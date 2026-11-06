@@ -1,0 +1,67 @@
+project:
+  name: "Adaptive Clinical Trial Site Enrollment Forecasting"
+  version: "1.0.0"
+
+data:
+  source: "synthetic"  # options: 'synthetic' or 'mimic'
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  mimic_dir: "data/raw/mimic"
+  ctgov_cache: "data/raw/ctgov_trial_metadata.json"
+  synthetic_ground_truth: "data/raw/synthetic_ground_truth.json"
+  processed_panel: "data/processed/weekly_site_panel.parquet"
+  processed_panel_csv: "data/processed/weekly_site_panel.csv"
+
+synthetic:
+  n_sites: 40
+  n_countries: 5
+  n_weeks: 104
+  target_enrollment: 1200
+  deadline_week: 90
+  random_seed: 42
+  zero_inflation_prob: 0.08  # ~8% sites never enroll
+  activation_delay_mean: 8
+  activation_delay_std: 4
+
+features:
+  lag_weeks: [1, 2, 3, 4]
+  rolling_windows: [4, 8]
+  fourier_terms: 2
+  standardize_covariates:
+    - "eligible_volume"
+    - "ed_visits"
+    - "occupancy_proxy"
+
+models:
+  cache_dir: "models_cache"
+  primary_trace: "models_cache/model_a_trace.nc"
+  mcmc:
+    tune: 1000
+    draws: 1000
+    chains: 4
+    target_accept: 0.90
+    random_seed: 42
+  debug_mcmc:
+    tune: 200
+    draws: 200
+    chains: 2
+    target_accept: 0.85
+    random_seed: 42
+
+forecasting:
+  default_target: 1200
+  default_deadline_week: 90
+  risk_probability_threshold: 0.80
+  monte_carlo_draws: 1000
+
+evaluation:
+  backtest_horizons: [4, 8, 12, 26]
+  origin_weeks: [30, 45, 60, 75]
+  reports_dir: "reports"
+  figures_dir: "reports/figures"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  reload: false
+

@@ -1,0 +1,20 @@
+{
+  "n_sites": 40,
+  "total_weeks": 104,
+  "total_enrolled": 5654,
+  "never_enrolling_site_count": 4,
+  "active_recruiting_site_count": 36,
+  "median_activation_week": 8.0,
+  "mean_weekly_enrollment_per_active_site": 1.46,
+  "median_weekly_enrollment_per_active_site": 0.0,
+  "p90_weekly_enrollment_per_active_site": 4.0,
+  "correlation_eligible_volume_vs_enrolled": 0.152,
+  "correlation_occupancy_vs_enrolled": 0.062,
+  "countries": [
+    "USA",
+    "UK",
+    "Germany",
+    "Canada",
+    "France"
+  ]
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "model": "Pooled_Poisson",
+    "MAE": 115.02,
+    "RMSE": 188.04,
+    "MAPE_pct": 4.04,
+    "Coverage_80": 0.94,
+    "Coverage_95": 0.94,
+    "Completion_Err_Weeks": 22.5
+  },
+  {
+    "model": "Hierarchical_Bayesian_Full",
+    "MAE": 119.84,
+    "RMSE": 145.05,
+    "MAPE_pct": 4.17,
+    "Coverage_80": 0.56,
+    "Coverage_95": 0.81,
+    "Completion_Err_Weeks": 23.5
+  },
+  {
+    "model": "XGBoost_Lag",
+    "MAE": 123.7,
+    "RMSE": 180.1,
+    "MAPE_pct": 4.81,
+    "Coverage_80": 0.81,
+    "Coverage_95": 1.0,
+    "Completion_Err_Weeks": 22.5
+  },
+  {
+    "model": "Ablation_No_Pooling",
+    "MAE": 166.04,
+    "RMSE": 218.03,
+    "MAPE_pct": 5.41,
+    "Coverage_80": 0.88,
+    "Coverage_95": 0.94,
+    "Completion_Err_Weeks": 22.5
+  },
+  {
+    "model": "Ablation_No_Flow",
+    "MAE": 182.47,
+    "RMSE": 254.17,
+    "MAPE_pct": 5.74,
+    "Coverage_80": 0.81,
+    "Coverage_95": 0.88,
+    "Completion_Err_Weeks": 22.5
+  }
+]

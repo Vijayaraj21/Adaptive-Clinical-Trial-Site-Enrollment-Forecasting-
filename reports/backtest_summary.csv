@@ -1,0 +1,6 @@
+model,MAE,RMSE,MAPE_pct,Coverage_80,Coverage_95,Completion_Err_Weeks
+Pooled_Poisson,115.02,188.04,4.04,0.94,0.94,22.5
+Hierarchical_Bayesian_Full,119.84,145.05,4.17,0.56,0.81,23.5
+XGBoost_Lag,123.7,180.1,4.81,0.81,1.0,22.5
+Ablation_No_Pooling,166.04,218.03,5.41,0.88,0.94,22.5
+Ablation_No_Flow,182.47,254.17,5.74,0.81,0.88,22.5

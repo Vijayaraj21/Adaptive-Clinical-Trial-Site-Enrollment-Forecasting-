@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adaptive Clinical Trial Site Enrollment Forecasting</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-badge">CT-BAYES</div>
+        <div>
+          <h1>Adaptive Clinical Trial Enrollment Forecasting</h1>
+          <p class="subtitle">Hierarchical Bayesian Forecasting & Real-World Hospital Flow Analytics</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div id="system-badge" class="status-badge pulse">Connecting...</div>
+        <button id="theme-toggle" class="btn-secondary" title="Toggle theme">
+          <span class="icon">🌓</span> <span id="theme-text">Light Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top KPI Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-label">Enrolled to Date</span>
+        <div class="kpi-value" id="kpi-enrolled">--</div>
+        <span class="kpi-sub" id="kpi-enrolled-sub">Current Week 40</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Target Enrollment</span>
+        <div class="kpi-value" id="kpi-target">1,200</div>
+        <span class="kpi-sub" id="kpi-deadline-sub">Deadline: Week 90</span>
+      </div>
+      <div class="kpi-card highlight-success">
+        <span class="kpi-label">P(Hit by Deadline)</span>
+        <div class="kpi-value" id="kpi-prob">--%</div>
+        <span class="kpi-sub" id="kpi-prob-sub">Posterior Probability</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Median Completion Week</span>
+        <div class="kpi-value" id="kpi-comp-week">Week --</div>
+        <span class="kpi-sub" id="kpi-comp-delta">--</span>
+      </div>
+      <div class="kpi-card highlight-warning">
+        <span class="kpi-label">At-Risk Sites</span>
+        <div class="kpi-value" id="kpi-risk-sites">--</div>
+        <span class="kpi-sub" id="kpi-active-sites">-- Active Sites</span>
+      </div>
+    </section>
+
+    <!-- What-If Sandbox Controls -->
+    <section class="control-panel">
+      <div class="panel-header">
+        <h3>Policy Interventions & What-If Simulation Sandbox</h3>
+        <span class="badge" id="scenario-tag">Status Quo</span>
+      </div>
+      <div class="controls-grid">
+        <div class="control-group">
+          <label for="input-target">Target Enrollment</label>
+          <input type="number" id="input-target" value="1200" min="200" max="5000" step="50">
+        </div>
+        <div class="control-group">
+          <label for="input-deadline">Deadline (Week)</label>
+          <input type="number" id="input-deadline" value="90" min="20" max="104" step="1">
+        </div>
+        <div class="control-group">
+          <div class="slider-label">
+            <label for="slider-flow">Hospital Patient Flow Shift</label>
+            <span id="flow-val" class="slider-num">+0%</span>
+          </div>
+          <input type="range" id="slider-flow" min="-30" max="30" value="0" step="5">
+        </div>
+        <div class="control-group">
+          <div class="slider-label">
+            <label for="slider-new-sites">Add New Sites</label>
+            <span id="new-sites-val" class="slider-num">0 sites</span>
+          </div>
+          <input type="range" id="slider-new-sites" min="0" max="10" value="0" step="1">
+        </div>
+        <div class="control-actions">
+          <button id="btn-close-at-risk" class="btn-danger">Close At-Risk Sites</button>
+          <button id="btn-reset" class="btn-secondary">Reset Interventions</button>
+        </div>
+      </div>
+      <div id="whatif-delta-banner" class="whatif-banner" style="display:none;">
+        <strong>Simulation Impact:</strong>
+        <span id="delta-comp-text"></span> |
+        <span id="delta-prob-text"></span>
+      </div>
+    </section>
+
+    <!-- Main Charts Section -->
+    <section class="charts-grid">
+      <!-- Fan Chart -->
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <h3>Cumulative Enrollment Trajectory & Bayesian Credible Bands</h3>
+            <p class="chart-sub">Observed trajectory, median forecast, and 80% & 95% posterior credible envelopes</p>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-color obs"></span>Observed</span>
+            <span class="legend-item"><span class="legend-color q50"></span>Median (q50)</span>
+            <span class="legend-item"><span class="legend-color band80"></span>80% CI</span>
+            <span class="legend-item"><span class="legend-color band95"></span>95% CI</span>
+            <span class="legend-item"><span class="legend-color target"></span>Target</span>
+            <span class="legend-item"><span class="legend-color deadline"></span>Deadline</span>
+          </div>
+        </div>
+        <div class="chart-container" id="fan-chart-container">
+          <!-- Inline SVG rendered by app.js -->
+          <svg id="fan-chart-svg" viewBox="0 0 850 360" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+
+      <!-- Completion Week Histogram -->
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <h3>Completion Week Posterior Distribution</h3>
+            <p class="chart-sub">Density of Monte Carlo predicted trial completion weeks</p>
+          </div>
+        </div>
+        <div class="chart-container" id="hist-chart-container">
+          <!-- Inline SVG rendered by app.js -->
+          <svg id="hist-chart-svg" viewBox="0 0 450 360" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sites Table Section -->
+    <section class="table-section">
+      <div class="table-header">
+        <div>
+          <h3>Trial Site Registry & Performance Flags</h3>
+          <p class="chart-sub">Click any site row or toggle action to dynamically close or re-open the site in what-if mode.</p>
+        </div>
+        <div class="table-filters">
+          <input type="text" id="site-search" placeholder="Search site or country...">
+          <select id="status-filter">
+            <option value="ALL">All Statuses</option>
+            <option value="HEALTHY">Healthy Only</option>
+            <option value="AT_RISK">At-Risk Only</option>
+            <option value="CLOSED">Closed Only</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table class="site-table">
+          <thead>
+            <tr>
+              <th>Site ID</th>
+              <th>Country</th>
+              <th>Hospital Tier</th>
+              <th>Enrolled</th>
+              <th>Posterior Rate (80% CI)</th>
+              <th>P(At Risk)</th>
+              <th>Status</th>
+              <th>Intervention</th>
+            </tr>
+          </thead>
+          <tbody id="site-table-body">
+            <tr><td colspan="8" class="text-center">Loading site profiles...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Adaptive Clinical Trial Forecasting Engine v1.0.0 &bull; Biostatistical Hierarchical Negative Binomial Model with Hospital Flow Covariates</p>
+      <p class="api-link">API Swagger Docs: <a href="/docs" target="_blank">/docs</a> &bull; ReDoc: <a href="/redoc" target="_blank">/redoc</a></p>
+    </footer>
+  </div>
+
+  <div id="tooltip" class="chart-tooltip"></div>
+  <script src="app.js"></script>
+</body>
+</html>
+
