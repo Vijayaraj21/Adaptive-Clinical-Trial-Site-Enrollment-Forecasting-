@@ -1,0 +1,293 @@
+{
+  "protocolSection": {
+    "identificationModule": {
+      "nctId": "NCT04280705",
+      "briefTitle": "Adaptive Multi-Center Clinical Trial for Acute Cardiovascular Care",
+      "officialTitle": "A Phase III, Randomized, Multi-Center, Global Trial Evaluating Real-World Enrollment and Clinical Outcomes"
+    },
+    "statusModule": {
+      "overallStatus": "RECRUITING",
+      "startDateStruct": {
+        "startDate": "2024-01-15",
+        "type": "ACTUAL"
+      },
+      "completionDateStruct": {
+        "completionDate": "2026-01-15",
+        "type": "ANTICIPATED"
+      }
+    },
+    "designModule": {
+      "studyType": "INTERVENTIONAL",
+      "phases": [
+        "PHASE3"
+      ],
+      "designInfo": {
+        "allocation": "RANDOMIZED",
+        "interventionModel": "PARALLEL",
+        "primaryPurpose": "TREATMENT"
+      },
+      "enrollmentInfo": {
+        "count": 1200,
+        "type": "ESTIMATED"
+      }
+    },
+    "conditionsModule": {
+      "conditions": [
+        "Acute Coronary Syndrome",
+        "Congestive Heart Failure",
+        "Sepsis-Associated Cardiac Dysfunction"
+      ]
+    },
+    "eligibilityModule": {
+      "eligibilityCriteria": "Inclusion: Age 18-85, Emergency Admission with cardiac biomarker elevation.\nExclusion: End-stage renal disease on dialysis, terminal illness <3 months.",
+      "healthyVolunteers": false,
+      "sex": "ALL",
+      "minimumAge": "18 Years",
+      "maximumAge": "85 Years"
+    },
+    "contactsLocationsModule": {
+      "locations": [
+        {
+          "facility": "Academic Medical Center Site 001",
+          "city": "Boston",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 002",
+          "city": "New York",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 003",
+          "city": "Chicago",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 004",
+          "city": "Houston",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 005",
+          "city": "Seattle",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 006",
+          "city": "San Francisco",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 007",
+          "city": "Philadelphia",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 008",
+          "city": "Atlanta",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 009",
+          "city": "London",
+          "country": "UK",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 010",
+          "city": "Manchester",
+          "country": "UK",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 011",
+          "city": "Birmingham",
+          "country": "UK",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 012",
+          "city": "Edinburgh",
+          "country": "UK",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 013",
+          "city": "Berlin",
+          "country": "Germany",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 014",
+          "city": "Munich",
+          "country": "Germany",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 015",
+          "city": "Heidelberg",
+          "country": "Germany",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 016",
+          "city": "Hamburg",
+          "country": "Germany",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 017",
+          "city": "Toronto",
+          "country": "Canada",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 018",
+          "city": "Montreal",
+          "country": "Canada",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 019",
+          "city": "Vancouver",
+          "country": "Canada",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 020",
+          "city": "Calgary",
+          "country": "Canada",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 021",
+          "city": "Paris",
+          "country": "France",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 022",
+          "city": "Lyon",
+          "country": "France",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 023",
+          "city": "Marseille",
+          "country": "France",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 024",
+          "city": "Bordeaux",
+          "country": "France",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 025",
+          "city": "Boston",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 026",
+          "city": "New York",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 027",
+          "city": "Chicago",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 028",
+          "city": "Houston",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 029",
+          "city": "Seattle",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 030",
+          "city": "San Francisco",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 031",
+          "city": "Philadelphia",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 032",
+          "city": "Atlanta",
+          "country": "USA",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 033",
+          "city": "London",
+          "country": "UK",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 034",
+          "city": "Manchester",
+          "country": "UK",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 035",
+          "city": "Birmingham",
+          "country": "UK",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 036",
+          "city": "Edinburgh",
+          "country": "UK",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 037",
+          "city": "Berlin",
+          "country": "Germany",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 038",
+          "city": "Munich",
+          "country": "Germany",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 039",
+          "city": "Heidelberg",
+          "country": "Germany",
+          "status": "RECRUITING"
+        },
+        {
+          "facility": "Academic Medical Center Site 040",
+          "city": "Hamburg",
+          "country": "Germany",
+          "status": "RECRUITING"
+        }
+      ]
+    }
+  }
+}

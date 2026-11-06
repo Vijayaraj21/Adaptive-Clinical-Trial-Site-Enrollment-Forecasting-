@@ -26,15 +26,7 @@ env/
 venv/
 ENV/
 
-# Data & Models (never commit raw sensitive data or huge caches)
-data/raw/
-data/processed/*.parquet
-data/processed/*.csv
-!data/processed/.gitkeep
-models_cache/*.nc
-!models_cache/.gitkeep
-
-# Environment variables
+# Sensitive Environment variables
 .env
 
 # IDE / OS
@@ -48,7 +40,4 @@ Thumbs.db
 .coverage
 htmlcov/
 .ruff_cache/
-
-
 .cache/
-
