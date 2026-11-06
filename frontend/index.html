@@ -22,6 +22,23 @@
       </div>
       <div class="header-actions">
         <div id="system-badge" class="status-badge pulse">Connecting...</div>
+        
+        <!-- User & Management Auth Badge -->
+        <div id="auth-header-section" class="auth-header-section">
+          <div id="user-profile-badge" class="user-profile-badge" style="display:none;">
+            <div class="avatar-wrap">
+              <span id="user-avatar" class="user-avatar">👤</span>
+            </div>
+            <div class="user-info-text">
+              <span id="user-display-name" class="user-display-name">Loading...</span>
+              <span id="user-role-badge" class="role-badge role-user">Investigator</span>
+            </div>
+            <button id="btn-switch-role" class="btn-sm btn-outline" title="Switch User or Management role">Switch Role</button>
+            <button id="btn-logout" class="btn-sm btn-ghost" title="Sign out">Logout</button>
+          </div>
+          <button id="btn-open-login" class="btn-primary btn-sm">Sign In</button>
+        </div>
+
         <button id="theme-toggle" class="btn-secondary" title="Toggle theme">
           <span class="icon">🌓</span> <span id="theme-text">Light Mode</span>
         </button>
@@ -58,12 +75,30 @@
     </section>
 
     <!-- What-If Sandbox Controls -->
-    <section class="control-panel">
+    <section class="control-panel" id="sandbox-panel">
       <div class="panel-header">
-        <h3>Policy Interventions & What-If Simulation Sandbox</h3>
-        <span class="badge" id="scenario-tag">Status Quo</span>
+        <div class="panel-title-wrap">
+          <h3>Policy Interventions & What-If Simulation Sandbox</h3>
+          <span class="role-pill" id="panel-role-pill">User View (Read-Only)</span>
+        </div>
+        <div class="panel-header-actions">
+          <span class="badge" id="scenario-tag">Status Quo</span>
+          <button id="btn-open-ingest" class="btn-sm btn-accent" style="display:none;" title="Management Only: Ingest new weekly site records">
+            + Ingest Weekly Data
+          </button>
+        </div>
       </div>
-      <div class="controls-grid">
+
+      <!-- User Role Notice (shown when logged in as User) -->
+      <div id="user-role-notice" class="role-notice-banner" style="display:none;">
+        <span class="notice-icon">🔒</span>
+        <span>
+          <strong>Investigator View (Read-Only)</strong>: Parameter tuning and site closure interventions are locked to <strong>Management</strong>. 
+          <a href="#" id="link-switch-to-manager">Switch to Management Mode</a> to unlock live sandbox simulations.
+        </span>
+      </div>
+
+      <div class="controls-grid" id="controls-grid">
         <div class="control-group">
           <label for="input-target">Target Enrollment</label>
           <input type="number" id="input-target" value="1200" min="200" max="5000" step="50">
@@ -182,6 +217,140 @@
     </footer>
   </div>
 
+  <!-- Login Modal Overlay -->
+  <div id="login-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-brand">
+          <div class="logo-badge">CT-BAYES</div>
+          <div>
+            <h2>Portal Authentication</h2>
+            <p class="subtitle">Select your role to access Adaptive Enrollment Forecasting</p>
+          </div>
+        </div>
+        <button id="btn-close-login" class="btn-close" title="Close">&times;</button>
+      </div>
+
+      <!-- Quick Role Selection Cards -->
+      <div class="role-cards-grid">
+        <!-- User Role Card -->
+        <div class="role-select-card" id="card-login-user">
+          <div class="role-card-top">
+            <span class="role-card-icon">👨‍⚕️</span>
+            <span class="role-badge role-user">User Access</span>
+          </div>
+          <h4>Clinical Investigator</h4>
+          <p class="role-desc">Designed for site investigators and clinical research coordinators.</p>
+          <ul class="role-features">
+            <li>✔ View longitudinal Bayesian fan charts</li>
+            <li>✔ Monitor completion week densities</li>
+            <li>✔ Inspect site performance & risk scores</li>
+            <li>🔒 Read-only view of policy interventions</li>
+          </ul>
+          <button id="btn-quick-login-user" class="btn-primary btn-block">
+            Sign In as Investigator (User)
+          </button>
+        </div>
+
+        <!-- Management Role Card -->
+        <div class="role-select-card role-card-management" id="card-login-mgmt">
+          <div class="role-card-top">
+            <span class="role-card-icon">🛡️</span>
+            <span class="role-badge role-mgmt">Management Access</span>
+          </div>
+          <h4>Trial Operations Director</h4>
+          <p class="role-desc">For steering committees, study directors, and trial operations leads.</p>
+          <ul class="role-features">
+            <li>✔ Full What-If simulation sandbox</li>
+            <li>✔ Hospital flow shift multipliers (&plusmn;15%)</li>
+            <li>✔ Mid-trial site additions & early closures</li>
+            <li>✔ Ingest new weekly site enrollment data</li>
+          </ul>
+          <button id="btn-quick-login-mgmt" class="btn-accent btn-block">
+            Sign In as Management (Admin)
+          </button>
+        </div>
+      </div>
+
+      <!-- Manual Credential Form Divider -->
+      <div class="form-divider">
+        <span>or sign in with custom credentials</span>
+      </div>
+
+      <!-- Credential Form -->
+      <form id="login-form" class="login-form" onsubmit="return false;">
+        <div id="login-error" class="login-error-alert" style="display:none;"></div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" placeholder="e.g. user or manager" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password">
+          </div>
+        </div>
+
+        <div class="form-hints">
+          <span>Demo credentials:</span>
+          <button type="button" class="btn-chip" id="chip-user">user / user123</button>
+          <button type="button" class="btn-chip" id="chip-manager">manager / admin123</button>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="btn-submit-login" class="btn-primary">Authenticate & Enter</button>
+          <button type="button" id="btn-cancel-login" class="btn-secondary">Continue as Guest (User View)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Weekly Data Ingestion Modal (Management Only) -->
+  <div id="ingest-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card modal-card-sm">
+      <div class="modal-header">
+        <div>
+          <h3>Ingest Weekly Trial Batch</h3>
+          <p class="subtitle">Management Only: Push new site observations into panel</p>
+        </div>
+        <button id="btn-close-ingest" class="btn-close">&times;</button>
+      </div>
+      <form id="ingest-form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="ingest-site">Select Site</label>
+          <select id="ingest-site" required>
+            <option value="SITE_001">SITE_001 (USA - Academic Medical Center)</option>
+            <option value="SITE_002">SITE_002 (USA - Regional Hospital)</option>
+            <option value="SITE_003">SITE_003 (CAN - Academic Medical Center)</option>
+            <option value="SITE_004">SITE_004 (GBR - Specialized Cancer Center)</option>
+            <option value="SITE_005">SITE_005 (DEU - University Hospital)</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ingest-week">Week Number</label>
+            <input type="number" id="ingest-week" value="41" min="1" max="104" required>
+          </div>
+          <div class="form-group">
+            <label for="ingest-enrolled">New Patients Enrolled</label>
+            <input type="number" id="ingest-enrolled" value="4" min="0" max="50" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="ingest-volume">Eligible Patient Volume</label>
+          <input type="number" id="ingest-volume" value="48" min="0" max="200" required>
+        </div>
+        <div id="ingest-status-msg" style="display:none; font-size:0.85rem; margin-bottom:1rem;"></div>
+        <div class="form-actions">
+          <button type="submit" id="btn-submit-ingest" class="btn-accent">Submit & Update Forecast</button>
+          <button type="button" id="btn-cancel-ingest" class="btn-secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast-notification"></div>
   <div id="tooltip" class="chart-tooltip"></div>
   <script src="app.js"></script>
 </body>

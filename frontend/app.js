@@ -18,11 +18,19 @@ const state = {
   forecastData: null,
   baselineData: null,
   sites: [],
+  currentUser: JSON.parse(localStorage.getItem("ct_auth_user") || "null") || {
+    username: "investigator",
+    full_name: "Dr. Sarah Chen",
+    role: "user",
+    title: "Clinical Investigator",
+    email: "sarah.chen@trial-site.org",
+  },
 };
 
 // Initialize App
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
+  initAuth();
   initEventListeners();
   checkHealth();
   fetchInitialData();
@@ -85,16 +93,25 @@ function initEventListeners() {
   });
 
   document.getElementById("btn-close-at-risk")?.addEventListener("click", () => {
+    if (!state.currentUser || state.currentUser.role !== "management") {
+      showToast("⚠️ Simulation interventions require Management privileges.", "warning");
+      return;
+    }
     if (!state.forecastData) return;
     state.forecastData.sites.forEach((s) => {
       if (s.is_at_risk) {
         state.closedSites.add(s.site_id);
       }
     });
+    showToast("Closed all at-risk sites. Recalculating forecast...");
     triggerForecast();
   });
 
   document.getElementById("btn-reset")?.addEventListener("click", () => {
+    if (!state.currentUser || state.currentUser.role !== "management") {
+      showToast("⚠️ Simulation interventions require Management privileges.", "warning");
+      return;
+    }
     state.flowChange = 0.0;
     state.newSites = 0;
     state.closedSites.clear();
@@ -102,6 +119,7 @@ function initEventListeners() {
     document.getElementById("flow-val").textContent = "+0%";
     document.getElementById("slider-new-sites").value = "0";
     document.getElementById("new-sites-val").textContent = "0 sites";
+    showToast("Interventions reset to Status Quo.");
     triggerForecast();
   });
 
@@ -115,7 +133,282 @@ function initEventListeners() {
     state.siteFilter = e.target.value;
     renderSitesTable();
   });
+
+  // Auth & Role Event Listeners
+  document.getElementById("btn-open-login")?.addEventListener("click", openLoginModal);
+  document.getElementById("btn-close-login")?.addEventListener("click", closeLoginModal);
+  document.getElementById("btn-cancel-login")?.addEventListener("click", () => {
+    // Continue as guest user
+    setAuthenticatedUser({
+      username: "guest_investigator",
+      full_name: "Guest Investigator",
+      role: "user",
+      title: "Clinical Investigator (Guest)",
+      email: "guest@trial.org",
+    });
+    closeLoginModal();
+    showToast("Signed in as Guest (User View).");
+  });
+
+  document.getElementById("btn-quick-login-user")?.addEventListener("click", () => quickLogin("user"));
+  document.getElementById("btn-quick-login-mgmt")?.addEventListener("click", () => quickLogin("management"));
+
+  document.getElementById("btn-switch-role")?.addEventListener("click", switchRole);
+  document.getElementById("btn-logout")?.addEventListener("click", logout);
+  document.getElementById("link-switch-to-manager")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    quickLogin("management");
+  });
+
+  // Demo credential chips
+  document.getElementById("chip-user")?.addEventListener("click", () => {
+    document.getElementById("login-username").value = "user";
+    document.getElementById("login-password").value = "user123";
+  });
+  document.getElementById("chip-manager")?.addEventListener("click", () => {
+    document.getElementById("login-username").value = "manager";
+    document.getElementById("login-password").value = "admin123";
+  });
+
+  // Login form submit
+  document.getElementById("login-form")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const u = document.getElementById("login-username").value.trim();
+    const p = document.getElementById("login-password").value.trim();
+    if (u && p) {
+      loginWithCredentials(u, p);
+    }
+  });
+
+  // Ingestion Modal Listeners (Management)
+  document.getElementById("btn-open-ingest")?.addEventListener("click", openIngestModal);
+  document.getElementById("btn-close-ingest")?.addEventListener("click", closeIngestModal);
+  document.getElementById("btn-cancel-ingest")?.addEventListener("click", closeIngestModal);
+  document.getElementById("ingest-form")?.addEventListener("submit", submitIngestData);
 }
+
+// Authentication & Role Functions
+function initAuth() {
+  updateUserDisplay();
+  applyRolePermissions();
+}
+
+function updateUserDisplay() {
+  const profileBadge = document.getElementById("user-profile-badge");
+  const openLoginBtn = document.getElementById("btn-open-login");
+  const displayName = document.getElementById("user-display-name");
+  const roleBadge = document.getElementById("user-role-badge");
+  const avatar = document.getElementById("user-avatar");
+
+  if (!state.currentUser) {
+    if (profileBadge) profileBadge.style.display = "none";
+    if (openLoginBtn) openLoginBtn.style.display = "inline-flex";
+    return;
+  }
+
+  if (openLoginBtn) openLoginBtn.style.display = "none";
+  if (profileBadge) profileBadge.style.display = "flex";
+
+  if (displayName) displayName.textContent = state.currentUser.full_name || state.currentUser.username;
+
+  const isMgmt = state.currentUser.role === "management";
+  if (roleBadge) {
+    roleBadge.textContent = isMgmt ? "Management" : "Investigator";
+    roleBadge.className = `role-badge ${isMgmt ? "role-mgmt" : "role-user"}`;
+  }
+  if (avatar) {
+    avatar.textContent = isMgmt ? "🛡️" : "👨‍⚕️";
+  }
+}
+
+function applyRolePermissions() {
+  const isMgmt = state.currentUser && state.currentUser.role === "management";
+  const rolePill = document.getElementById("panel-role-pill");
+  const userNotice = document.getElementById("user-role-notice");
+  const openIngestBtn = document.getElementById("btn-open-ingest");
+  const controlsGrid = document.getElementById("controls-grid");
+
+  if (rolePill) {
+    rolePill.textContent = isMgmt ? "🛡️ Management Mode (Full Simulation)" : "User View (Read-Only)";
+    if (isMgmt) {
+      rolePill.classList.add("mgmt");
+    } else {
+      rolePill.classList.remove("mgmt");
+    }
+  }
+
+  if (userNotice) {
+    userNotice.style.display = isMgmt ? "none" : "flex";
+  }
+
+  if (openIngestBtn) {
+    openIngestBtn.style.display = isMgmt ? "inline-flex" : "none";
+  }
+
+  const inputs = [
+    document.getElementById("input-target"),
+    document.getElementById("input-deadline"),
+    document.getElementById("slider-flow"),
+    document.getElementById("slider-new-sites"),
+    document.getElementById("btn-close-at-risk"),
+    document.getElementById("btn-reset"),
+  ];
+
+  inputs.forEach((elem) => {
+    if (elem) elem.disabled = !isMgmt;
+  });
+
+  if (controlsGrid) {
+    if (!isMgmt) {
+      controlsGrid.classList.add("sandbox-disabled");
+    } else {
+      controlsGrid.classList.remove("sandbox-disabled");
+    }
+  }
+
+  renderSitesTable();
+}
+
+function openLoginModal() {
+  const modal = document.getElementById("login-modal");
+  if (modal) modal.style.display = "flex";
+  const errDiv = document.getElementById("login-error");
+  if (errDiv) errDiv.style.display = "none";
+}
+
+function closeLoginModal() {
+  const modal = document.getElementById("login-modal");
+  if (modal) modal.style.display = "none";
+}
+
+async function loginWithCredentials(username, password) {
+  const errDiv = document.getElementById("login-error");
+  if (errDiv) errDiv.style.display = "none";
+
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({ detail: "Authentication failed." }));
+      throw new Error(errData.detail || "Invalid username or password.");
+    }
+
+    const user = await res.json();
+    setAuthenticatedUser(user);
+    closeLoginModal();
+    showToast(`Signed in as ${user.full_name} [${user.role.toUpperCase()}]`);
+  } catch (err) {
+    if (errDiv) {
+      errDiv.textContent = err.message;
+      errDiv.style.display = "block";
+    }
+  }
+}
+
+function quickLogin(role) {
+  if (role === "management") {
+    loginWithCredentials("manager", "admin123");
+  } else {
+    loginWithCredentials("investigator", "user123");
+  }
+}
+
+function switchRole() {
+  const currentRole = state.currentUser ? state.currentUser.role : "user";
+  if (currentRole === "user") {
+    quickLogin("management");
+  } else {
+    quickLogin("user");
+  }
+}
+
+function logout() {
+  state.currentUser = null;
+  localStorage.removeItem("ct_auth_user");
+  updateUserDisplay();
+  applyRolePermissions();
+  openLoginModal();
+  showToast("Logged out.");
+}
+
+function openIngestModal() {
+  const modal = document.getElementById("ingest-modal");
+  if (modal) modal.style.display = "flex";
+}
+
+function closeIngestModal() {
+  const modal = document.getElementById("ingest-modal");
+  if (modal) modal.style.display = "none";
+}
+
+async function submitIngestData(e) {
+  e.preventDefault();
+  const site = document.getElementById("ingest-site").value;
+  const week = parseInt(document.getElementById("ingest-week").value) || 41;
+  const enrolled = parseInt(document.getElementById("ingest-enrolled").value) || 0;
+  const volume = parseInt(document.getElementById("ingest-volume").value) || 40;
+  const statusMsg = document.getElementById("ingest-status-msg");
+
+  const payload = {
+    records: [
+      {
+        site_id: site,
+        week: week,
+        enrolled_count: enrolled,
+        eligible_volume: volume,
+        is_active: 1,
+      },
+    ],
+    recalculate_forecast: true,
+  };
+
+  try {
+    if (statusMsg) {
+      statusMsg.style.display = "block";
+      statusMsg.style.color = "var(--text-muted)";
+      statusMsg.textContent = "Ingesting record and re-running Bayesian forecast...";
+    }
+
+    const res = await fetch("/api/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error("Data ingestion failed.");
+    const data = await res.json();
+
+    closeIngestModal();
+    showToast(`✓ Ingested week ${week} for ${site}. Forecast updated!`);
+    await triggerForecast();
+  } catch (err) {
+    if (statusMsg) {
+      statusMsg.style.display = "block";
+      statusMsg.style.color = "var(--accent-red)";
+      statusMsg.textContent = err.message;
+    }
+  }
+}
+
+function showToast(message, type = "info") {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+  toast.textContent = message;
+  toast.style.display = "block";
+  if (type === "warning") {
+    toast.style.borderColor = "var(--accent-amber)";
+  } else {
+    toast.style.borderColor = "var(--accent-blue)";
+  }
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 3500);
+}
+
 
 // Health Check
 async function checkHealth() {
@@ -381,6 +674,7 @@ function renderSitesTable() {
 
   const query = state.searchQuery;
   const filter = state.siteFilter;
+  const isMgmt = state.currentUser && state.currentUser.role === "management";
 
   const filtered = state.sites.filter((s) => {
     const matchSearch = s.site_id.toLowerCase().includes(query) || s.country.toLowerCase().includes(query);
@@ -401,8 +695,16 @@ function renderSitesTable() {
       const btnActionText = isClosed ? "Reopen" : "Close";
       const btnClass = isClosed ? "btn-secondary" : "btn-danger";
 
+      const btnHtml = isMgmt
+        ? `<button class="${btnClass}" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="event.stopPropagation(); toggleSiteAction('${s.site_id}')">${btnActionText}</button>`
+        : `<button class="btn-outline user-view-pill" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="event.stopPropagation(); showToast('⚠️ Site intervention requires Management privileges.', 'warning')">View Only</button>`;
+
+      const rowClick = isMgmt
+        ? `toggleSiteAction('${s.site_id}')`
+        : `showToast('Site ${s.site_id}: Rate ${s.posterior_mean_rate}/wk, Risk ${Math.round(s.p_at_risk * 100)}%')`;
+
       return `
-      <tr onclick="toggleSiteAction('${s.site_id}')">
+      <tr onclick="${rowClick}">
         <td><strong>${s.site_id}</strong></td>
         <td>${s.country}</td>
         <td>${s.hospital_tier}</td>
@@ -410,7 +712,7 @@ function renderSitesTable() {
         <td>${s.posterior_mean_rate} <span style="color:var(--text-muted);font-size:0.75rem;">[${s.rate_ci_80[0]} - ${s.rate_ci_80[1]}]</span></td>
         <td style="color:${s.p_at_risk > 0.8 ? "var(--accent-red)" : "inherit"}; font-weight:${s.p_at_risk > 0.8 ? "700" : "400"};">${Math.round(s.p_at_risk * 100)}%</td>
         <td><span class="status-pill ${pillClass}">${statusText}</span></td>
-        <td><button class="${btnClass}" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="event.stopPropagation(); toggleSiteAction('${s.site_id}')">${btnActionText}</button></td>
+        <td>${btnHtml}</td>
       </tr>
     `;
     })
@@ -419,10 +721,16 @@ function renderSitesTable() {
 
 // Toggle Site Open/Close
 function toggleSiteAction(siteId) {
+  if (!state.currentUser || state.currentUser.role !== "management") {
+    showToast("⚠️ Site intervention requires Management privileges.", "warning");
+    return;
+  }
   if (state.closedSites.has(siteId)) {
     state.closedSites.delete(siteId);
+    showToast(`Site ${siteId} reopened. Recalculating forecast...`);
   } else {
     state.closedSites.add(siteId);
+    showToast(`Site ${siteId} marked closed. Recalculating forecast...`);
   }
   triggerForecast();
 }

@@ -86,3 +86,37 @@ def test_update_endpoint():
     data = response.json()
     assert data["status"] == "success"
     assert data["ingested_count"] == 1
+
+
+def test_auth_login_user():
+    # User / Investigator
+    resp = client.post("/api/auth/login", json={"username": "user", "password": "user123"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["role"] == "user"
+    assert data["full_name"] == "Dr. Sarah Chen"
+    assert "token" in data
+
+
+def test_auth_login_management():
+    # Management / Operations
+    resp = client.post("/api/auth/login", json={"username": "manager", "password": "admin123"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["role"] == "management"
+    assert "simulate_whatif" in data["permissions"]
+
+
+def test_auth_login_invalid():
+    resp = client.post("/api/auth/login", json={"username": "wrong", "password": "bad"})
+    assert resp.status_code == 401
+
+
+def test_auth_demo_users():
+    resp = client.get("/api/auth/demo-users")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) >= 2
+    roles = [u["role"] for u in data]
+    assert "user" in roles and "management" in roles
+

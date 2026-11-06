@@ -7,6 +7,29 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class UserResponse(BaseModel):
+    username: str
+    full_name: str
+    role: str  # "user" or "management"
+    email: str
+    token: str
+    permissions: list[str]
+
+
+class DemoUser(BaseModel):
+    username: str
+    role: str
+    full_name: str
+    title: str
+    description: str
+
+
+
 class HealthResponse(BaseModel):
     status: str = "ok"
     version: str = "1.0.0"

@@ -5,23 +5,67 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from backend.schemas import (
     DataIngestBatch,
+    DemoUser,
     ForecastRequest,
     ForecastResponse,
     HealthResponse,
+    LoginRequest,
     SitesResponse,
     TrialMetadataResponse,
+    UserResponse,
     WhatIfResponse,
 )
 from backend.services.forecast_service import ForecastService
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("backend")
+
+# Demo Users Store
+USERS_DB = {
+    "user": {
+        "password": "user123",
+        "full_name": "Dr. Sarah Chen",
+        "role": "user",
+        "email": "sarah.chen@trial-site.org",
+        "title": "Clinical Investigator & Site Lead",
+        "description": "Read-only access to enrollment projections, Bayesian credible bounds, and site registry.",
+        "permissions": ["view_kpi", "view_forecast", "view_sites"],
+    },
+    "investigator": {
+        "password": "user123",
+        "full_name": "Dr. Sarah Chen",
+        "role": "user",
+        "email": "sarah.chen@trial-site.org",
+        "title": "Clinical Investigator & Site Lead",
+        "description": "Read-only access to enrollment projections, Bayesian credible bounds, and site registry.",
+        "permissions": ["view_kpi", "view_forecast", "view_sites"],
+    },
+    "manager": {
+        "password": "admin123",
+        "full_name": "Dr. Marcus Vance",
+        "role": "management",
+        "email": "m.vance@trial-operations.org",
+        "title": "Trial Operations Director & Steering Committee",
+        "description": "Full administrative access: What-If simulation interventions, site toggling, and data ingestion.",
+        "permissions": ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data", "admin"],
+    },
+    "admin": {
+        "password": "admin123",
+        "full_name": "Dr. Marcus Vance",
+        "role": "management",
+        "email": "m.vance@trial-operations.org",
+        "title": "Trial Operations Director & Steering Committee",
+        "description": "Full administrative access: What-If simulation interventions, site toggling, and data ingestion.",
+        "permissions": ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data", "admin"],
+    },
+}
+
 
 app = FastAPI(
     title="Adaptive Clinical Trial Enrollment Forecasting API",
@@ -100,6 +144,66 @@ def ingest_weekly_data(batch: DataIngestBatch) -> dict:
     except (RuntimeError, ValueError, KeyError, OSError) as e:
         logger.error("Error ingesting data: %s", e)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# Authentication Endpoints
+@app.post("/api/auth/login", response_model=UserResponse, tags=["Authentication"])
+def login(req: LoginRequest) -> UserResponse:
+    """Authenticate User or Management credentials."""
+    user = USERS_DB.get(req.username.lower())
+    if not user or user["password"] != req.password:
+        raise HTTPException(status_code=401, detail="Invalid username or password.")
+    return UserResponse(
+        username=req.username.lower(),
+        full_name=user["full_name"],
+        role=user["role"],
+        email=user["email"],
+        token=f"token_{req.username.lower()}_{user['role']}",
+        permissions=user["permissions"],
+    )
+
+
+@app.get("/api/auth/demo-users", response_model=list[DemoUser], tags=["Authentication"])
+def get_demo_users() -> list[DemoUser]:
+    """Retrieve pre-configured User and Management demo credentials for front-end 1-click login."""
+    return [
+        DemoUser(
+            username="investigator",
+            role="user",
+            full_name="Dr. Sarah Chen",
+            title="Clinical Investigator (User)",
+            description="Read-only access to enrollment projections, Bayesian credible bounds, and site registry.",
+        ),
+        DemoUser(
+            username="manager",
+            role="management",
+            full_name="Dr. Marcus Vance",
+            title="Trial Operations Director (Management)",
+            description="Full administrative access: What-If simulation interventions, site toggling, and data ingestion.",
+        ),
+    ]
+
+
+@app.get("/api/auth/me", response_model=UserResponse, tags=["Authentication"])
+def get_current_user(token: str | None = Query(None), authorization: str | None = Header(None)) -> UserResponse:
+    """Validate current session token and return user profile."""
+    auth_token = token or (authorization.replace("Bearer ", "") if authorization else None)
+    if not auth_token:
+        raise HTTPException(status_code=401, detail="No authorization token provided.")
+
+    for uname, user in USERS_DB.items():
+        if f"token_{uname}_{user['role']}" == auth_token:
+            return UserResponse(
+                username=uname,
+                full_name=user["full_name"],
+                role=user["role"],
+                email=user["email"],
+                token=auth_token,
+                permissions=user["permissions"],
+            )
+
+    raise HTTPException(status_code=401, detail="Invalid or expired session token.")
+
 
 
 # Mount Static Frontend
