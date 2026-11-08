@@ -31,7 +31,8 @@ const state = {
 
 // Initialize App
 document.addEventListener("DOMContentLoaded", () => {
-  initTheme();
+  const savedTheme = localStorage.getItem("ct_theme_name") || "midnight";
+  applyMultiTheme(savedTheme);
   initAuth();
   initEventListeners();
   checkHealth();
@@ -407,6 +408,34 @@ function initEventListeners() {
       triggerForecast();
     });
   });
+
+  // Theme Selector Dropdown
+  const themeSelector = document.getElementById("theme-selector");
+  if (themeSelector) {
+    themeSelector.value = localStorage.getItem("ct_theme_name") || "midnight";
+    themeSelector.addEventListener("change", (e) => applyMultiTheme(e.target.value));
+  }
+
+  // Audio FX Toggle
+  document.getElementById("btn-sound-fx")?.addEventListener("click", () => audioFx.toggle());
+
+  // Timeline Playback Listeners
+  document.getElementById("btn-play-timeline")?.addEventListener("click", () => playback.toggle());
+  document.getElementById("btn-reset-timeline")?.addEventListener("click", () => playback.reset());
+  document.getElementById("timeline-scrubber")?.addEventListener("input", (e) => {
+    playback.week = parseInt(e.target.value);
+    playback.syncUI();
+  });
+  document.querySelectorAll(".speed-chip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const s = parseInt(btn.getAttribute("data-speed")) || 1;
+      playback.setSpeed(s);
+    });
+  });
+
+  // Executive Export Buttons
+  document.getElementById("btn-export-csv")?.addEventListener("click", exportPanelCSV);
+  document.getElementById("btn-export-summary")?.addEventListener("click", exportExecutiveSummary);
 
   document.getElementById("drawer-btn-reset")?.addEventListener("click", () => {
     const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
@@ -860,6 +889,8 @@ async function triggerForecast(isInitial = false) {
     state.sites = data.scenario.sites;
 
     updateKPIs(data.scenario);
+    updateTrialHealthGauge(data.scenario);
+    renderGeoDistribution(data.scenario.sites);
     updateTrialProgressBar(data.scenario.total_enrolled_to_date, data.scenario.target);
     updateScenarioBadge(data);
     updateComparisonCards(data);
@@ -1305,4 +1336,343 @@ function renderSiteHistoryChart(history) {
   svgContent += `<line x1="${curX}" y1="${pad.top}" x2="${curX}" y2="${pad.top + plotH}" stroke="var(--line-observed)" stroke-dasharray="2,2" stroke-width="1.5" />`;
 
   svg.innerHTML = svgContent;
+}
+
+// ============================================================================
+// Creative Interactive Features: Audio FX, Playback Engine, Multi-Theme, Exports
+// ============================================================================
+
+// 1. Web Audio API Clinical Synthesizer
+const audioFx = {
+  enabled: localStorage.getItem("ct_sound_fx") !== "false",
+  ctx: null,
+
+  init() {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) this.ctx = new AudioContext();
+    } catch (e) {
+      console.warn("AudioContext not supported");
+    }
+  },
+
+  playClick() {
+    if (!this.enabled) return;
+    try {
+      if (!this.ctx) this.init();
+      if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(750, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(350, this.ctx.currentTime + 0.04);
+      gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.04);
+    } catch (e) {}
+  },
+
+  playChime() {
+    if (!this.enabled) return;
+    try {
+      if (!this.ctx) this.init();
+      if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
+      const now = this.ctx.currentTime;
+      [523.25, 659.25, 783.99].forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+        gain.gain.setValueAtTime(0.06, now + idx * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.2);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now + idx * 0.06);
+        osc.stop(now + idx * 0.06 + 0.2);
+      });
+    } catch (e) {}
+  },
+
+  toggle() {
+    this.enabled = !this.enabled;
+    localStorage.setItem("ct_sound_fx", this.enabled);
+    const btn = document.getElementById("btn-sound-fx");
+    const icon = document.getElementById("sound-icon");
+    if (btn) btn.classList.toggle("active", this.enabled);
+    if (icon) icon.textContent = this.enabled ? "🔊" : "🔇";
+    showToast(this.enabled ? "Audio feedback enabled" : "Audio muted");
+  }
+};
+
+// 2. Timeline Playback Engine
+const playback = {
+  isPlaying: false,
+  week: 40,
+  timer: null,
+  speed: 1,
+
+  start() {
+    this.isPlaying = true;
+    audioFx.playChime();
+    const playText = document.getElementById("play-text");
+    const playIcon = document.getElementById("play-icon");
+    if (playText) playText.textContent = "Pause Animation";
+    if (playIcon) playIcon.textContent = "⏸";
+
+    if (this.week >= 104) this.week = 1;
+
+    this.timer = setInterval(() => {
+      this.week += 1;
+      if (this.week > 104) {
+        this.pause();
+        this.week = 40;
+      }
+      this.syncUI();
+      audioFx.playClick();
+    }, 180 / this.speed);
+  },
+
+  pause() {
+    this.isPlaying = false;
+    clearInterval(this.timer);
+    this.timer = null;
+    const playText = document.getElementById("play-text");
+    const playIcon = document.getElementById("play-icon");
+    if (playText) playText.textContent = "Play Trajectory";
+    if (playIcon) playIcon.textContent = "▶";
+  },
+
+  toggle() {
+    if (this.isPlaying) this.pause();
+    else this.start();
+  },
+
+  reset() {
+    this.pause();
+    this.week = 40;
+    this.syncUI();
+    showToast("Trajectory scrubber reset to Week 40");
+  },
+
+  setSpeed(s) {
+    this.speed = s;
+    document.querySelectorAll(".speed-chip").forEach((btn) => {
+      btn.classList.toggle("active", parseInt(btn.getAttribute("data-speed")) === s);
+    });
+    if (this.isPlaying) {
+      clearInterval(this.timer);
+      this.start();
+    }
+  },
+
+  syncUI() {
+    const scrubber = document.getElementById("timeline-scrubber");
+    const badge = document.getElementById("scrubber-week-badge");
+    if (scrubber) scrubber.value = this.week;
+    if (badge) badge.textContent = `Week ${this.week}`;
+
+    // Interpolate animated trajectory count
+    if (state.forecastData && state.forecastData.trajectory) {
+      const fan = state.forecastData.trajectory;
+      const idx = fan.weeks.indexOf(this.week);
+      if (idx !== -1) {
+        const simVal = Math.round(fan.q50[idx]);
+        const kpiEnrolled = document.getElementById("kpi-enrolled");
+        if (kpiEnrolled) kpiEnrolled.textContent = simVal.toLocaleString();
+        updateTrialProgressBar(simVal, state.target);
+      }
+    }
+  }
+};
+
+// 3. Multi-Theme Switching System
+function applyMultiTheme(themeName) {
+  document.documentElement.setAttribute("data-theme", themeName);
+  localStorage.setItem("ct_theme_name", themeName);
+  const selector = document.getElementById("theme-selector");
+  if (selector) selector.value = themeName;
+  if (state.forecastData) {
+    renderFanChart(state.forecastData);
+    renderHistogram(state.forecastData);
+  }
+  audioFx.playClick();
+}
+
+// 4. Trial Health & Velocity Gauge Calculations
+function updateTrialHealthGauge(data) {
+  const pVal = data.p_hit_by_deadline;
+  const activeRate = data.sites.length > 0 ? (data.active_sites_count / data.sites.length) : 1;
+  const healthScore = Math.min(Math.max(Math.round((pVal * 0.7 + activeRate * 0.3) * 100), 5), 100);
+
+  const arc = document.getElementById("gauge-arc");
+  const scoreText = document.getElementById("gauge-score-text");
+  const title = document.getElementById("health-title");
+  const badge = document.getElementById("health-badge");
+  const desc = document.getElementById("health-desc");
+
+  if (scoreText) scoreText.textContent = `${healthScore}%`;
+
+  // Circumference = 2 * pi * 40 = ~251.2
+  const offset = 251.2 * (1 - healthScore / 100.0);
+  if (arc) {
+    arc.style.strokeDashoffset = offset;
+    arc.style.stroke = healthScore >= 80 ? "var(--accent-green)" : healthScore >= 50 ? "var(--accent-amber)" : "var(--accent-red)";
+  }
+
+  if (badge) {
+    if (healthScore >= 80) {
+      badge.textContent = "OPTIMAL VELOCITY";
+      badge.style.color = "var(--accent-green)";
+      badge.style.borderColor = "var(--accent-green)";
+    } else if (healthScore >= 50) {
+      badge.textContent = "MONITORING REQUIRED";
+      badge.style.color = "var(--accent-amber)";
+      badge.style.borderColor = "var(--accent-amber)";
+    } else {
+      badge.textContent = "CRITICAL SLOWDOWN";
+      badge.style.color = "var(--accent-red)";
+      badge.style.borderColor = "var(--accent-red)";
+    }
+  }
+
+  if (title) {
+    title.textContent = healthScore >= 80 
+      ? "Clinical Enrollment Health: On-Schedule Trajectory"
+      : healthScore >= 50 
+      ? "Clinical Enrollment Health: Moderate Attrition Risk"
+      : "Clinical Enrollment Health: Significant Target Delay";
+  }
+
+  if (desc) {
+    desc.innerHTML = `Hierarchical Bayesian posterior velocity indicates a <strong>${Math.round(pVal * 100)}% probability</strong> of hitting the ${data.target.toLocaleString()} patient protocol target by Week ${data.deadline}. Active site pool: <strong>${data.active_sites_count} / ${data.sites.length} sites</strong>.`;
+  }
+}
+
+// 5. Global Multi-Center Geo-Distribution Rendering
+function renderGeoDistribution(sites) {
+  const container = document.getElementById("geo-grid-container");
+  if (!container || !sites || sites.length === 0) return;
+
+  const countryStats = {};
+  const flagMap = {
+    USA: "🇺🇸 United States",
+    CAN: "🇨🇦 Canada",
+    GBR: "🇬🇧 United Kingdom",
+    DEU: "🇩🇪 Germany",
+    AUS: "🇦🇺 Australia",
+    FRA: "🇫🇷 France",
+    JPN: "🇯🇵 Japan",
+  };
+
+  sites.forEach((s) => {
+    const c = s.country || "USA";
+    if (!countryStats[c]) {
+      countryStats[c] = { count: 0, totalRate: 0, enrolled: 0 };
+    }
+    countryStats[c].count += 1;
+    countryStats[c].totalRate += s.posterior_mean_rate;
+    countryStats[c].enrolled += s.enrolled_to_date;
+  });
+
+  const cardsHtml = Object.entries(countryStats)
+    .sort((a, b) => b[1].count - a[1].count)
+    .map(([code, stat]) => {
+      const avgRate = (stat.totalRate / stat.count).toFixed(1);
+      const name = flagMap[code] || `🌐 ${code}`;
+      return `
+        <div class="geo-country-card">
+          <div class="geo-country-header">
+            <span class="geo-flag-name">${name}</span>
+            <span class="geo-site-count">${stat.count} Sites</span>
+          </div>
+          <div class="geo-rate-row">
+            <span>Mean Velocity:</span>
+            <strong class="geo-rate-val">${avgRate} pts/wk</strong>
+          </div>
+          <div class="geo-rate-row" style="font-size:0.72rem;">
+            <span>Enrolled Total:</span>
+            <span>${stat.enrolled} patients</span>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+
+  container.innerHTML = cardsHtml;
+}
+
+// 6. Executive Data Export Suite
+function exportPanelCSV() {
+  if (!state.sites || state.sites.length === 0) {
+    showToast("⚠️ No site data loaded to export.", "warning");
+    return;
+  }
+  audioFx.playChime();
+  const headers = ["Site_ID", "Country", "Hospital_Tier", "Enrolled_To_Date", "Posterior_Mean_Rate", "Rate_CI_80_Lower", "Rate_CI_80_Upper", "Prob_At_Risk", "Status"];
+  const rows = state.sites.map(s => [
+    s.site_id,
+    s.country,
+    `"${s.hospital_tier}"`,
+    s.enrolled_to_date,
+    s.posterior_mean_rate,
+    s.rate_ci_80[0],
+    s.rate_ci_80[1],
+    s.p_at_risk,
+    state.closedSites.has(s.site_id) ? "Closed" : (s.is_at_risk ? "At-Risk" : "Healthy")
+  ]);
+
+  const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `adaptive_trial_sites_week_${state.currentWeek}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("✓ CSV Export completed!");
+}
+
+function exportExecutiveSummary() {
+  if (!state.forecastData) {
+    showToast("⚠️ No forecast data loaded to export.", "warning");
+    return;
+  }
+  audioFx.playChime();
+  const d = state.forecastData;
+  const summary = `# ADAPTIVE CLINICAL TRIAL ENROLLMENT EXECUTIVE BRIEFING
+Generated: ${new Date().toISOString()}
+Current Trial Week: ${state.currentWeek} | Protocol Deadline: Week ${d.deadline}
+
+## 1. Primary Forecasting Metrics
+- Cumulative Patients Enrolled: ${d.total_enrolled_to_date.toLocaleString()}
+- Protocol Target Enrollment: ${d.target.toLocaleString()}
+- Posterior Probability of Target Completion: ${(d.p_hit_by_deadline * 100).toFixed(1)}%
+- Median Monte Carlo Projected Completion Week: Week ${d.median_completion_week}
+- Timeline Delta vs Deadline: ${(d.median_completion_week - d.deadline).toFixed(1)} weeks
+
+## 2. Multi-Center Site Registry
+- Total Investigation Sites: ${d.sites.length}
+- Active Operational Sites: ${d.active_sites_count}
+- Flagged Underperforming / At-Risk Sites: ${d.at_risk_sites_count}
+- Currently Closed Interventions: ${state.closedSites.size}
+
+## 3. Policy Interventions Active
+- Hospital Patient Flow Shift Multiplier: ${(state.flowChange * 100).toFixed(0)}%
+- Additional Mid-Trial Centers Onboarded: ${state.newSites} sites
+
+## 4. Methodological Note
+Inference powered by PyMC Hierarchical Negative-Binomial distribution calibrated with real-world hospital flow proxies.
+`;
+
+  const blob = new Blob([summary], { type: "text/markdown;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `trial_executive_briefing_w${state.currentWeek}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("✓ Executive Summary exported!");
 }

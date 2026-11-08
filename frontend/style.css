@@ -1,27 +1,31 @@
-:root {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-card: #1e293b;
-  --bg-hover: #334155;
+:root,
+[data-theme="midnight"],
+[data-theme="dark"] {
+  --bg-primary: #070c18;
+  --bg-secondary: #0f172a;
+  --bg-card: #0f172a;
+  --bg-hover: #1e293b;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
-  --border-color: #334155;
+  --border-color: #1e293b;
   
   --accent-blue: #38bdf8;
   --accent-teal: #2dd4bf;
-  --accent-green: #34d399;
+  --accent-green: #10b981;
   --accent-amber: #fbbf24;
-  --accent-red: #f87171;
+  --accent-red: #f43f5e;
   --accent-purple: #c084fc;
   
-  --band-95: rgba(56, 189, 248, 0.15);
-  --band-80: rgba(56, 189, 248, 0.32);
+  --band-95: rgba(56, 189, 248, 0.14);
+  --band-80: rgba(56, 189, 248, 0.30);
   --line-median: #38bdf8;
   --line-observed: #f8fafc;
-  --line-target: #34d399;
+  --line-target: #10b981;
   --line-deadline: #fbbf24;
   
+  --card-glow: 0 4px 25px -4px rgba(56, 189, 248, 0.08);
+  --theme-gradient: linear-gradient(135deg, #0284c7, #8b5cf6);
   --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --radius-sm: 6px;
@@ -29,11 +33,13 @@
   --radius-lg: 14px;
 }
 
+/* Theme 2: Clean Hospital / Nordic Frost (Light) */
+[data-theme="nordic"],
 [data-theme="light"] {
-  --bg-primary: #f1f5f9;
+  --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-card: #ffffff;
-  --bg-hover: #f8fafc;
+  --bg-hover: #f1f5f9;
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
@@ -44,14 +50,75 @@
   --accent-green: #16a34a;
   --accent-amber: #d97706;
   --accent-red: #dc2626;
-  --accent-purple: #9333ea;
+  --accent-purple: #7c3aed;
   
   --band-95: rgba(2, 132, 199, 0.12);
-  --band-80: rgba(2, 132, 199, 0.28);
+  --band-80: rgba(2, 132, 199, 0.26);
   --line-median: #0284c7;
   --line-observed: #0f172a;
   --line-target: #16a34a;
   --line-deadline: #d97706;
+  
+  --card-glow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+  --theme-gradient: linear-gradient(135deg, #0284c7, #0284c7);
+}
+
+/* Theme 3: Bio-Tech Emerald (Genomics / Biotech Lab) */
+[data-theme="biotech"] {
+  --bg-primary: #04130f;
+  --bg-secondary: #08211b;
+  --bg-card: #08211b;
+  --bg-hover: #0f352c;
+  --text-primary: #ecfdf5;
+  --text-secondary: #a7f3d0;
+  --text-muted: #6ee7b7;
+  --border-color: #134e40;
+  
+  --accent-blue: #2dd4bf;
+  --accent-teal: #14b8a6;
+  --accent-green: #10b981;
+  --accent-amber: #facc15;
+  --accent-red: #fb7185;
+  --accent-purple: #a855f7;
+  
+  --band-95: rgba(16, 185, 129, 0.15);
+  --band-80: rgba(16, 185, 129, 0.32);
+  --line-median: #10b981;
+  --line-observed: #ecfdf5;
+  --line-target: #2dd4bf;
+  --line-deadline: #facc15;
+  
+  --card-glow: 0 4px 25px -4px rgba(16, 185, 129, 0.12);
+  --theme-gradient: linear-gradient(135deg, #059669, #10b981);
+}
+
+/* Theme 4: Sunset Executive (Warm Twilight & Amber) */
+[data-theme="executive"] {
+  --bg-primary: #120f0c;
+  --bg-secondary: #1e1914;
+  --bg-card: #1e1914;
+  --bg-hover: #2e261f;
+  --text-primary: #fef3c7;
+  --text-secondary: #d4d4d8;
+  --text-muted: #a1a1aa;
+  --border-color: #382d24;
+  
+  --accent-blue: #f59e0b;
+  --accent-teal: #fb923c;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-red: #f43f5e;
+  --accent-purple: #e11d48;
+  
+  --band-95: rgba(245, 158, 11, 0.15);
+  --band-80: rgba(245, 158, 11, 0.32);
+  --line-median: #f59e0b;
+  --line-observed: #fef3c7;
+  --line-target: #10b981;
+  --line-deadline: #fb923c;
+  
+  --card-glow: 0 4px 25px -4px rgba(245, 158, 11, 0.12);
+  --theme-gradient: linear-gradient(135deg, #d97706, #b45309);
 }
 
 * {
@@ -1884,3 +1951,366 @@ input[type="range"] {
 
 
 
+
+/* ==========================================================================
+   Creative Dashboard Additions: Playback, Gauges, Geo-Ribbon, Sound FX
+   ========================================================================== */
+
+/* Enhanced Card Glow & Glassmorphism */
+.kpi-card, .chart-card, .comparison-card, .control-panel, .table-section {
+  box-shadow: var(--card-glow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Theme Selector Pill & Menu */
+.theme-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.theme-select-wrap label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.theme-select {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.theme-select option {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* Sound FX Toggle Button */
+.btn-sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-sound-toggle.active {
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
+  background-color: rgba(56, 189, 248, 0.1);
+}
+
+/* Animated Timeline Playback Controller Bar */
+.playback-controller-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  box-shadow: var(--card-glow);
+}
+
+.playback-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.playback-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--theme-gradient);
+  color: #ffffff;
+  border: none;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.playback-btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.playback-btn-icon {
+  font-size: 0.9rem;
+}
+
+.playback-scrubber-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.playback-scrubber-wrap input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent-blue);
+}
+
+.playback-week-badge {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-blue);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.playback-speed-group {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.speed-chip {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.speed-chip.active {
+  background-color: var(--accent-blue);
+  color: #0f172a;
+  border-color: var(--accent-blue);
+}
+
+/* Executive Export Toolbar */
+.export-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-export:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* Velocity & Trial Health Circular Gauge Card */
+.trial-health-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--card-glow);
+}
+
+.gauge-wrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+}
+
+.gauge-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.gauge-bg {
+  fill: none;
+  stroke: var(--bg-hover);
+  stroke-width: 8;
+}
+
+.gauge-fill {
+  fill: none;
+  stroke: var(--accent-green);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease;
+}
+
+.gauge-center-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-pct {
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.gauge-subtext {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.health-details {
+  flex: 1;
+}
+
+.health-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.health-title-row h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.health-status-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.health-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Global Centers Geo-Distribution Ribbon */
+.geo-distribution-section {
+  margin-top: 1.5rem;
+}
+
+.geo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.85rem;
+  margin-top: 0.85rem;
+}
+
+.geo-country-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+  box-shadow: var(--card-glow);
+}
+
+.geo-country-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-blue);
+}
+
+.geo-country-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.geo-flag-name {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.geo-site-count {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+}
+
+.geo-rate-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.geo-rate-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+/* Subtle Animated Pulse on Active Interventions */
+@keyframes neonPulse {
+  0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(56, 189, 248, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+}
+
+.status-badge.pulse {
+  animation: neonPulse 2.5s infinite;
+}

@@ -204,9 +204,31 @@
           <button id="btn-open-login" class="btn-primary btn-sm">Sign In</button>
         </div>
 
-        <button id="theme-toggle" class="btn-secondary" title="Toggle theme">
-          <span class="icon">🌓</span> <span id="theme-text">Light Mode</span>
+        <!-- Creative Theme Selector -->
+        <div class="theme-select-wrap">
+          <label for="theme-selector">🎨 Theme:</label>
+          <select id="theme-selector" class="theme-select" title="Switch visual color theme">
+            <option value="midnight">🌌 Midnight Cyber</option>
+            <option value="nordic">🏥 Clinical Nordic</option>
+            <option value="biotech">🧬 Bio-Tech Emerald</option>
+            <option value="executive">🌅 Sunset Executive</option>
+          </select>
+        </div>
+
+        <!-- Audio FX Synthesizer Toggle -->
+        <button id="btn-sound-fx" class="btn-sound-toggle active" title="Toggle Clinical Feedback Sound Effects">
+          <span id="sound-icon">🔊</span> Audio FX
         </button>
+
+        <!-- Executive Export Toolbar -->
+        <div class="export-toolbar">
+          <button id="btn-export-csv" class="btn-export" title="Export trial panel records as CSV">
+            <span>📊 Export CSV</span>
+          </button>
+          <button id="btn-export-summary" class="btn-export" title="Export executive trial briefing">
+            <span>📄 Summary</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -250,6 +272,29 @@
       </div>
     </section>
 
+    <!-- Creative Component: Trial Health & Velocity Gauge -->
+    <section class="trial-health-card">
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 100 100">
+          <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+          <circle id="gauge-arc" class="gauge-fill" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="30"></circle>
+        </svg>
+        <div class="gauge-center-text">
+          <span id="gauge-score-text" class="gauge-pct">92%</span>
+          <span class="gauge-subtext">Velocity</span>
+        </div>
+      </div>
+      <div class="health-details">
+        <div class="health-title-row">
+          <h4 id="health-title">Clinical Enrollment Health: Optimal Trajectory</h4>
+          <span id="health-badge" class="health-status-badge">HIGH CONFIDENCE</span>
+        </div>
+        <p class="health-desc" id="health-desc">
+          Hierarchical Bayesian posterior velocity indicates a <strong>92% probability</strong> of hitting the 1,200 patient protocol target by Week 90. Site-level overdispersion is well-controlled with low residual variance.
+        </p>
+      </div>
+    </section>
+
     <!-- Dashboard Tab Navigation Bar -->
     <nav class="dashboard-tabs">
       <button class="tab-btn active" data-tab="tab-overview">
@@ -273,6 +318,28 @@
          TAB 1: Trajectory & Forecast Overview
          ========================================================================= -->
     <div id="tab-overview" class="tab-content active">
+      <!-- Creative Component: Animated Trajectory Timeline Playback Controller -->
+      <div class="playback-controller-card">
+        <div class="playback-controls">
+          <button id="btn-play-timeline" class="playback-btn-primary" title="Play animated forecast trajectory week-by-week">
+            <span id="play-icon" class="playback-btn-icon">▶</span>
+            <span id="play-text">Play Trajectory</span>
+          </button>
+          <button id="btn-reset-timeline" class="btn-chip" title="Reset playback to current week 40">↺ Reset</button>
+        </div>
+        <div class="playback-scrubber-wrap">
+          <label for="timeline-scrubber" style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">TIMELINE:</label>
+          <input type="range" id="timeline-scrubber" min="1" max="104" value="40" step="1" title="Drag to inspect trajectory at any week">
+          <span id="scrubber-week-badge" class="playback-week-badge">Week 40</span>
+        </div>
+        <div class="playback-speed-group">
+          <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">SPEED:</span>
+          <button class="speed-chip active" data-speed="1">1x</button>
+          <button class="speed-chip" data-speed="2">2x</button>
+          <button class="speed-chip" data-speed="4">4x</button>
+        </div>
+      </div>
+
       <!-- Main Charts Grid -->
       <section class="charts-grid">
         <!-- Fan Chart -->
@@ -378,6 +445,69 @@
               <tr><td colspan="8" class="text-center">Loading site profiles...</td></tr>
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- Creative Component: Global Centers Geo-Distribution Ribbon -->
+      <section class="geo-distribution-section">
+        <div class="panel-header">
+          <div>
+            <h4>Global Medical Centers Recruitment Distribution</h4>
+            <p class="chart-sub">International multi-center trial performance and hospital network tiering</p>
+          </div>
+        </div>
+        <div class="geo-grid" id="geo-grid-container">
+          <!-- Filled dynamically by app.js -->
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇺🇸 United States</span>
+              <span class="geo-site-count">16 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">4.8 pts/wk</strong>
+            </div>
+          </div>
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇨🇦 Canada</span>
+              <span class="geo-site-count">8 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">3.6 pts/wk</strong>
+            </div>
+          </div>
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇬🇧 United Kingdom</span>
+              <span class="geo-site-count">6 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">3.9 pts/wk</strong>
+            </div>
+          </div>
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇩🇪 Germany</span>
+              <span class="geo-site-count">6 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">3.4 pts/wk</strong>
+            </div>
+          </div>
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇦🇺 Australia</span>
+              <span class="geo-site-count">4 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">3.1 pts/wk</strong>
+            </div>
+          </div>
         </div>
       </section>
     </div>
