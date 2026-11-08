@@ -592,6 +592,12 @@ input[type="range"] {
   border: 1px solid rgba(192, 132, 252, 0.4);
 }
 
+.role-admin {
+  background-color: rgba(245, 158, 11, 0.22);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+}
+
 .btn-sm {
   padding: 0.35rem 0.75rem;
   font-size: 0.78rem;
@@ -669,6 +675,12 @@ input[type="range"] {
   border-color: rgba(192, 132, 252, 0.35);
 }
 
+.role-pill.admin {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
 .role-notice-banner {
   background-color: rgba(56, 189, 248, 0.08);
   border-left: 3px solid var(--accent-blue);
@@ -723,7 +735,7 @@ input[type="range"] {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  max-width: 760px;
+  max-width: 900px;
   width: 100%;
   padding: 2rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
@@ -772,12 +784,12 @@ input[type="range"] {
 /* Role Selection Cards */
 .role-cards-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.1rem;
   margin-bottom: 1.5rem;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 860px) {
   .role-cards-grid {
     grid-template-columns: 1fr;
   }
@@ -802,6 +814,37 @@ input[type="range"] {
 .role-card-management:hover {
   border-color: var(--accent-purple);
   box-shadow: 0 10px 20px -5px rgba(192, 132, 252, 0.18);
+}
+
+.role-card-admin {
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.role-card-admin:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 10px 22px -4px rgba(245, 158, 11, 0.25);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #0f172a;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-gold:hover {
+  opacity: 0.94;
+  transform: translateY(-1px);
+}
+
+.btn-chip.chip-admin {
+  border-color: rgba(245, 158, 11, 0.45);
+  color: #fbbf24;
+}
+
+.btn-chip.chip-admin:hover {
+  background-color: rgba(245, 158, 11, 0.15);
 }
 
 .role-card-top {

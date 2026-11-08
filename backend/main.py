@@ -19,6 +19,7 @@ from backend.schemas import (
     LoginRequest,
     SitesResponse,
     TrialMetadataResponse,
+    UpdatePasswordRequest,
     UserResponse,
     WhatIfResponse,
 )
@@ -27,8 +28,35 @@ from backend.services.forecast_service import ForecastService
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("backend")
 
-# Demo Users Store
+# Demo & Registered Users Store
 USERS_DB = {
+    "admin": {
+        "password": "admin123",
+        "full_name": "Vijayaraj (System Administrator)",
+        "role": "admin",
+        "email": "vijayaraj@trial-operations.org",
+        "title": "Lead Clinical Trial Administrator & System Architect",
+        "description": "Full System Superuser: What-If simulation interventions, site control, and batch data ingestion.",
+        "permissions": ["*"],
+    },
+    "vijayaraj": {
+        "password": "admin123",
+        "full_name": "Vijayaraj (System Administrator)",
+        "role": "admin",
+        "email": "vijayaraj@trial-operations.org",
+        "title": "Lead Clinical Trial Administrator & System Architect",
+        "description": "Full System Superuser: What-If simulation interventions, site control, and batch data ingestion.",
+        "permissions": ["*"],
+    },
+    "manager": {
+        "password": "admin123",
+        "full_name": "Dr. Marcus Vance",
+        "role": "management",
+        "email": "m.vance@trial-operations.org",
+        "title": "Trial Operations Director",
+        "description": "Management access: What-If simulation interventions, site toggling, and data ingestion.",
+        "permissions": ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data"],
+    },
     "user": {
         "password": "user123",
         "full_name": "Dr. Sarah Chen",
@@ -46,24 +74,6 @@ USERS_DB = {
         "title": "Clinical Investigator & Site Lead",
         "description": "Read-only access to enrollment projections, Bayesian credible bounds, and site registry.",
         "permissions": ["view_kpi", "view_forecast", "view_sites"],
-    },
-    "manager": {
-        "password": "admin123",
-        "full_name": "Dr. Marcus Vance",
-        "role": "management",
-        "email": "m.vance@trial-operations.org",
-        "title": "Trial Operations Director & Steering Committee",
-        "description": "Full administrative access: What-If simulation interventions, site toggling, and data ingestion.",
-        "permissions": ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data", "admin"],
-    },
-    "admin": {
-        "password": "admin123",
-        "full_name": "Dr. Marcus Vance",
-        "role": "management",
-        "email": "m.vance@trial-operations.org",
-        "title": "Trial Operations Director & Steering Committee",
-        "description": "Full administrative access: What-If simulation interventions, site toggling, and data ingestion.",
-        "permissions": ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data", "admin"],
     },
 }
 
@@ -208,8 +218,22 @@ def login(req: LoginRequest) -> UserResponse:
 
 @app.get("/api/auth/demo-users", response_model=list[DemoUser], tags=["Authentication"])
 def get_demo_users() -> list[DemoUser]:
-    """Retrieve pre-configured User and Management demo credentials for front-end 1-click login."""
+    """Retrieve pre-configured Admin, Management, and User credentials for front-end 1-click login."""
     return [
+        DemoUser(
+            username="admin",
+            role="admin",
+            full_name="Vijayaraj (System Administrator)",
+            title="Lead System Administrator & Architect",
+            description="Full superuser privileges: parameter sandbox, site interventions, protocol updates, and data ingestion.",
+        ),
+        DemoUser(
+            username="manager",
+            role="management",
+            full_name="Dr. Marcus Vance",
+            title="Trial Operations Director (Management)",
+            description="Management access: What-If simulation interventions, site toggling, and data ingestion.",
+        ),
         DemoUser(
             username="investigator",
             role="user",
@@ -217,14 +241,20 @@ def get_demo_users() -> list[DemoUser]:
             title="Clinical Investigator (User)",
             description="Read-only access to enrollment projections, Bayesian credible bounds, and site registry.",
         ),
-        DemoUser(
-            username="manager",
-            role="management",
-            full_name="Dr. Marcus Vance",
-            title="Trial Operations Director (Management)",
-            description="Full administrative access: What-If simulation interventions, site toggling, and data ingestion.",
-        ),
     ]
+
+
+@app.post("/api/auth/change-password", tags=["Authentication"])
+def change_password(req: UpdatePasswordRequest) -> dict:
+    """Update password for an existing account."""
+    uname = req.username.lower()
+    user = USERS_DB.get(uname)
+    if not user:
+        raise HTTPException(status_code=404, detail="User account not found.")
+    if user["password"] != req.old_password:
+        raise HTTPException(status_code=401, detail="Current password incorrect.")
+    user["password"] = req.new_password
+    return {"status": "success", "message": f"Password successfully updated for user '{uname}'."}
 
 
 @app.get("/api/auth/me", response_model=UserResponse, tags=["Authentication"])

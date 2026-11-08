@@ -106,8 +106,9 @@ function initEventListeners() {
   // Quick Scenario Presets
   document.querySelectorAll(".preset-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      if (!state.currentUser || state.currentUser.role !== "management") {
-        showToast("⚠️ Quick scenarios require Management privileges.", "warning");
+      const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+      if (!isPrivileged) {
+        showToast("⚠️ Quick scenarios require Management or Admin privileges.", "warning");
         return;
       }
       const flow = parseInt(btn.getAttribute("data-flow")) || 0;
@@ -128,8 +129,9 @@ function initEventListeners() {
   });
 
   document.getElementById("btn-close-at-risk")?.addEventListener("click", () => {
-    if (!state.currentUser || state.currentUser.role !== "management") {
-      showToast("⚠️ Simulation interventions require Management privileges.", "warning");
+    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    if (!isPrivileged) {
+      showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
       return;
     }
     if (!state.forecastData) return;
@@ -143,8 +145,9 @@ function initEventListeners() {
   });
 
   document.getElementById("btn-reset")?.addEventListener("click", () => {
-    if (!state.currentUser || state.currentUser.role !== "management") {
-      showToast("⚠️ Simulation interventions require Management privileges.", "warning");
+    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    if (!isPrivileged) {
+      showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
       return;
     }
     state.flowChange = 0.0;
@@ -189,8 +192,9 @@ function initEventListeners() {
     showToast("Signed in as Guest (User View).");
   });
 
-  document.getElementById("btn-quick-login-user")?.addEventListener("click", () => quickLogin("user"));
+  document.getElementById("btn-quick-login-admin")?.addEventListener("click", () => quickLogin("admin"));
   document.getElementById("btn-quick-login-mgmt")?.addEventListener("click", () => quickLogin("management"));
+  document.getElementById("btn-quick-login-user")?.addEventListener("click", () => quickLogin("user"));
 
   document.getElementById("btn-switch-role")?.addEventListener("click", switchRole);
   document.getElementById("btn-logout")?.addEventListener("click", logout);
@@ -200,14 +204,28 @@ function initEventListeners() {
   });
 
   // Demo credential chips
-  document.getElementById("chip-user")?.addEventListener("click", () => {
-    document.getElementById("login-username").value = "user";
-    document.getElementById("login-password").value = "user123";
+  document.getElementById("chip-admin")?.addEventListener("click", () => {
+    document.getElementById("login-username").value = "admin";
+    document.getElementById("login-password").value = "admin123";
+  });
+  document.getElementById("chip-vijayaraj")?.addEventListener("click", () => {
+    document.getElementById("login-username").value = "vijayaraj";
+    document.getElementById("login-password").value = "admin123";
   });
   document.getElementById("chip-manager")?.addEventListener("click", () => {
     document.getElementById("login-username").value = "manager";
     document.getElementById("login-password").value = "admin123";
   });
+  document.getElementById("chip-user")?.addEventListener("click", () => {
+    document.getElementById("login-username").value = "user";
+    document.getElementById("login-password").value = "user123";
+  });
+
+  // Change Password Modal Listeners
+  document.getElementById("btn-change-pwd")?.addEventListener("click", openChangePwdModal);
+  document.getElementById("btn-close-pwd-modal")?.addEventListener("click", closeChangePwdModal);
+  document.getElementById("btn-cancel-change-pwd")?.addEventListener("click", closeChangePwdModal);
+  document.getElementById("change-pwd-form")?.addEventListener("submit", submitChangePwd);
 
   // Login form submit
   document.getElementById("login-form")?.addEventListener("submit", (e) => {
@@ -265,6 +283,7 @@ function updateUserDisplay() {
   const displayName = document.getElementById("user-display-name");
   const roleBadge = document.getElementById("user-role-badge");
   const avatar = document.getElementById("user-avatar");
+  const changePwdBtn = document.getElementById("btn-change-pwd");
 
   if (!state.currentUser) {
     if (profileBadge) profileBadge.style.display = "none";
@@ -277,38 +296,61 @@ function updateUserDisplay() {
 
   if (displayName) displayName.textContent = state.currentUser.full_name || state.currentUser.username;
 
-  const isMgmt = state.currentUser.role === "management";
+  const role = state.currentUser.role;
+  const isAdmin = role === "admin";
+  const isMgmt = role === "management";
+
   if (roleBadge) {
-    roleBadge.textContent = isMgmt ? "Management" : "Investigator";
-    roleBadge.className = `role-badge ${isMgmt ? "role-mgmt" : "role-user"}`;
+    if (isAdmin) {
+      roleBadge.textContent = "👑 System Admin";
+      roleBadge.className = "role-badge role-admin";
+    } else if (isMgmt) {
+      roleBadge.textContent = "Management";
+      roleBadge.className = "role-badge role-mgmt";
+    } else {
+      roleBadge.textContent = "Investigator";
+      roleBadge.className = "role-badge role-user";
+    }
   }
+
   if (avatar) {
-    avatar.textContent = isMgmt ? "🛡️" : "👨‍⚕️";
+    avatar.textContent = isAdmin ? "👑" : isMgmt ? "🛡️" : "👨‍⚕️";
+  }
+
+  if (changePwdBtn) {
+    changePwdBtn.style.display = "inline-block";
   }
 }
 
 function applyRolePermissions() {
+  const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+  const isAdmin = state.currentUser && state.currentUser.role === "admin";
   const isMgmt = state.currentUser && state.currentUser.role === "management";
+
   const rolePill = document.getElementById("panel-role-pill");
   const userNotice = document.getElementById("user-role-notice");
   const openIngestBtn = document.getElementById("btn-open-ingest");
   const controlsGrid = document.getElementById("controls-grid");
 
   if (rolePill) {
-    rolePill.textContent = isMgmt ? "🛡️ Management Mode (Full Simulation)" : "User View (Read-Only)";
-    if (isMgmt) {
-      rolePill.classList.add("mgmt");
+    if (isAdmin) {
+      rolePill.textContent = "👑 Admin Superuser Mode (Full Engine Access)";
+      rolePill.className = "role-pill admin";
+    } else if (isMgmt) {
+      rolePill.textContent = "🛡️ Management Mode (Full Simulation)";
+      rolePill.className = "role-pill mgmt";
     } else {
-      rolePill.classList.remove("mgmt");
+      rolePill.textContent = "User View (Read-Only)";
+      rolePill.className = "role-pill";
     }
   }
 
   if (userNotice) {
-    userNotice.style.display = isMgmt ? "none" : "flex";
+    userNotice.style.display = isPrivileged ? "none" : "flex";
   }
 
   if (openIngestBtn) {
-    openIngestBtn.style.display = isMgmt ? "inline-flex" : "none";
+    openIngestBtn.style.display = isPrivileged ? "inline-flex" : "none";
   }
 
   const inputs = [
@@ -321,11 +363,11 @@ function applyRolePermissions() {
   ];
 
   inputs.forEach((elem) => {
-    if (elem) elem.disabled = !isMgmt;
+    if (elem) elem.disabled = !isPrivileged;
   });
 
   if (controlsGrid) {
-    if (!isMgmt) {
+    if (!isPrivileged) {
       controlsGrid.classList.add("sandbox-disabled");
     } else {
       controlsGrid.classList.remove("sandbox-disabled");
@@ -333,6 +375,13 @@ function applyRolePermissions() {
   }
 
   renderSitesTable();
+}
+
+function setAuthenticatedUser(user) {
+  state.currentUser = user;
+  localStorage.setItem("ct_auth_user", JSON.stringify(user));
+  updateUserDisplay();
+  applyRolePermissions();
 }
 
 function openLoginModal() {
@@ -376,7 +425,9 @@ async function loginWithCredentials(username, password) {
 }
 
 function quickLogin(role) {
-  if (role === "management") {
+  if (role === "admin") {
+    loginWithCredentials("admin", "admin123");
+  } else if (role === "management") {
     loginWithCredentials("manager", "admin123");
   } else {
     loginWithCredentials("investigator", "user123");
@@ -387,6 +438,8 @@ function switchRole() {
   const currentRole = state.currentUser ? state.currentUser.role : "user";
   if (currentRole === "user") {
     quickLogin("management");
+  } else if (currentRole === "management") {
+    quickLogin("admin");
   } else {
     quickLogin("user");
   }
@@ -399,6 +452,60 @@ function logout() {
   applyRolePermissions();
   openLoginModal();
   showToast("Logged out.");
+}
+
+function openChangePwdModal() {
+  const modal = document.getElementById("change-pwd-modal");
+  if (!modal) return;
+  modal.style.display = "flex";
+  const sub = document.getElementById("pwd-modal-user-subtitle");
+  if (sub && state.currentUser) {
+    sub.textContent = `Update credentials for @${state.currentUser.username} (${state.currentUser.role})`;
+  }
+  const errDiv = document.getElementById("change-pwd-error");
+  if (errDiv) errDiv.style.display = "none";
+  const oldInput = document.getElementById("pwd-old");
+  const newInput = document.getElementById("pwd-new");
+  if (oldInput) oldInput.value = "";
+  if (newInput) newInput.value = "";
+}
+
+function closeChangePwdModal() {
+  const modal = document.getElementById("change-pwd-modal");
+  if (modal) modal.style.display = "none";
+}
+
+async function submitChangePwd(e) {
+  e.preventDefault();
+  if (!state.currentUser) return;
+  const oldPwd = document.getElementById("pwd-old").value;
+  const newPwd = document.getElementById("pwd-new").value;
+  const errDiv = document.getElementById("change-pwd-error");
+
+  try {
+    const res = await fetch("/api/auth/change-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: state.currentUser.username,
+        old_password: oldPwd,
+        new_password: newPwd,
+      }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({ detail: "Failed to update password." }));
+      throw new Error(data.detail || "Incorrect current password.");
+    }
+
+    closeChangePwdModal();
+    showToast("✓ Password successfully updated!");
+  } catch (err) {
+    if (errDiv) {
+      errDiv.textContent = err.message;
+      errDiv.style.display = "block";
+    }
+  }
 }
 
 function openIngestModal() {
@@ -812,7 +919,7 @@ function renderSitesTable() {
   const query = state.searchQuery;
   const statusFilter = state.siteFilter;
   const countryFilter = state.countryFilter;
-  const isMgmt = state.currentUser && state.currentUser.role === "management";
+  const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
 
   const filtered = state.sites.filter((s) => {
     const matchSearch = s.site_id.toLowerCase().includes(query) || s.country.toLowerCase().includes(query);
@@ -834,9 +941,9 @@ function renderSitesTable() {
       const btnActionText = isClosed ? "Reopen" : "Close";
       const btnClass = isClosed ? "btn-secondary" : "btn-danger";
 
-      const btnHtml = isMgmt
+      const btnHtml = isPrivileged
         ? `<button class="${btnClass}" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="event.stopPropagation(); toggleSiteAction('${s.site_id}')">${btnActionText}</button>`
-        : `<button class="btn-outline user-view-pill" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="event.stopPropagation(); showToast('⚠️ Site intervention requires Management privileges.', 'warning')">View Only</button>`;
+        : `<button class="btn-outline user-view-pill" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="event.stopPropagation(); showToast('⚠️ Site intervention requires Management or Admin privileges.', 'warning')">View Only</button>`;
 
       return `
       <tr onclick="openSiteDetailModal('${s.site_id}')" style="cursor:pointer;" title="Click to inspect site historical timeline">
@@ -856,8 +963,9 @@ function renderSitesTable() {
 
 // Toggle Site Open/Close
 function toggleSiteAction(siteId) {
-  if (!state.currentUser || state.currentUser.role !== "management") {
-    showToast("⚠️ Site intervention requires Management privileges.", "warning");
+  const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+  if (!isPrivileged) {
+    showToast("⚠️ Site intervention requires Management or Admin privileges.", "warning");
     return;
   }
   if (state.closedSites.has(siteId)) {
@@ -903,10 +1011,10 @@ async function openSiteDetailModal(siteId) {
 
     const isClosed = state.closedSites.has(siteId);
     if (toggleBtn) {
-      const isMgmt = state.currentUser && state.currentUser.role === "management";
+      const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
       toggleBtn.textContent = isClosed ? "Reopen Site" : "Close Site";
       toggleBtn.className = isClosed ? "btn-secondary" : "btn-danger";
-      toggleBtn.disabled = !isMgmt;
+      toggleBtn.disabled = !isPrivileged;
     }
 
     renderSiteHistoryChart(data.history || []);

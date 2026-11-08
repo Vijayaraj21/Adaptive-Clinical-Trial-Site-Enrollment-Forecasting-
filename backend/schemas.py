@@ -12,6 +12,12 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class UpdatePasswordRequest(BaseModel):
+    username: str
+    old_password: str
+    new_password: str
+
+
 class UserResponse(BaseModel):
     username: str
     full_name: str
