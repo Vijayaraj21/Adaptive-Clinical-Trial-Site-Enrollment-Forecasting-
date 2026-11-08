@@ -30,6 +30,15 @@ logger = logging.getLogger("backend")
 
 # Demo & Registered Users Store
 USERS_DB = {
+    "vijay": {
+        "password": "1704",
+        "full_name": "Vijay (System Owner & Administrator)",
+        "role": "admin",
+        "email": "vijay@trial-operations.org",
+        "title": "Principal Clinical Trial Director & System Owner",
+        "description": "Full System Superuser: Unrestricted What-If simulation interventions, site control, protocol parameters, and data ingestion.",
+        "permissions": ["*"],
+    },
     "admin": {
         "password": "admin123",
         "full_name": "Vijayaraj (System Administrator)",
@@ -221,10 +230,10 @@ def get_demo_users() -> list[DemoUser]:
     """Retrieve pre-configured Admin, Management, and User credentials for front-end 1-click login."""
     return [
         DemoUser(
-            username="admin",
+            username="Vijay",
             role="admin",
-            full_name="Vijayaraj (System Administrator)",
-            title="Lead System Administrator & Architect",
+            full_name="Vijay (System Administrator)",
+            title="Principal System Administrator & Owner",
             description="Full superuser privileges: parameter sandbox, site interventions, protocol updates, and data ingestion.",
         ),
         DemoUser(

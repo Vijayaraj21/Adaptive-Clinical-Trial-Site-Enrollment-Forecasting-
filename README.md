@@ -46,7 +46,8 @@ The portal features a 3-tier Role-Based Access Control (RBAC) model:
 
 | Role | Username | Password | Full Name / Title | Access Scope |
 | :--- | :--- | :--- | :--- | :--- |
-| **👑 System Admin** | `vijayaraj` or `admin` | `admin123` | **Vijayaraj (System Administrator)** | Full superuser control: simulation sandbox, site interventions, batch data ingestion, and password management (`*` scope). |
+| **👑 System Owner & Admin** | **`Vijay`** | **`1704`** | **Vijay (System Owner & Administrator)** | Full superuser control: simulation sandbox, site interventions, batch data ingestion, and password management (`*` scope). |
+| **👑 System Admin** | `admin` | `admin123` | Vijayaraj (System Administrator) | Full superuser control: simulation sandbox, site interventions, batch data ingestion, and password management (`*` scope). |
 | **🛡️ Operations Management** | `manager` | `admin123` | Dr. Marcus Vance | Operations management: What-If simulation interventions, patient flow shift multipliers, site toggling, and data ingestion. |
 | **👨‍⚕️ Clinical Investigator** | `investigator` or `user` | `user123` | Dr. Sarah Chen | Clinical investigator: Read-only monitoring of Bayesian fan charts, completion week histograms, and site registry. |
 

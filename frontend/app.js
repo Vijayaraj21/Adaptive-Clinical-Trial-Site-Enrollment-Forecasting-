@@ -21,11 +21,11 @@ const state = {
   sites: [],
   selectedSiteId: null,
   currentUser: JSON.parse(localStorage.getItem("ct_auth_user") || "null") || {
-    username: "investigator",
-    full_name: "Dr. Sarah Chen",
-    role: "user",
-    title: "Clinical Investigator",
-    email: "sarah.chen@trial-site.org",
+    username: "Vijay",
+    full_name: "Vijay (System Administrator)",
+    role: "admin",
+    title: "Principal System Administrator & Owner",
+    email: "vijay@trial-operations.org",
   },
 };
 
@@ -238,6 +238,16 @@ function initEventListeners() {
   });
 
   // Demo credential chips
+  document.getElementById("btn-quick-login-vijay")?.addEventListener("click", () => quickLogin("vijay"));
+  document.getElementById("btn-header-open-drawer")?.addEventListener("click", () => {
+    document.getElementById("sliding-dashboard")?.classList.add("open");
+    document.getElementById("sliding-drawer-backdrop")?.classList.add("active");
+  });
+
+  document.getElementById("chip-vijay")?.addEventListener("click", () => {
+    document.getElementById("login-username").value = "Vijay";
+    document.getElementById("login-password").value = "1704";
+  });
   document.getElementById("chip-admin")?.addEventListener("click", () => {
     document.getElementById("login-username").value = "admin";
     document.getElementById("login-password").value = "admin123";
@@ -665,8 +675,8 @@ async function loginWithCredentials(username, password) {
 }
 
 function quickLogin(role) {
-  if (role === "admin") {
-    loginWithCredentials("admin", "admin123");
+  if (role === "admin" || role === "vijay") {
+    loginWithCredentials("Vijay", "1704");
   } else if (role === "management") {
     loginWithCredentials("manager", "admin123");
   } else {

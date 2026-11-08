@@ -14,19 +14,19 @@ Base URL: `http://localhost:8000`
 **Request Body:**
 ```json
 {
-  "username": "vijayaraj",
-  "password": "admin123"
+  "username": "Vijay",
+  "password": "1704"
 }
 ```
 
 **Response (200 OK):**
 ```json
 {
-  "username": "vijayaraj",
-  "full_name": "Vijayaraj (System Administrator)",
+  "username": "vijay",
+  "full_name": "Vijay (System Owner & Administrator)",
   "role": "admin",
-  "email": "vijayaraj@trial-operations.org",
-  "token": "token_vijayaraj_admin",
+  "email": "vijay@trial-operations.org",
+  "token": "token_vijay_admin",
   "permissions": ["*"]
 }
 ```
@@ -162,3 +162,4 @@ print(f"Status Quo Completion: Week {scenario['baseline']['median_completion_wee
 print(f"Simulated Scenario Completion: Week {scenario['scenario']['median_completion_week']}")
 print(f"Timeline Weeks Saved: {scenario['delta_completion_week']} weeks")
 ```
+

@@ -71,3 +71,4 @@ flowchart TD
 - **System Administrator (Admin - Vijayaraj)**: Superuser scope (`*`) with permissions to modify simulation parameters, toggle sites, ingest longitudinal panel records, and manage account credentials.
 - **Trial Operations Director (Management)**: Simulation sandbox and operational site intervention scope.
 - **Clinical Investigator (User)**: Read-only monitoring scope.
+

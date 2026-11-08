@@ -612,6 +612,13 @@ input[type="range"] {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+.user-profile-badge-drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
 .avatar-wrap {
   width: 28px;
   height: 28px;

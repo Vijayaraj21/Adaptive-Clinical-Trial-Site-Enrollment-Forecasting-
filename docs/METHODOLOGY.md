@@ -86,3 +86,4 @@ Leave-One-Out Cross-Validation (LOO-CV) and 4-horizon rolling expanding-window b
 | Model C: No Flow Covariates | 182.47 | 254.17 | 5.74% | 81.0% | 88.0% | -708.71 |
 | Pooled Poisson Baseline | 115.02 | 188.04 | 4.04% | 94.0% | 94.0% | N/A |
 | XGBoost Lag Baseline | 123.70 | 180.10 | 4.81% | 81.0% | 100.0% | N/A |
+

@@ -30,24 +30,63 @@
           <p class="drawer-sub">Adaptive Trial Analytics</p>
         </div>
       </div>
-      <button id="btn-close-drawer" class="btn-close-drawer" title="Close Panel">&times;</button>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <div id="system-badge" class="status-badge pulse">Connecting...</div>
+        <button id="btn-close-drawer" class="btn-close-drawer" title="Close Panel">&times;</button>
+      </div>
     </div>
 
     <!-- Scrollable Drawer Body -->
     <div class="drawer-scroll-body">
-      <!-- Active User / Role Card -->
-      <div class="drawer-user-card">
-        <div class="drawer-user-info">
-          <div class="drawer-user-avatar" id="drawer-user-avatar">👑</div>
-          <div>
-            <h4 id="drawer-user-name">Vijayaraj</h4>
-            <span id="drawer-user-role" class="role-badge role-admin">👑 System Admin</span>
+      <!-- Active User / Role Card (Moved into Drawer) -->
+      <div class="drawer-user-card" id="auth-header-section">
+        <div id="user-profile-badge" class="user-profile-badge-drawer">
+          <div class="drawer-user-info">
+            <div class="drawer-user-avatar" id="user-avatar">👑</div>
+            <div>
+              <h4 id="user-display-name">Vijay (System Administrator)</h4>
+              <span id="user-role-badge" class="role-badge role-admin">👑 SYSTEM ADMIN</span>
+            </div>
+          </div>
+          <div class="drawer-user-actions" style="margin-top:0.75rem; display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <button id="btn-change-pwd" class="btn-chip" title="Change Password">🔑 Password</button>
+            <button id="btn-switch-role" class="btn-chip" title="Cycle Account Role">🔄 Switch Role</button>
+            <button id="btn-open-ingest" class="btn-chip btn-accent" style="display:none;" title="Ingest Weekly Batch">+ Ingest Batch</button>
+            <button id="btn-logout" class="btn-chip btn-ghost" title="Sign out">Logout</button>
           </div>
         </div>
-        <div class="drawer-user-actions">
-          <button id="drawer-btn-switch-role" class="btn-chip" title="Cycle Account Role">Switch Role</button>
-          <button id="drawer-btn-pwd" class="btn-chip" title="Change Password">Password</button>
-          <button id="drawer-btn-ingest" class="btn-chip" style="display:none;" title="Ingest Weekly Batch">+ Ingest Batch</button>
+        <button id="btn-open-login" class="btn-primary btn-sm btn-block" style="display:none;">Sign In</button>
+      </div>
+
+      <!-- Theme & Audio Controls Section (Moved into Drawer) -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Visual Theme & Audio FX</div>
+        <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+          <div class="theme-select-wrap" style="flex:1;">
+            <label for="theme-selector">🎨 Theme:</label>
+            <select id="theme-selector" class="theme-select" title="Switch visual color theme">
+              <option value="midnight">🌌 Midnight Cyber</option>
+              <option value="nordic">🏥 Clinical Nordic</option>
+              <option value="biotech">🧬 Bio-Tech Emerald</option>
+              <option value="executive">🌅 Sunset Executive</option>
+            </select>
+          </div>
+          <button id="btn-sound-fx" class="btn-sound-toggle active" title="Toggle Clinical Feedback Sound Effects">
+            <span id="sound-icon">🔊</span> Audio FX
+          </button>
+        </div>
+      </div>
+
+      <!-- Executive Export Suite Section (Moved into Drawer) -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Executive Data Export</div>
+        <div class="export-toolbar" style="display:flex; gap:0.5rem;">
+          <button id="btn-export-csv" class="btn-export" style="flex:1; justify-content:center;" title="Export trial panel records as CSV">
+            <span>📊 Export CSV</span>
+          </button>
+          <button id="btn-export-summary" class="btn-export" style="flex:1; justify-content:center;" title="Export executive trial briefing">
+            <span>📄 Summary</span>
+          </button>
         </div>
       </div>
 
@@ -166,7 +205,7 @@
   </aside>
 
   <div class="app-container">
-    <!-- Top Header -->
+    <!-- Top Header (Clean & Spacious - Controls moved to Left Dashboard) -->
     <header class="app-header">
       <div class="brand">
         <!-- Sliding Dashboard Toggle Button in Left Corner -->
@@ -185,50 +224,10 @@
         </div>
       </div>
       <div class="header-actions">
-        <div id="system-badge" class="status-badge pulse">Connecting...</div>
-        
-        <!-- User & Management Auth Badge -->
-        <div id="auth-header-section" class="auth-header-section">
-          <div id="user-profile-badge" class="user-profile-badge" style="display:none;">
-            <div class="avatar-wrap">
-              <span id="user-avatar" class="user-avatar">👤</span>
-            </div>
-            <div class="user-info-text">
-              <span id="user-display-name" class="user-display-name">Loading...</span>
-              <span id="user-role-badge" class="role-badge role-user">Investigator</span>
-            </div>
-            <button id="btn-change-pwd" class="btn-sm btn-outline" title="Change Password">Password</button>
-            <button id="btn-switch-role" class="btn-sm btn-outline" title="Switch User, Management, or Admin role">Switch Role</button>
-            <button id="btn-logout" class="btn-sm btn-ghost" title="Sign out">Logout</button>
-          </div>
-          <button id="btn-open-login" class="btn-primary btn-sm">Sign In</button>
-        </div>
-
-        <!-- Creative Theme Selector -->
-        <div class="theme-select-wrap">
-          <label for="theme-selector">🎨 Theme:</label>
-          <select id="theme-selector" class="theme-select" title="Switch visual color theme">
-            <option value="midnight">🌌 Midnight Cyber</option>
-            <option value="nordic">🏥 Clinical Nordic</option>
-            <option value="biotech">🧬 Bio-Tech Emerald</option>
-            <option value="executive">🌅 Sunset Executive</option>
-          </select>
-        </div>
-
-        <!-- Audio FX Synthesizer Toggle -->
-        <button id="btn-sound-fx" class="btn-sound-toggle active" title="Toggle Clinical Feedback Sound Effects">
-          <span id="sound-icon">🔊</span> Audio FX
+        <!-- Fast Trigger to open sliding drawer -->
+        <button id="btn-header-open-drawer" class="btn-primary btn-sm" title="Open Left Corner Control Dashboard">
+          <span>⚡ Open Control Dashboard</span>
         </button>
-
-        <!-- Executive Export Toolbar -->
-        <div class="export-toolbar">
-          <button id="btn-export-csv" class="btn-export" title="Export trial panel records as CSV">
-            <span>📊 Export CSV</span>
-          </button>
-          <button id="btn-export-summary" class="btn-export" title="Export executive trial briefing">
-            <span>📄 Summary</span>
-          </button>
-        </div>
       </div>
     </header>
 
@@ -885,22 +884,22 @@
 
       <!-- Quick Role Selection Cards -->
       <div class="role-cards-grid">
-        <!-- Admin Role Card -->
-        <div class="role-select-card role-card-admin" id="card-login-admin">
+        <!-- Dedicated Vijay Admin Role Card -->
+        <div class="role-select-card role-card-admin" id="card-login-vijay">
           <div class="role-card-top">
             <span class="role-card-icon">👑</span>
-            <span class="role-badge role-admin">Admin Superuser</span>
+            <span class="role-badge role-admin">Owner & Admin</span>
           </div>
-          <h4>System Administrator</h4>
-          <p class="role-desc">Full superuser control for Vijayaraj & trial architects.</p>
+          <h4>Vijay (System Owner)</h4>
+          <p class="role-desc">Dedicated administrative superuser credentials: <code>Vijay / 1704</code>.</p>
           <ul class="role-features">
             <li>✔ Unrestricted What-If simulation engine</li>
             <li>✔ Real-time site closure & activation</li>
             <li>✔ Ingest new weekly site observation batches</li>
             <li>✔ Manage credentials & system configuration</li>
           </ul>
-          <button id="btn-quick-login-admin" class="btn-gold btn-block">
-            Sign In as Admin (Vijayaraj)
+          <button id="btn-quick-login-vijay" class="btn-gold btn-block">
+            Sign In as Vijay (1704)
           </button>
         </div>
 
@@ -965,8 +964,8 @@
 
         <div class="form-hints">
           <span>Quick fill:</span>
+          <button type="button" class="btn-chip chip-admin" id="chip-vijay">👑 Vijay / 1704</button>
           <button type="button" class="btn-chip chip-admin" id="chip-admin">👑 admin / admin123</button>
-          <button type="button" class="btn-chip chip-admin" id="chip-vijayaraj">👑 vijayaraj / admin123</button>
           <button type="button" class="btn-chip" id="chip-manager">🛡️ manager / admin123</button>
           <button type="button" class="btn-chip" id="chip-user">👨‍⚕️ user / user123</button>
         </div>
