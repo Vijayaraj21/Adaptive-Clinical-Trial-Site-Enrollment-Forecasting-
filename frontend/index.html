@@ -10,10 +10,174 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Floating Corner Tab on Left Edge of Viewport -->
+  <button id="btn-edge-drawer" class="corner-drawer-tab" title="Open Sliding Dashboard (Left Corner)" aria-label="Open Sliding Dashboard">
+    <span class="corner-tab-arrow">▶</span>
+    <span class="corner-tab-text">DASHBOARD</span>
+  </button>
+
+  <!-- Sliding Drawer Backdrop Overlay -->
+  <div id="sliding-drawer-backdrop" class="sliding-drawer-backdrop"></div>
+
+  <!-- Sliding Left Corner Dashboard Drawer -->
+  <aside id="sliding-dashboard" class="sliding-drawer" aria-label="Sliding Navigation and Control Dashboard">
+    <!-- Drawer Header -->
+    <div class="drawer-header">
+      <div class="drawer-brand">
+        <div class="logo-badge">CT-BAYES</div>
+        <div>
+          <h3>Control Dashboard</h3>
+          <p class="drawer-sub">Adaptive Trial Analytics</p>
+        </div>
+      </div>
+      <button id="btn-close-drawer" class="btn-close-drawer" title="Close Panel">&times;</button>
+    </div>
+
+    <!-- Scrollable Drawer Body -->
+    <div class="drawer-scroll-body">
+      <!-- Active User / Role Card -->
+      <div class="drawer-user-card">
+        <div class="drawer-user-info">
+          <div class="drawer-user-avatar" id="drawer-user-avatar">👑</div>
+          <div>
+            <h4 id="drawer-user-name">Vijayaraj</h4>
+            <span id="drawer-user-role" class="role-badge role-admin">👑 System Admin</span>
+          </div>
+        </div>
+        <div class="drawer-user-actions">
+          <button id="drawer-btn-switch-role" class="btn-chip" title="Cycle Account Role">Switch Role</button>
+          <button id="drawer-btn-pwd" class="btn-chip" title="Change Password">Password</button>
+          <button id="drawer-btn-ingest" class="btn-chip" style="display:none;" title="Ingest Weekly Batch">+ Ingest Batch</button>
+        </div>
+      </div>
+
+      <!-- Quick Navigation Tabs -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Navigation Tabs</div>
+        <nav class="drawer-nav">
+          <button class="drawer-nav-item active" data-tab="tab-overview">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Trajectory & Bayesian Forecast</span>
+          </button>
+          <button class="drawer-nav-item" data-tab="tab-sites">
+            <span class="nav-icon">🏥</span>
+            <span class="nav-label">Site Registry & Risk Analysis</span>
+            <span class="drawer-nav-badge" id="drawer-nav-site-count">40</span>
+          </button>
+          <button class="drawer-nav-item" data-tab="tab-whatif">
+            <span class="nav-icon">🎛️</span>
+            <span class="nav-label">What-If Simulation Sandbox</span>
+          </button>
+          <button class="drawer-nav-item" data-tab="tab-hospital">
+            <span class="nav-icon">🔬</span>
+            <span class="nav-label">Hospital Flow Analytics</span>
+          </button>
+          <button class="drawer-nav-item" data-tab="tab-models">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Bayesian Model Diagnostics</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Trial Pulse Micro-KPIs -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Trial Pulse (Week 40)</div>
+        <div class="drawer-kpis-grid">
+          <div class="drawer-mini-kpi">
+            <span class="mini-label">Enrolled to Date</span>
+            <strong id="drawer-kpi-enrolled">--</strong>
+          </div>
+          <div class="drawer-mini-kpi">
+            <span class="mini-label">Target (Week 90)</span>
+            <strong id="drawer-kpi-target">1,200</strong>
+          </div>
+          <div class="drawer-mini-kpi">
+            <span class="mini-label">P(Hit by Deadline)</span>
+            <strong id="drawer-kpi-prob">--%</strong>
+          </div>
+          <div class="drawer-mini-kpi">
+            <span class="mini-label">Median Completion</span>
+            <strong id="drawer-kpi-comp-week">Week --</strong>
+          </div>
+          <div class="drawer-mini-kpi full-width">
+            <span class="mini-label">At-Risk Clinical Sites</span>
+            <strong id="drawer-kpi-risk-sites" style="color:var(--accent-red);">-- Sites</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Simulator Sliders (Synchronized) -->
+      <div class="drawer-section" id="drawer-sim-section">
+        <div class="drawer-section-title">
+          <span>Quick Simulator</span>
+          <span class="badge" id="drawer-scenario-tag">Status Quo</span>
+        </div>
+        <div class="drawer-slider-group">
+          <div class="slider-label">
+            <label for="drawer-slider-flow">Hospital Flow Shift</label>
+            <span id="drawer-flow-val" class="slider-num">+0%</span>
+          </div>
+          <input type="range" id="drawer-slider-flow" min="-30" max="30" value="0" step="5">
+        </div>
+        <div class="drawer-slider-group">
+          <div class="slider-label">
+            <label for="drawer-slider-new-sites">New Sites</label>
+            <span id="drawer-new-sites-val" class="slider-num">0 sites</span>
+          </div>
+          <input type="range" id="drawer-slider-new-sites" min="0" max="10" value="0" step="1">
+        </div>
+        <div class="drawer-presets">
+          <button class="btn-chip drawer-preset-btn" data-flow="15" data-sites="0">+15% Surge</button>
+          <button class="btn-chip drawer-preset-btn" data-flow="-20" data-sites="0">-20% Strain</button>
+          <button class="btn-chip drawer-preset-btn" data-flow="0" data-sites="3">+3 Sites</button>
+          <button class="btn-chip drawer-reset-btn" id="drawer-btn-reset">Reset</button>
+        </div>
+      </div>
+
+      <!-- System & API Docs -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">System & API Specs</div>
+        <div class="drawer-links-list">
+          <a href="/docs" target="_blank" class="drawer-link-item">
+            <span>📖 Swagger API Documentation</span>
+            <span class="ext-icon">↗</span>
+          </a>
+          <a href="/redoc" target="_blank" class="drawer-link-item">
+            <span>📘 ReDoc Specification</span>
+            <span class="ext-icon">↗</span>
+          </a>
+          <a href="/api/health" target="_blank" class="drawer-link-item">
+            <span>🩺 Service Health Check</span>
+            <span class="ext-icon">↗</span>
+          </a>
+          <a href="https://github.com/Vijayaraj21/Adaptive-Clinical-Trial-Site-Enrollment-Forecasting-" target="_blank" class="drawer-link-item">
+            <span>🐙 GitHub Repository</span>
+            <span class="ext-icon">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="drawer-footer">
+      <button id="drawer-btn-theme" class="btn-outline btn-block btn-sm">🌓 Theme</button>
+      <button id="drawer-btn-logout" class="btn-ghost btn-block btn-sm">Logout</button>
+    </div>
+  </aside>
+
   <div class="app-container">
     <!-- Top Header -->
     <header class="app-header">
       <div class="brand">
+        <!-- Sliding Dashboard Toggle Button in Left Corner -->
+        <button id="btn-toggle-drawer" class="btn-drawer-toggle" title="Open Sliding Dashboard (Left Corner)" aria-label="Toggle Sliding Dashboard">
+          <span class="drawer-icon-bars">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span>Dashboard</span>
+        </button>
         <div class="logo-badge">CT-BAYES</div>
         <div>
           <h1>Adaptive Clinical Trial Enrollment Forecasting</h1>

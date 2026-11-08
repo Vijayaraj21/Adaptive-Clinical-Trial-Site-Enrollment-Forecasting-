@@ -92,14 +92,25 @@ function initEventListeners() {
   flowSlider?.addEventListener("input", (e) => {
     const val = parseInt(e.target.value);
     state.flowChange = val / 100.0;
-    document.getElementById("flow-val").textContent = `${val >= 0 ? "+" : ""}${val}%`;
+    const txt = `${val >= 0 ? "+" : ""}${val}%`;
+    document.getElementById("flow-val").textContent = txt;
+    const drawerFlow = document.getElementById("drawer-slider-flow");
+    if (drawerFlow) drawerFlow.value = val;
+    const drawerFlowVal = document.getElementById("drawer-flow-val");
+    if (drawerFlowVal) drawerFlowVal.textContent = txt;
     triggerForecast();
   });
 
   const newSitesSlider = document.getElementById("slider-new-sites");
   newSitesSlider?.addEventListener("input", (e) => {
-    state.newSites = parseInt(e.target.value);
-    document.getElementById("new-sites-val").textContent = `${state.newSites} sites`;
+    const val = parseInt(e.target.value);
+    state.newSites = val;
+    const txt = `${state.newSites} sites`;
+    document.getElementById("new-sites-val").textContent = txt;
+    const drawerSites = document.getElementById("drawer-slider-new-sites");
+    if (drawerSites) drawerSites.value = val;
+    const drawerSitesVal = document.getElementById("drawer-new-sites-val");
+    if (drawerSitesVal) drawerSitesVal.textContent = txt;
     triggerForecast();
   });
 
@@ -118,10 +129,21 @@ function initEventListeners() {
 
       const flowSliderElem = document.getElementById("slider-flow");
       const newSitesSliderElem = document.getElementById("slider-new-sites");
+      const drawerFlowSlider = document.getElementById("drawer-slider-flow");
+      const drawerSitesSlider = document.getElementById("drawer-slider-new-sites");
       if (flowSliderElem) flowSliderElem.value = flow;
       if (newSitesSliderElem) newSitesSliderElem.value = sites;
-      document.getElementById("flow-val").textContent = `${flow >= 0 ? "+" : ""}${flow}%`;
-      document.getElementById("new-sites-val").textContent = `${sites} sites`;
+      if (drawerFlowSlider) drawerFlowSlider.value = flow;
+      if (drawerSitesSlider) drawerSitesSlider.value = sites;
+
+      const flowTxt = `${flow >= 0 ? "+" : ""}${flow}%`;
+      const sitesTxt = `${sites} sites`;
+      document.getElementById("flow-val").textContent = flowTxt;
+      document.getElementById("new-sites-val").textContent = sitesTxt;
+      const drawerFlowVal = document.getElementById("drawer-flow-val");
+      if (drawerFlowVal) drawerFlowVal.textContent = flowTxt;
+      const drawerSitesVal = document.getElementById("drawer-new-sites-val");
+      if (drawerSitesVal) drawerSitesVal.textContent = sitesTxt;
 
       showToast(`Applied preset: ${btn.textContent.trim()}`);
       triggerForecast();
@@ -153,10 +175,21 @@ function initEventListeners() {
     state.flowChange = 0.0;
     state.newSites = 0;
     state.closedSites.clear();
-    document.getElementById("slider-flow").value = "0";
+    const flowSliderElem = document.getElementById("slider-flow");
+    const newSitesSliderElem = document.getElementById("slider-new-sites");
+    const drawerFlowSlider = document.getElementById("drawer-slider-flow");
+    const drawerSitesSlider = document.getElementById("drawer-slider-new-sites");
+    if (flowSliderElem) flowSliderElem.value = "0";
+    if (newSitesSliderElem) newSitesSliderElem.value = "0";
+    if (drawerFlowSlider) drawerFlowSlider.value = "0";
+    if (drawerSitesSlider) drawerSitesSlider.value = "0";
+
     document.getElementById("flow-val").textContent = "+0%";
-    document.getElementById("slider-new-sites").value = "0";
     document.getElementById("new-sites-val").textContent = "0 sites";
+    const drawerFlowVal = document.getElementById("drawer-flow-val");
+    if (drawerFlowVal) drawerFlowVal.textContent = "+0%";
+    const drawerSitesVal = document.getElementById("drawer-new-sites-val");
+    if (drawerSitesVal) drawerSitesVal.textContent = "0 sites";
     showToast("Interventions reset to Status Quo.");
     triggerForecast();
   });
@@ -252,11 +285,159 @@ function initEventListeners() {
       closeSiteDetailModal();
     }
   });
+
+  // Sliding Left Dashboard Drawer
+  const drawer = document.getElementById("sliding-dashboard");
+  const backdrop = document.getElementById("sliding-drawer-backdrop");
+
+  const openDrawer = () => {
+    drawer?.classList.add("open");
+    backdrop?.classList.add("active");
+  };
+
+  const closeDrawer = () => {
+    drawer?.classList.remove("open");
+    backdrop?.classList.remove("active");
+  };
+
+  const toggleDrawer = () => {
+    if (drawer?.classList.contains("open")) {
+      closeDrawer();
+    } else {
+      openDrawer();
+    }
+  };
+
+  document.getElementById("btn-toggle-drawer")?.addEventListener("click", toggleDrawer);
+  document.getElementById("btn-edge-drawer")?.addEventListener("click", openDrawer);
+  document.getElementById("btn-close-drawer")?.addEventListener("click", closeDrawer);
+  backdrop?.addEventListener("click", closeDrawer);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && drawer?.classList.contains("open")) {
+      closeDrawer();
+    }
+  });
+
+  // Drawer Navigation Items
+  document.querySelectorAll(".drawer-nav-item").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const tabId = btn.getAttribute("data-tab");
+      switchTab(tabId);
+      if (window.innerWidth < 900) {
+        closeDrawer();
+      }
+    });
+  });
+
+  // Drawer User Actions
+  document.getElementById("drawer-btn-switch-role")?.addEventListener("click", switchRole);
+  document.getElementById("drawer-btn-pwd")?.addEventListener("click", openChangePwdModal);
+  document.getElementById("drawer-btn-ingest")?.addEventListener("click", openIngestModal);
+  document.getElementById("drawer-btn-theme")?.addEventListener("click", toggleTheme);
+  document.getElementById("drawer-btn-logout")?.addEventListener("click", logout);
+
+  // Drawer Simulator Sliders Synchronization
+  const drawerFlowSlider = document.getElementById("drawer-slider-flow");
+  drawerFlowSlider?.addEventListener("input", (e) => {
+    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    if (!isPrivileged) {
+      showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
+      e.target.value = Math.round(state.flowChange * 100);
+      return;
+    }
+    const val = parseInt(e.target.value);
+    state.flowChange = val / 100.0;
+    const txt = `${val >= 0 ? "+" : ""}${val}%`;
+    document.getElementById("drawer-flow-val").textContent = txt;
+    const mainFlow = document.getElementById("slider-flow");
+    if (mainFlow) mainFlow.value = val;
+    document.getElementById("flow-val").textContent = txt;
+    triggerForecast();
+  });
+
+  const drawerSitesSlider = document.getElementById("drawer-slider-new-sites");
+  drawerSitesSlider?.addEventListener("input", (e) => {
+    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    if (!isPrivileged) {
+      showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
+      e.target.value = state.newSites;
+      return;
+    }
+    const val = parseInt(e.target.value);
+    state.newSites = val;
+    const txt = `${val} sites`;
+    document.getElementById("drawer-new-sites-val").textContent = txt;
+    const mainSites = document.getElementById("slider-new-sites");
+    if (mainSites) mainSites.value = val;
+    document.getElementById("new-sites-val").textContent = txt;
+    triggerForecast();
+  });
+
+  // Drawer Presets
+  document.querySelectorAll(".drawer-preset-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+      if (!isPrivileged) {
+        showToast("⚠️ Quick scenarios require Management or Admin privileges.", "warning");
+        return;
+      }
+      const flow = parseInt(btn.getAttribute("data-flow")) || 0;
+      const sites = parseInt(btn.getAttribute("data-sites")) || 0;
+      state.flowChange = flow / 100.0;
+      state.newSites = sites;
+
+      const flowSliderElem = document.getElementById("slider-flow");
+      const newSitesSliderElem = document.getElementById("slider-new-sites");
+      if (flowSliderElem) flowSliderElem.value = flow;
+      if (newSitesSliderElem) newSitesSliderElem.value = sites;
+      if (drawerFlowSlider) drawerFlowSlider.value = flow;
+      if (drawerSitesSlider) drawerSitesSlider.value = sites;
+
+      const flowTxt = `${flow >= 0 ? "+" : ""}${flow}%`;
+      const sitesTxt = `${sites} sites`;
+      document.getElementById("flow-val").textContent = flowTxt;
+      document.getElementById("new-sites-val").textContent = sitesTxt;
+      const drawerFlowVal = document.getElementById("drawer-flow-val");
+      if (drawerFlowVal) drawerFlowVal.textContent = flowTxt;
+      const drawerSitesVal = document.getElementById("drawer-new-sites-val");
+      if (drawerSitesVal) drawerSitesVal.textContent = sitesTxt;
+
+      showToast(`Applied preset: ${btn.textContent.trim()}`);
+      triggerForecast();
+    });
+  });
+
+  document.getElementById("drawer-btn-reset")?.addEventListener("click", () => {
+    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    if (!isPrivileged) {
+      showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
+      return;
+    }
+    state.flowChange = 0.0;
+    state.newSites = 0;
+    state.closedSites.clear();
+    const flowMain = document.getElementById("slider-flow");
+    const sitesMain = document.getElementById("slider-new-sites");
+    if (flowMain) flowMain.value = "0";
+    if (sitesMain) sitesMain.value = "0";
+    if (drawerFlowSlider) drawerFlowSlider.value = "0";
+    if (drawerSitesSlider) drawerSitesSlider.value = "0";
+    document.getElementById("flow-val").textContent = "+0%";
+    document.getElementById("drawer-flow-val").textContent = "+0%";
+    document.getElementById("new-sites-val").textContent = "0 sites";
+    document.getElementById("drawer-new-sites-val").textContent = "0 sites";
+    showToast("Interventions reset to Status Quo.");
+    triggerForecast();
+  });
 }
 
 // Tab Switching
 function switchTab(tabId) {
   document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.getAttribute("data-tab") === tabId);
+  });
+  document.querySelectorAll(".drawer-nav-item").forEach((btn) => {
     btn.classList.toggle("active", btn.getAttribute("data-tab") === tabId);
   });
   document.querySelectorAll(".tab-content").forEach((content) => {
@@ -320,6 +501,26 @@ function updateUserDisplay() {
   if (changePwdBtn) {
     changePwdBtn.style.display = "inline-block";
   }
+
+  // Update Drawer User Card
+  const drawerUserName = document.getElementById("drawer-user-name");
+  const drawerUserAvatar = document.getElementById("drawer-user-avatar");
+  const drawerUserRole = document.getElementById("drawer-user-role");
+
+  if (drawerUserName) drawerUserName.textContent = state.currentUser ? (state.currentUser.full_name || state.currentUser.username) : "Guest";
+  if (drawerUserAvatar) drawerUserAvatar.textContent = isAdmin ? "👑" : isMgmt ? "🛡️" : "👨‍⚕️";
+  if (drawerUserRole) {
+    if (isAdmin) {
+      drawerUserRole.textContent = "👑 System Admin";
+      drawerUserRole.className = "role-badge role-admin";
+    } else if (isMgmt) {
+      drawerUserRole.textContent = "Management";
+      drawerUserRole.className = "role-badge role-mgmt";
+    } else {
+      drawerUserRole.textContent = "Investigator";
+      drawerUserRole.className = "role-badge role-user";
+    }
+  }
 }
 
 function applyRolePermissions() {
@@ -373,6 +574,16 @@ function applyRolePermissions() {
       controlsGrid.classList.remove("sandbox-disabled");
     }
   }
+
+  // Update Drawer Privileges
+  const drawerIngestBtn = document.getElementById("drawer-btn-ingest");
+  if (drawerIngestBtn) {
+    drawerIngestBtn.style.display = isPrivileged ? "inline-block" : "none";
+  }
+  const drawerFlow = document.getElementById("drawer-slider-flow");
+  const drawerSites = document.getElementById("drawer-slider-new-sites");
+  if (drawerFlow) drawerFlow.disabled = !isPrivileged;
+  if (drawerSites) drawerSites.disabled = !isPrivileged;
 
   renderSitesTable();
 }
@@ -697,6 +908,23 @@ function updateKPIs(data) {
   if (riskElem) riskElem.textContent = data.at_risk_sites_count;
   if (closedElem) closedElem.textContent = state.closedSites.size;
   if (tabSiteCount) tabSiteCount.textContent = data.sites.length;
+
+  // Update Drawer Micro-KPIs
+  const drawerEnrolled = document.getElementById("drawer-kpi-enrolled");
+  if (drawerEnrolled) drawerEnrolled.textContent = data.total_enrolled_to_date.toLocaleString();
+  const drawerTarget = document.getElementById("drawer-kpi-target");
+  if (drawerTarget) drawerTarget.textContent = data.target.toLocaleString();
+  const drawerProb = document.getElementById("drawer-kpi-prob");
+  if (drawerProb) {
+    drawerProb.textContent = `${pVal}%`;
+    drawerProb.style.color = pVal >= 80 ? "var(--accent-green)" : pVal >= 50 ? "var(--accent-amber)" : "var(--accent-red)";
+  }
+  const drawerCompWeek = document.getElementById("drawer-kpi-comp-week");
+  if (drawerCompWeek) drawerCompWeek.textContent = `Week ${data.median_completion_week}`;
+  const drawerRiskSites = document.getElementById("drawer-kpi-risk-sites");
+  if (drawerRiskSites) drawerRiskSites.textContent = `${data.at_risk_sites_count} Sites`;
+  const drawerSiteCount = document.getElementById("drawer-nav-site-count");
+  if (drawerSiteCount) drawerSiteCount.textContent = data.sites ? data.sites.length : "40";
 }
 
 // Update Progress Bar
@@ -719,14 +947,23 @@ function updateScenarioBadge(whatif) {
   const banner = document.getElementById("whatif-delta-banner");
 
   const isIntervention = state.flowChange !== 0 || state.newSites > 0 || state.closedSites.size > 0;
+  const drawerTag = document.getElementById("drawer-scenario-tag");
   if (!isIntervention) {
     badge.textContent = "Status Quo";
     badge.style.color = "var(--accent-blue)";
     banner.style.display = "none";
+    if (drawerTag) {
+      drawerTag.textContent = "Status Quo";
+      drawerTag.style.color = "var(--accent-blue)";
+    }
   } else {
     badge.textContent = "Intervention Active";
     badge.style.color = "var(--accent-amber)";
     banner.style.display = "block";
+    if (drawerTag) {
+      drawerTag.textContent = "Intervention Active";
+      drawerTag.style.color = "var(--accent-amber)";
+    }
 
     const compDelta = whatif.delta_completion_week;
     const probDelta = Math.round(whatif.delta_p_hit_by_deadline * 100);
