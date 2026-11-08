@@ -1,7 +1,7 @@
 /**
  * Clinical Trial Enrollment Forecasting Dashboard
- * Reactive UI with Inline SVG Fan Chart, Histogram, What-If Simulation Sandbox,
- * and Site Intervention Management.
+ * Reactive Multi-Tab UI with Inline SVG Fan Chart, Histogram, What-If Simulation Sandbox,
+ * Real-World Hospital Flow Analytics, Bayesian Model Diagnostics, and Role-Based Management.
  */
 
 // Application State
@@ -13,11 +13,13 @@ const state = {
   newSites: 0,
   closedSites: new Set(),
   siteFilter: "ALL",
+  countryFilter: "ALL",
   searchQuery: "",
   theme: localStorage.getItem("ct_theme") || "dark",
   forecastData: null,
   baselineData: null,
   sites: [],
+  selectedSiteId: null,
   currentUser: JSON.parse(localStorage.getItem("ct_auth_user") || "null") || {
     username: "investigator",
     full_name: "Dr. Sarah Chen",
@@ -33,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initAuth();
   initEventListeners();
   checkHealth();
+  fetchTrialMetadata();
   fetchInitialData();
 });
 
@@ -64,6 +67,14 @@ function updateThemeButton() {
 function initEventListeners() {
   document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
 
+  // Dashboard Tab Switching
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const tabId = btn.getAttribute("data-tab");
+      switchTab(tabId);
+    });
+  });
+
   // Sliders and Inputs
   const targetInput = document.getElementById("input-target");
   targetInput?.addEventListener("change", (e) => {
@@ -90,6 +101,30 @@ function initEventListeners() {
     state.newSites = parseInt(e.target.value);
     document.getElementById("new-sites-val").textContent = `${state.newSites} sites`;
     triggerForecast();
+  });
+
+  // Quick Scenario Presets
+  document.querySelectorAll(".preset-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (!state.currentUser || state.currentUser.role !== "management") {
+        showToast("⚠️ Quick scenarios require Management privileges.", "warning");
+        return;
+      }
+      const flow = parseInt(btn.getAttribute("data-flow")) || 0;
+      const sites = parseInt(btn.getAttribute("data-sites")) || 0;
+      state.flowChange = flow / 100.0;
+      state.newSites = sites;
+
+      const flowSliderElem = document.getElementById("slider-flow");
+      const newSitesSliderElem = document.getElementById("slider-new-sites");
+      if (flowSliderElem) flowSliderElem.value = flow;
+      if (newSitesSliderElem) newSitesSliderElem.value = sites;
+      document.getElementById("flow-val").textContent = `${flow >= 0 ? "+" : ""}${flow}%`;
+      document.getElementById("new-sites-val").textContent = `${sites} sites`;
+
+      showToast(`Applied preset: ${btn.textContent.trim()}`);
+      triggerForecast();
+    });
   });
 
   document.getElementById("btn-close-at-risk")?.addEventListener("click", () => {
@@ -134,11 +169,15 @@ function initEventListeners() {
     renderSitesTable();
   });
 
+  document.getElementById("country-filter")?.addEventListener("change", (e) => {
+    state.countryFilter = e.target.value;
+    renderSitesTable();
+  });
+
   // Auth & Role Event Listeners
   document.getElementById("btn-open-login")?.addEventListener("click", openLoginModal);
   document.getElementById("btn-close-login")?.addEventListener("click", closeLoginModal);
   document.getElementById("btn-cancel-login")?.addEventListener("click", () => {
-    // Continue as guest user
     setAuthenticatedUser({
       username: "guest_investigator",
       full_name: "Guest Investigator",
@@ -185,6 +224,33 @@ function initEventListeners() {
   document.getElementById("btn-close-ingest")?.addEventListener("click", closeIngestModal);
   document.getElementById("btn-cancel-ingest")?.addEventListener("click", closeIngestModal);
   document.getElementById("ingest-form")?.addEventListener("submit", submitIngestData);
+
+  // Site Detail Modal Listeners
+  document.getElementById("btn-close-site-modal")?.addEventListener("click", closeSiteDetailModal);
+  document.getElementById("btn-modal-dismiss")?.addEventListener("click", closeSiteDetailModal);
+  document.getElementById("btn-modal-toggle-site")?.addEventListener("click", () => {
+    if (state.selectedSiteId) {
+      toggleSiteAction(state.selectedSiteId);
+      closeSiteDetailModal();
+    }
+  });
+}
+
+// Tab Switching
+function switchTab(tabId) {
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.getAttribute("data-tab") === tabId);
+  });
+  document.querySelectorAll(".tab-content").forEach((content) => {
+    content.classList.toggle("active", content.id === tabId);
+  });
+
+  if (tabId === "tab-overview" && state.forecastData) {
+    setTimeout(() => {
+      renderFanChart(state.forecastData);
+      renderHistogram(state.forecastData);
+    }, 50);
+  }
 }
 
 // Authentication & Role Functions
@@ -409,7 +475,6 @@ function showToast(message, type = "info") {
   }, 3500);
 }
 
-
 // Health Check
 async function checkHealth() {
   const badge = document.getElementById("system-badge");
@@ -423,6 +488,27 @@ async function checkHealth() {
   } catch (err) {
     badge.textContent = "Offline / Error";
     badge.style.color = "var(--accent-red)";
+  }
+}
+
+// Fetch Trial Metadata
+async function fetchTrialMetadata() {
+  try {
+    const res = await fetch("/api/trials");
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const titleElem = document.getElementById("protocol-title");
+    if (titleElem) titleElem.textContent = `${data.title} (${data.trial_id})`;
+
+    const countriesList = document.getElementById("protocol-countries-list");
+    if (countriesList && data.countries) {
+      countriesList.innerHTML = data.countries
+        .map((c) => `<span class="protocol-chip">🌐 ${c}</span>`)
+        .join("");
+    }
+  } catch (err) {
+    console.warn("Trial metadata fetch failed:", err);
   }
 }
 
@@ -456,7 +542,9 @@ async function triggerForecast(isInitial = false) {
     state.sites = data.scenario.sites;
 
     updateKPIs(data.scenario);
+    updateTrialProgressBar(data.scenario.total_enrolled_to_date, data.scenario.target);
     updateScenarioBadge(data);
+    updateComparisonCards(data);
     renderFanChart(data.scenario);
     renderHistogram(data.scenario);
     renderSitesTable();
@@ -489,6 +577,33 @@ function updateKPIs(data) {
 
   document.getElementById("kpi-risk-sites").textContent = data.at_risk_sites_count;
   document.getElementById("kpi-active-sites").textContent = `${data.active_sites_count} Active Sites`;
+
+  // Site summary pills
+  const totalElem = document.getElementById("site-stat-total");
+  const activeElem = document.getElementById("site-stat-active");
+  const riskElem = document.getElementById("site-stat-risk");
+  const closedElem = document.getElementById("site-stat-closed");
+  const tabSiteCount = document.getElementById("tab-site-count");
+
+  if (totalElem) totalElem.textContent = data.sites.length;
+  if (activeElem) activeElem.textContent = data.active_sites_count;
+  if (riskElem) riskElem.textContent = data.at_risk_sites_count;
+  if (closedElem) closedElem.textContent = state.closedSites.size;
+  if (tabSiteCount) tabSiteCount.textContent = data.sites.length;
+}
+
+// Update Progress Bar
+function updateTrialProgressBar(enrolled, target) {
+  const pct = Math.min(Math.round((enrolled / target) * 100), 100);
+  const enrolledText = document.getElementById("progress-enrolled-text");
+  const targetText = document.getElementById("progress-target-text");
+  const pctText = document.getElementById("progress-percent-text");
+  const fillElem = document.getElementById("progress-bar-fill");
+
+  if (enrolledText) enrolledText.textContent = enrolled.toLocaleString();
+  if (targetText) targetText.textContent = target.toLocaleString();
+  if (pctText) pctText.textContent = `${pct}% target achieved`;
+  if (fillElem) fillElem.style.width = `${pct}%`;
 }
 
 // Update Scenario Description Banner
@@ -519,123 +634,145 @@ function updateScenarioBadge(whatif) {
   }
 }
 
-// Render Inline SVG Fan Chart
+// Update What-If Comparison Cards
+function updateComparisonCards(whatif) {
+  const baseProb = document.getElementById("compare-base-prob");
+  const baseWeek = document.getElementById("compare-base-week");
+  const baseSites = document.getElementById("compare-base-sites");
+
+  const scenProb = document.getElementById("compare-scen-prob");
+  const scenWeek = document.getElementById("compare-scen-week");
+  const netDelta = document.getElementById("compare-net-delta");
+
+  if (baseProb) baseProb.textContent = `${Math.round(whatif.baseline.p_hit_by_deadline * 100)}%`;
+  if (baseWeek) baseWeek.textContent = `Week ${whatif.baseline.median_completion_week}`;
+  if (baseSites) baseSites.textContent = `${whatif.baseline.active_sites_count} Sites`;
+
+  if (scenProb) scenProb.textContent = `${Math.round(whatif.scenario.p_hit_by_deadline * 100)}%`;
+  if (scenWeek) scenWeek.textContent = `Week ${whatif.scenario.median_completion_week}`;
+
+  if (netDelta) {
+    const d = whatif.delta_completion_week;
+    if (d < 0) {
+      netDelta.textContent = `⚡ ${Math.abs(d)} weeks faster`;
+      netDelta.style.color = "var(--accent-green)";
+    } else if (d > 0) {
+      netDelta.textContent = `⚠️ +${d} weeks slower`;
+      netDelta.style.color = "var(--accent-red)";
+    } else {
+      netDelta.textContent = `0 weeks (Unchanged)`;
+      netDelta.style.color = "var(--text-secondary)";
+    }
+  }
+}
+
+// Render SVG Bayesian Fan Chart
 function renderFanChart(data) {
   const svg = document.getElementById("fan-chart-svg");
-  if (!svg) return;
+  if (!svg || !data.forecast_fan) return;
 
   const width = 850;
   const height = 360;
-  const pad = { top: 30, right: 40, bottom: 45, left: 65 };
-
+  const pad = { top: 25, right: 30, bottom: 40, left: 60 };
   const plotW = width - pad.left - pad.right;
   const plotH = height - pad.top - pad.bottom;
 
-  const hist = data.observed_history;
   const fan = data.forecast_fan;
+  const obs = data.observed_history;
 
   const minWeek = 1;
   const maxWeek = 104;
-
-  const maxEnroll = Math.max(
-    data.target * 1.25,
-    Math.max(...fan.q975),
-    hist.length > 0 ? hist[hist.length - 1].cumulative_enrolled : 0
-  );
+  const maxEnroll = Math.max(data.target * 1.15, fan.q975[fan.q975.length - 1] * 1.05);
 
   const scaleX = (w) => pad.left + ((w - minWeek) / (maxWeek - minWeek)) * plotW;
-  const scaleY = (v) => pad.top + plotH - (v / maxEnroll) * plotH;
+  const scaleY = (y) => pad.top + plotH - (y / maxEnroll) * plotH;
 
   let svgContent = "";
 
-  // 1. Grid Lines
+  // Grid lines
+  for (let e = 200; e <= maxEnroll; e += 200) {
+    const yPos = scaleY(e);
+    svgContent += `<line x1="${pad.left}" y1="${yPos}" x2="${width - pad.right}" y2="${yPos}" class="grid-line" />`;
+    svgContent += `<text x="${pad.left - 8}" y="${yPos + 4}" text-anchor="end" class="axis-text">${e}</text>`;
+  }
+
   for (let w = 10; w <= 100; w += 10) {
-    const x = scaleX(w);
-    svgContent += `<line x1="${x}" y1="${pad.top}" x2="${x}" y2="${pad.top + plotH}" class="grid-line" />`;
-    svgContent += `<text x="${x}" y="${height - 15}" text-anchor="middle" class="axis-text">${w}w</text>`;
+    const xPos = scaleX(w);
+    svgContent += `<line x1="${xPos}" y1="${pad.top}" x2="${xPos}" y2="${pad.top + plotH}" class="grid-line" />`;
+    svgContent += `<text x="${xPos}" y="${height - 15}" text-anchor="middle" class="axis-text">W${w}</text>`;
   }
 
-  for (let val = 0; val <= maxEnroll; val += 300) {
-    const y = scaleY(val);
-    svgContent += `<line x1="${pad.left}" y1="${y}" x2="${width - pad.right}" y2="${y}" class="grid-line" />`;
-    svgContent += `<text x="${pad.left - 10}" y="${y + 4}" text-anchor="end" class="axis-text">${val}</text>`;
-  }
+  // Helper for polygon ribbon
+  const makeRibbon = (qLow, qHigh) => {
+    let pts = [];
+    if (obs.length > 0) {
+      const lastObs = obs[obs.length - 1];
+      pts.push(`${scaleX(lastObs.week)},${scaleY(lastObs.cumulative_enrolled)}`);
+    }
+    fan.weeks.forEach((w, i) => pts.push(`${scaleX(w)},${scaleY(qHigh[i])}`));
+    for (let i = fan.weeks.length - 1; i >= 0; i--) {
+      pts.push(`${scaleX(fan.weeks[i])},${scaleY(qLow[i])}`);
+    }
+    return pts.join(" ");
+  };
 
-  // 2. Target Line & Deadline Line
+  // 95% Credible Band
+  svgContent += `<polygon points="${makeRibbon(fan.q025, fan.q975)}" class="fan-area-95" />`;
+  // 80% Credible Band
+  svgContent += `<polygon points="${makeRibbon(fan.q10, fan.q90)}" class="fan-area-80" />`;
+
+  // Target Line
   const targetY = scaleY(data.target);
-  svgContent += `<line x1="${pad.left}" y1="${targetY}" x2="${width - pad.right}" y2="${targetY}" stroke="var(--line-target)" stroke-width="1.8" stroke-dasharray="5,5" />`;
-  svgContent += `<text x="${width - pad.right - 10}" y="${targetY - 8}" text-anchor="end" fill="var(--line-target)" font-size="11" font-weight="600">Target (${data.target})</text>`;
+  svgContent += `<line x1="${pad.left}" y1="${targetY}" x2="${width - pad.right}" y2="${targetY}" stroke="var(--line-target)" stroke-width="2" stroke-dasharray="4,4" />`;
+  svgContent += `<text x="${width - pad.right - 5}" y="${targetY - 6}" text-anchor="end" fill="var(--line-target)" font-size="11" font-weight="600">Target: ${data.target}</text>`;
 
+  // Deadline Line
   const deadlineX = scaleX(data.deadline);
-  svgContent += `<line x1="${deadlineX}" y1="${pad.top}" x2="${deadlineX}" y2="${pad.top + plotH}" stroke="var(--line-deadline)" stroke-width="1.8" stroke-dasharray="3,3" />`;
-  svgContent += `<text x="${deadlineX + 5}" y="${pad.top + 15}" fill="var(--line-deadline)" font-size="11" font-weight="600">Deadline (W${data.deadline})</text>`;
+  svgContent += `<line x1="${deadlineX}" y1="${pad.top}" x2="${deadlineX}" y2="${pad.top + plotH}" stroke="var(--line-deadline)" stroke-width="2" stroke-dasharray="4,4" />`;
+  svgContent += `<text x="${deadlineX}" y="${pad.top + 14}" text-anchor="middle" fill="var(--line-deadline)" font-size="11" font-weight="600">Deadline (W${data.deadline})</text>`;
 
-  // 3. Credible Bands (95% & 80%)
-  const weeks = fan.weeks;
-  if (weeks.length > 0) {
-    // 95% Band Polygon
-    let poly95 = "";
-    for (let i = 0; i < weeks.length; i++) {
-      poly95 += `${scaleX(weeks[i])},${scaleY(fan.q975[i])} `;
-    }
-    for (let i = weeks.length - 1; i >= 0; i--) {
-      poly95 += `${scaleX(weeks[i])},${scaleY(fan.q025[i])} `;
-    }
-    svgContent += `<polygon points="${poly95}" fill="var(--band-95)" />`;
+  // Observed Curve
+  let obsPath = "";
+  obs.forEach((d, i) => {
+    const x = scaleX(d.week);
+    const y = scaleY(d.cumulative_enrolled);
+    obsPath += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+  });
+  svgContent += `<path d="${obsPath}" class="trajectory-line-observed" />`;
 
-    // 80% Band Polygon
-    let poly80 = "";
-    for (let i = 0; i < weeks.length; i++) {
-      poly80 += `${scaleX(weeks[i])},${scaleY(fan.q90[i])} `;
-    }
-    for (let i = weeks.length - 1; i >= 0; i--) {
-      poly80 += `${scaleX(weeks[i])},${scaleY(fan.q10[i])} `;
-    }
-    svgContent += `<polygon points="${poly80}" fill="var(--band-80)" />`;
-
-    // Median Forecast Line (q50)
-    let path50 = `M ${scaleX(data.current_week)},${scaleY(data.total_enrolled_to_date)} `;
-    for (let i = 0; i < weeks.length; i++) {
-      path50 += `L ${scaleX(weeks[i])},${scaleY(fan.q50[i])} `;
-    }
-    svgContent += `<path d="${path50}" fill="none" stroke="var(--line-median)" stroke-width="2.2" stroke-dasharray="6,4" />`;
+  // Median (q50) Forecast Line
+  let medPath = "";
+  if (obs.length > 0) {
+    const lastObs = obs[obs.length - 1];
+    medPath = `M ${scaleX(lastObs.week)} ${scaleY(lastObs.cumulative_enrolled)}`;
   }
-
-  // 4. Observed Trajectory Line
-  if (hist.length > 0) {
-    let pathObs = `M ${scaleX(hist[0].week)},${scaleY(hist[0].cumulative_enrolled)} `;
-    for (let i = 1; i < hist.length; i++) {
-      pathObs += `L ${scaleX(hist[i].week)},${scaleY(hist[i].cumulative_enrolled)} `;
-    }
-    svgContent += `<path d="${pathObs}" fill="none" stroke="var(--line-observed)" stroke-width="2.6" />`;
-  }
-
-  // 5. Current Origin Node
-  const curX = scaleX(data.current_week);
-  const curY = scaleY(data.total_enrolled_to_date);
-  svgContent += `<circle cx="${curX}" cy="${curY}" r="5" fill="var(--accent-blue)" stroke="white" stroke-width="2" />`;
+  fan.weeks.forEach((w, i) => {
+    const x = scaleX(w);
+    const y = scaleY(fan.q50[i]);
+    medPath += medPath === "" ? `M ${x} ${y}` : ` L ${x} ${y}`;
+  });
+  svgContent += `<path d="${medPath}" class="trajectory-line-median" />`;
 
   svg.innerHTML = svgContent;
 }
 
-// Render Completion Week Histogram
+// Render SVG Completion Week Histogram
 function renderHistogram(data) {
   const svg = document.getElementById("hist-chart-svg");
-  if (!svg) return;
+  if (!svg || !data.completion_histogram) return;
 
   const width = 450;
   const height = 360;
-  const pad = { top: 30, right: 30, bottom: 45, left: 45 };
-
+  const pad = { top: 25, right: 20, bottom: 40, left: 45 };
   const plotW = width - pad.left - pad.right;
   const plotH = height - pad.top - pad.bottom;
 
   const bins = data.completion_histogram;
-  if (!bins || bins.length === 0) return;
+  if (bins.length === 0) return;
 
-  const maxCount = Math.max(...bins.map((b) => b.count), 1);
   const minW = bins[0].week;
   const maxW = bins[bins.length - 1].week + 2;
+  const maxCount = Math.max(...bins.map((b) => b.count), 1);
 
   const scaleX = (w) => pad.left + ((w - minW) / (maxW - minW)) * plotW;
   const scaleY = (c) => pad.top + plotH - (c / maxCount) * plotH;
@@ -673,13 +810,15 @@ function renderSitesTable() {
   if (!tbody || !state.sites) return;
 
   const query = state.searchQuery;
-  const filter = state.siteFilter;
+  const statusFilter = state.siteFilter;
+  const countryFilter = state.countryFilter;
   const isMgmt = state.currentUser && state.currentUser.role === "management";
 
   const filtered = state.sites.filter((s) => {
     const matchSearch = s.site_id.toLowerCase().includes(query) || s.country.toLowerCase().includes(query);
-    const matchFilter = filter === "ALL" || s.status === filter;
-    return matchSearch && matchFilter;
+    const matchStatus = statusFilter === "ALL" || s.status === statusFilter;
+    const matchCountry = countryFilter === "ALL" || s.country === countryFilter;
+    return matchSearch && matchStatus && matchCountry;
   });
 
   if (filtered.length === 0) {
@@ -699,12 +838,8 @@ function renderSitesTable() {
         ? `<button class="${btnClass}" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="event.stopPropagation(); toggleSiteAction('${s.site_id}')">${btnActionText}</button>`
         : `<button class="btn-outline user-view-pill" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="event.stopPropagation(); showToast('⚠️ Site intervention requires Management privileges.', 'warning')">View Only</button>`;
 
-      const rowClick = isMgmt
-        ? `toggleSiteAction('${s.site_id}')`
-        : `showToast('Site ${s.site_id}: Rate ${s.posterior_mean_rate}/wk, Risk ${Math.round(s.p_at_risk * 100)}%')`;
-
       return `
-      <tr onclick="${rowClick}">
+      <tr onclick="openSiteDetailModal('${s.site_id}')" style="cursor:pointer;" title="Click to inspect site historical timeline">
         <td><strong>${s.site_id}</strong></td>
         <td>${s.country}</td>
         <td>${s.hospital_tier}</td>
@@ -735,3 +870,94 @@ function toggleSiteAction(siteId) {
   triggerForecast();
 }
 
+// Site Detail Inspection Modal
+async function openSiteDetailModal(siteId) {
+  state.selectedSiteId = siteId;
+  const modal = document.getElementById("site-detail-modal");
+  if (!modal) return;
+
+  const siteIdElem = document.getElementById("modal-site-id");
+  const siteTitle = document.getElementById("modal-site-title");
+  const siteMeta = document.getElementById("modal-site-meta");
+  const enrolledElem = document.getElementById("modal-site-enrolled");
+  const w40Elem = document.getElementById("modal-site-w40");
+  const activeElem = document.getElementById("modal-site-active");
+  const activationElem = document.getElementById("modal-site-activation");
+  const toggleBtn = document.getElementById("btn-modal-toggle-site");
+
+  if (siteIdElem) siteIdElem.textContent = siteId;
+  if (siteTitle) siteTitle.textContent = `Site Performance & History (${siteId})`;
+
+  modal.style.display = "flex";
+
+  try {
+    const res = await fetch(`/api/sites/${siteId}`);
+    if (!res.ok) throw new Error("Site details not found.");
+    const data = await res.json();
+
+    if (siteMeta) siteMeta.textContent = `${data.country} • ${data.hospital_tier}`;
+    if (enrolledElem) enrolledElem.textContent = data.total_enrolled.toLocaleString();
+    if (w40Elem) w40Elem.textContent = data.enrolled_at_current_week.toLocaleString();
+    if (activeElem) activeElem.textContent = `${data.active_weeks_count} / 104 wks`;
+    if (activationElem) activationElem.textContent = `Week ${data.activation_week}`;
+
+    const isClosed = state.closedSites.has(siteId);
+    if (toggleBtn) {
+      const isMgmt = state.currentUser && state.currentUser.role === "management";
+      toggleBtn.textContent = isClosed ? "Reopen Site" : "Close Site";
+      toggleBtn.className = isClosed ? "btn-secondary" : "btn-danger";
+      toggleBtn.disabled = !isMgmt;
+    }
+
+    renderSiteHistoryChart(data.history || []);
+  } catch (err) {
+    console.error("Error loading site details:", err);
+  }
+}
+
+function closeSiteDetailModal() {
+  const modal = document.getElementById("site-detail-modal");
+  if (modal) modal.style.display = "none";
+  state.selectedSiteId = null;
+}
+
+// Render SVG Timeline for Single Site
+function renderSiteHistoryChart(history) {
+  const svg = document.getElementById("site-history-svg");
+  if (!svg || history.length === 0) return;
+
+  const width = 700;
+  const height = 200;
+  const pad = { top: 15, right: 20, bottom: 30, left: 40 };
+  const plotW = width - pad.left - pad.right;
+  const plotH = height - pad.top - pad.bottom;
+
+  const maxEnrolled = Math.max(...history.map((h) => h.enrolled), 5);
+  const scaleX = (w) => pad.left + ((w - 1) / 103) * plotW;
+  const scaleY = (e) => pad.top + plotH - (e / maxEnrolled) * plotH;
+  const barW = Math.max(plotW / history.length - 1, 2);
+
+  let svgContent = "";
+
+  // Axis
+  svgContent += `<line x1="${pad.left}" y1="${pad.top + plotH}" x2="${width - pad.right}" y2="${pad.top + plotH}" class="axis-line" />`;
+
+  // Bars
+  history.forEach((h) => {
+    const x = scaleX(h.week);
+    const y = scaleY(h.enrolled);
+    const barHeight = pad.top + plotH - y;
+    const color = h.week <= state.currentWeek ? "var(--accent-teal)" : "rgba(148, 163, 184, 0.4)";
+    svgContent += `<rect x="${x}" y="${y}" width="${barW}" height="${barHeight}" fill="${color}" rx="1" />`;
+
+    if (h.week % 20 === 0) {
+      svgContent += `<text x="${x}" y="${height - 8}" text-anchor="middle" class="axis-text">W${h.week}</text>`;
+    }
+  });
+
+  // Current week line
+  const curX = scaleX(state.currentWeek);
+  svgContent += `<line x1="${curX}" y1="${pad.top}" x2="${curX}" y2="${pad.top + plotH}" stroke="var(--line-observed)" stroke-dasharray="2,2" stroke-width="1.5" />`;
+
+  svg.innerHTML = svgContent;
+}

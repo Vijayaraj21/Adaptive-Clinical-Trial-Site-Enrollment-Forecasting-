@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from pathlib import Path
 
@@ -146,6 +147,48 @@ def ingest_weekly_data(batch: DataIngestBatch) -> dict:
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/sites/{site_id}", tags=["Sites"])
+def get_site_details(site_id: str, current_week: int = Query(40, ge=1, le=104)) -> dict:
+    """Retrieve detailed longitudinal records and hospital flow covariates for a specific site."""
+    try:
+        return service.get_site_details(site_id, current_week=current_week)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Site {site_id} not found.")
+    except Exception as e:
+        logger.error("Error fetching site details for %s: %s", site_id, e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/reports/backtest", tags=["Reports"])
+def get_backtest_report() -> list[dict]:
+    """Retrieve benchmark backtest evaluation metrics across all models."""
+    path = Path("reports/backtest_summary.json")
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Backtest summary report not found.")
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+@app.get("/api/reports/diagnostics", tags=["Reports"])
+def get_diagnostics_report() -> dict:
+    """Retrieve Bayesian MCMC convergence diagnostics, LOO-CV and WAIC comparisons."""
+    path = Path("reports/bayesian_diagnostics.json")
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Bayesian diagnostics report not found.")
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+@app.get("/api/reports/eda", tags=["Reports"])
+def get_eda_report() -> dict:
+    """Retrieve Exploratory Data Analysis & Hospital Flow summary."""
+    path = Path("reports/eda_summary.json")
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="EDA report not found.")
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 # Authentication Endpoints
 @app.post("/api/auth/login", response_model=UserResponse, tags=["Authentication"])
 def login(req: LoginRequest) -> UserResponse:
@@ -206,7 +249,11 @@ def get_current_user(token: str | None = Query(None), authorization: str | None 
 
 
 
-# Mount Static Frontend
+# Mount Static Figures & Frontend
+figures_dir = Path("reports/figures")
+figures_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/reports/figures", StaticFiles(directory="reports/figures"), name="figures")
+
 frontend_dir = Path("frontend")
 frontend_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")

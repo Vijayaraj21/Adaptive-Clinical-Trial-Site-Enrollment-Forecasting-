@@ -89,6 +89,42 @@ class ForecastService:
             sites=sites,
         )
 
+    def get_site_details(self, site_id: str, current_week: int = 40) -> dict[str, Any]:
+        """Retrieve longitudinal history, flow covariates, and performance for a specific site."""
+        site_df = self.panel_df[self.panel_df["site_id"] == site_id].sort_values("week")
+        if len(site_df) == 0:
+            raise KeyError(f"Site {site_id} not found.")
+
+        country = str(site_df["country"].iloc[0])
+        tier = str(site_df["hospital_tier"].iloc[0])
+        total_enrolled = int(site_df["enrolled_count"].sum())
+        enrolled_current = int(site_df[site_df["week"] <= current_week]["enrolled_count"].sum())
+        active_weeks = int(site_df["is_active"].sum())
+        first_active_series = site_df[site_df["is_active"] == 1]["week"]
+        activation_week = int(first_active_series.iloc[0]) if len(first_active_series) > 0 else 0
+
+        history = [
+            {
+                "week": int(r["week"]),
+                "enrolled": int(r["enrolled_count"]),
+                "eligible_volume": int(r.get("eligible_volume", 0)),
+                "is_active": int(r.get("is_active", 1)),
+            }
+            for _, r in site_df.iterrows()
+        ]
+
+        return {
+            "site_id": site_id,
+            "country": country,
+            "hospital_tier": tier,
+            "activation_week": activation_week,
+            "active_weeks_count": active_weeks,
+            "total_enrolled": total_enrolled,
+            "enrolled_at_current_week": enrolled_current,
+            "current_week": current_week,
+            "history": history,
+        }
+
     def generate_forecast(self, req: ForecastRequest) -> ForecastResponse:
         """Execute longitudinal Bayesian forecast with interventions."""
         flow_mult = 1.0 + (req.flow_change or 0.0)
