@@ -179,6 +179,7 @@ class AdaptiveTrialForecaster:
                 act = future_site_data["is_active"].to_numpy()
 
             # Apply flow multiplier (e.g. +15% patient volume)
+            x_elig = np.nan_to_num(x_elig, nan=0.0)
             x_elig_adj = x_elig + np.log(max(flow_multiplier, 0.1))
 
             for w_idx in range(n_future):
@@ -187,9 +188,11 @@ class AdaptiveTrialForecaster:
                 # Rate for all draws
                 eta = draws_a_site[:, s_idx] + draws_beta_e * x_elig_adj[w_idx]
                 mu = np.exp(np.clip(eta, -5.0, 5.0))
+                mu = np.nan_to_num(mu, nan=1.0)
                 # Negative Binomial via Gamma-Poisson
-                r = 1.0 / draws_alpha_nb
-                gam = rng.gamma(r, mu / r)
+                r = np.clip(1.0 / np.maximum(draws_alpha_nb, 1e-4), 0.01, 1000.0)
+                gam = rng.gamma(r, np.maximum(mu / r, 1e-5))
+                gam = np.clip(np.nan_to_num(gam, nan=1.0), 0.0, 1e5)
                 counts = rng.poisson(gam)
                 simulated_weekly_totals[:, w_idx] += counts
 
@@ -204,9 +207,12 @@ class AdaptiveTrialForecaster:
                     # Ramp up rate
                     weeks_active = future_w - (current_week + new_site_activation_delay)
                     ramp = min(weeks_active / 4.0, 1.0)
-                    mu = np.exp(draws_a0) * ramp * flow_multiplier
-                    r = 1.0 / draws_alpha_nb
-                    counts = rng.poisson(rng.gamma(r, mu / r))
+                    mu = np.exp(np.clip(draws_a0, -5.0, 5.0)) * ramp * flow_multiplier
+                    mu = np.nan_to_num(mu, nan=1.0)
+                    r = np.clip(1.0 / np.maximum(draws_alpha_nb, 1e-4), 0.01, 1000.0)
+                    gam = rng.gamma(r, np.maximum(mu / r, 1e-5))
+                    gam = np.clip(np.nan_to_num(gam, nan=1.0), 0.0, 1e5)
+                    counts = rng.poisson(gam)
                     simulated_weekly_totals[:, w_idx] += counts
 
         # 4. Cumulative Trajectories across draws

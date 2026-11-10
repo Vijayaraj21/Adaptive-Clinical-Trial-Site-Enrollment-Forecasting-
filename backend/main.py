@@ -66,24 +66,6 @@ USERS_DB = {
         "description": "Management access: What-If simulation interventions, site toggling, and data ingestion.",
         "permissions": ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data"],
     },
-    "user": {
-        "password": "user123",
-        "full_name": "Dr. Sarah Chen",
-        "role": "user",
-        "email": "sarah.chen@trial-site.org",
-        "title": "Clinical Investigator & Site Lead",
-        "description": "Read-only access to enrollment projections, Bayesian credible bounds, and site registry.",
-        "permissions": ["view_kpi", "view_forecast", "view_sites"],
-    },
-    "investigator": {
-        "password": "user123",
-        "full_name": "Dr. Sarah Chen",
-        "role": "user",
-        "email": "sarah.chen@trial-site.org",
-        "title": "Clinical Investigator & Site Lead",
-        "description": "Read-only access to enrollment projections, Bayesian credible bounds, and site registry.",
-        "permissions": ["view_kpi", "view_forecast", "view_sites"],
-    },
 }
 
 
@@ -227,7 +209,7 @@ def login(req: LoginRequest) -> UserResponse:
 
 @app.get("/api/auth/demo-users", response_model=list[DemoUser], tags=["Authentication"])
 def get_demo_users() -> list[DemoUser]:
-    """Retrieve pre-configured Admin, Management, and User credentials for front-end 1-click login."""
+    """Retrieve pre-configured Admin and Management credentials for front-end 1-click login."""
     return [
         DemoUser(
             username="Vijay",
@@ -242,13 +224,6 @@ def get_demo_users() -> list[DemoUser]:
             full_name="Dr. Marcus Vance",
             title="Trial Operations Director (Management)",
             description="Management access: What-If simulation interventions, site toggling, and data ingestion.",
-        ),
-        DemoUser(
-            username="investigator",
-            role="user",
-            full_name="Dr. Sarah Chen",
-            title="Clinical Investigator (User)",
-            description="Read-only access to enrollment projections, Bayesian credible bounds, and site registry.",
         ),
     ]
 

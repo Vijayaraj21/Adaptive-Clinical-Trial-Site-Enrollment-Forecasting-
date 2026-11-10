@@ -68,7 +68,7 @@ flowchart TD
 - **Audio Feedback Synthesizer**: Utilizes the native Web Audio API to deliver responsive clinical sound feedback without external sound asset dependencies.
 
 ### 1.3 Role-Based Access Control (RBAC)
-- **System Administrator (Admin - Vijayaraj)**: Superuser scope (`*`) with permissions to modify simulation parameters, toggle sites, ingest longitudinal panel records, and manage account credentials.
-- **Trial Operations Director (Management)**: Simulation sandbox and operational site intervention scope.
-- **Clinical Investigator (User)**: Read-only monitoring scope.
+- **System Owner & Administrator (Vijay / Vijayaraj - Admin)**: Dedicated superuser scope (`*`) with permissions to modify simulation parameters, toggle sites, ingest longitudinal panel records, and manage account credentials.
+- **Trial Operations Director (Management)**: Simulation sandbox, flow shift multipliers, and operational site intervention scope.
+- **Guest / Observer**: Read-only monitoring scope for trajectory overviews and site registry.
 

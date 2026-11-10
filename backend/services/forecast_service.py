@@ -54,7 +54,7 @@ class ForecastService:
         title = ident.get("briefTitle", "Adaptive Multi-Center Clinical Trial")
         nct_id = ident.get("nctId", "NCT04280705")
 
-        countries = sorted(self.panel_df["country"].unique().tolist())
+        countries = sorted([str(c) for c in self.panel_df["country"].dropna().unique().tolist() if c is not None])
         total_sites = int(self.panel_df["site_id"].nunique())
         current_week = 40
         total_enrolled = int(self.panel_df[self.panel_df["week"] <= current_week]["enrolled_count"].sum())
@@ -182,6 +182,18 @@ class ForecastService:
         """Ingest new weekly records into the longitudinal panel and update forecasts."""
         new_records = [r.model_dump() for r in batch.records]
         new_df = pd.DataFrame(new_records)
+
+        # Backfill metadata and standardized flow for newly ingested rows
+        for col in ["country", "hospital_tier"]:
+            if col in self.panel_df.columns:
+                site_map = self.panel_df.dropna(subset=[col]).groupby("site_id")[col].first().to_dict()
+                new_df[col] = new_df["site_id"].map(site_map).fillna("USA")
+        if "eligible_volume_std" in self.panel_df.columns:
+            mean_ev = float(self.panel_df["eligible_volume"].mean()) if "eligible_volume" in self.panel_df.columns else 40.0
+            std_ev = float(self.panel_df["eligible_volume"].std()) if "eligible_volume" in self.panel_df.columns else 10.0
+            std_ev = std_ev if std_ev > 0 else 1.0
+            ev_vals = new_df["eligible_volume"] if "eligible_volume" in new_df.columns else 40.0
+            new_df["eligible_volume_std"] = (ev_vals - mean_ev) / std_ev
 
         # Merge with existing panel
         combined = pd.concat([self.panel_df, new_df], ignore_index=True)

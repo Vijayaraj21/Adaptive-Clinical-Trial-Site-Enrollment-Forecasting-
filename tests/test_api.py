@@ -88,14 +88,15 @@ def test_update_endpoint():
     assert data["ingested_count"] == 1
 
 
-def test_auth_login_user():
-    # User / Investigator
-    resp = client.post("/api/auth/login", json={"username": "user", "password": "user123"})
+def test_auth_login_vijay():
+    # Dedicated Vijay Superuser
+    resp = client.post("/api/auth/login", json={"username": "Vijay", "password": "1704"})
     assert resp.status_code == 200
     data = resp.json()
-    assert data["role"] == "user"
-    assert data["full_name"] == "Dr. Sarah Chen"
+    assert data["role"] == "admin"
+    assert "Vijay" in data["full_name"]
     assert "token" in data
+    assert "*" in data["permissions"]
 
 
 def test_auth_login_management():
@@ -107,6 +108,14 @@ def test_auth_login_management():
     assert "simulate_whatif" in data["permissions"]
 
 
+def test_auth_login_investigator_removed():
+    # Verify removed investigator / user accounts return 401 Unauthorized
+    resp = client.post("/api/auth/login", json={"username": "investigator", "password": "user123"})
+    assert resp.status_code == 401
+    resp2 = client.post("/api/auth/login", json={"username": "user", "password": "user123"})
+    assert resp2.status_code == 401
+
+
 def test_auth_login_invalid():
     resp = client.post("/api/auth/login", json={"username": "wrong", "password": "bad"})
     assert resp.status_code == 401
@@ -116,7 +125,8 @@ def test_auth_demo_users():
     resp = client.get("/api/auth/demo-users")
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) >= 2
+    assert len(data) == 2
     roles = [u["role"] for u in data]
-    assert "user" in roles and "management" in roles
+    assert "admin" in roles and "management" in roles
+    assert "user" not in roles
 

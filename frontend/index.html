@@ -519,7 +519,7 @@
         <div class="panel-header">
           <div class="panel-title-wrap">
             <h3>Policy Interventions & What-If Simulation Sandbox</h3>
-            <span class="role-pill" id="panel-role-pill">User View (Read-Only)</span>
+            <span class="role-pill" id="panel-role-pill">Guest View (Read-Only)</span>
           </div>
           <div class="panel-header-actions">
             <span class="badge" id="scenario-tag">Status Quo</span>
@@ -533,8 +533,8 @@
         <div id="user-role-notice" class="role-notice-banner" style="display:none;">
           <span class="notice-icon">🔒</span>
           <span>
-            <strong>Investigator View (Read-Only)</strong>: Simulation parameters and site closure interventions require <strong>Management Role</strong>. 
-            <a href="#" id="link-switch-to-manager">Switch to Management Mode</a> to unlock live sandbox sliders.
+            <strong>Guest View (Read-Only)</strong>: Simulation parameters and site closure interventions require <strong>Vijay (Admin)</strong> or <strong>Management</strong> credentials. 
+            <a href="#" id="link-switch-to-manager">Sign In with Authorized Account</a> to unlock live sandbox sliders.
           </span>
         </div>
 
@@ -921,25 +921,6 @@
             Sign In as Management
           </button>
         </div>
-
-        <!-- User Role Card -->
-        <div class="role-select-card" id="card-login-user">
-          <div class="role-card-top">
-            <span class="role-card-icon">👨‍⚕️</span>
-            <span class="role-badge role-user">User Access</span>
-          </div>
-          <h4>Clinical Investigator</h4>
-          <p class="role-desc">Designed for site investigators and clinical research coordinators.</p>
-          <ul class="role-features">
-            <li>✔ View longitudinal Bayesian fan charts</li>
-            <li>✔ Monitor completion week densities</li>
-            <li>✔ Inspect site performance & risk scores</li>
-            <li>🔒 Read-only view of policy interventions</li>
-          </ul>
-          <button id="btn-quick-login-user" class="btn-primary btn-block">
-            Sign In as Investigator (User)
-          </button>
-        </div>
       </div>
 
       <!-- Manual Credential Form Divider -->
@@ -954,7 +935,7 @@
         <div class="form-row">
           <div class="form-group">
             <label for="login-username">Username</label>
-            <input type="text" id="login-username" placeholder="e.g. admin or vijayaraj" required autocomplete="username">
+            <input type="text" id="login-username" placeholder="e.g. Vijay, admin, or manager" required autocomplete="username">
           </div>
           <div class="form-group">
             <label for="login-password">Password</label>
@@ -967,12 +948,11 @@
           <button type="button" class="btn-chip chip-admin" id="chip-vijay">👑 Vijay / 1704</button>
           <button type="button" class="btn-chip chip-admin" id="chip-admin">👑 admin / admin123</button>
           <button type="button" class="btn-chip" id="chip-manager">🛡️ manager / admin123</button>
-          <button type="button" class="btn-chip" id="chip-user">👨‍⚕️ user / user123</button>
         </div>
 
         <div class="form-actions">
           <button type="submit" id="btn-submit-login" class="btn-primary">Authenticate & Enter</button>
-          <button type="button" id="btn-cancel-login" class="btn-secondary">Continue as Guest (User View)</button>
+          <button type="button" id="btn-cancel-login" class="btn-secondary">Close / Continue as Guest</button>
         </div>
       </form>
     </div>

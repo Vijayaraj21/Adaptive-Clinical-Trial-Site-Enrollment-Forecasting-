@@ -215,20 +215,12 @@ function initEventListeners() {
   document.getElementById("btn-open-login")?.addEventListener("click", openLoginModal);
   document.getElementById("btn-close-login")?.addEventListener("click", closeLoginModal);
   document.getElementById("btn-cancel-login")?.addEventListener("click", () => {
-    setAuthenticatedUser({
-      username: "guest_investigator",
-      full_name: "Guest Investigator",
-      role: "user",
-      title: "Clinical Investigator (Guest)",
-      email: "guest@trial.org",
-    });
     closeLoginModal();
-    showToast("Signed in as Guest (User View).");
+    showToast("Continuing in Guest View (Read-Only).");
   });
 
   document.getElementById("btn-quick-login-admin")?.addEventListener("click", () => quickLogin("admin"));
   document.getElementById("btn-quick-login-mgmt")?.addEventListener("click", () => quickLogin("management"));
-  document.getElementById("btn-quick-login-user")?.addEventListener("click", () => quickLogin("user"));
 
   document.getElementById("btn-switch-role")?.addEventListener("click", switchRole);
   document.getElementById("btn-logout")?.addEventListener("click", logout);
@@ -259,10 +251,6 @@ function initEventListeners() {
   document.getElementById("chip-manager")?.addEventListener("click", () => {
     document.getElementById("login-username").value = "manager";
     document.getElementById("login-password").value = "admin123";
-  });
-  document.getElementById("chip-user")?.addEventListener("click", () => {
-    document.getElementById("login-username").value = "user";
-    document.getElementById("login-password").value = "user123";
   });
 
   // Change Password Modal Listeners
@@ -528,13 +516,13 @@ function updateUserDisplay() {
       roleBadge.textContent = "Management";
       roleBadge.className = "role-badge role-mgmt";
     } else {
-      roleBadge.textContent = "Investigator";
-      roleBadge.className = "role-badge role-user";
+      roleBadge.textContent = "Guest";
+      roleBadge.className = "role-badge";
     }
   }
 
   if (avatar) {
-    avatar.textContent = isAdmin ? "👑" : isMgmt ? "🛡️" : "👨‍⚕️";
+    avatar.textContent = isAdmin ? "👑" : isMgmt ? "🛡️" : "👤";
   }
 
   if (changePwdBtn) {
@@ -556,8 +544,8 @@ function updateUserDisplay() {
       drawerUserRole.textContent = "Management";
       drawerUserRole.className = "role-badge role-mgmt";
     } else {
-      drawerUserRole.textContent = "Investigator";
-      drawerUserRole.className = "role-badge role-user";
+      drawerUserRole.textContent = "Guest";
+      drawerUserRole.className = "role-badge";
     }
   }
 }
@@ -580,7 +568,7 @@ function applyRolePermissions() {
       rolePill.textContent = "🛡️ Management Mode (Full Simulation)";
       rolePill.className = "role-pill mgmt";
     } else {
-      rolePill.textContent = "User View (Read-Only)";
+      rolePill.textContent = "Guest View (Read-Only)";
       rolePill.className = "role-pill";
     }
   }
@@ -677,21 +665,17 @@ async function loginWithCredentials(username, password) {
 function quickLogin(role) {
   if (role === "admin" || role === "vijay") {
     loginWithCredentials("Vijay", "1704");
-  } else if (role === "management") {
-    loginWithCredentials("manager", "admin123");
   } else {
-    loginWithCredentials("investigator", "user123");
+    loginWithCredentials("manager", "admin123");
   }
 }
 
 function switchRole() {
-  const currentRole = state.currentUser ? state.currentUser.role : "user";
-  if (currentRole === "user") {
+  const currentRole = state.currentUser ? state.currentUser.role : "guest";
+  if (currentRole === "admin") {
     quickLogin("management");
-  } else if (currentRole === "management") {
-    quickLogin("admin");
   } else {
-    quickLogin("user");
+    quickLogin("admin");
   }
 }
 
