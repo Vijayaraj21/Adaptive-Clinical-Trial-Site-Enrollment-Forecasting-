@@ -1,5 +1,6 @@
 # Adaptive Clinical Trial Site Enrollment Forecasting Platform
 
+[![Live Website](https://img.shields.io/badge/Live%20Website-GitHub%20Pages-brightgreen.svg?logo=github&style=for-the-badge)](https://vijayaraj21.github.io/Adaptive-Clinical-Trial-Site-Enrollment-Forecasting-/)
 [![Python Version](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![PyMC](https://img.shields.io/badge/PyMC-5.10.4-ff6f00.svg)](https://www.pymc.io/)
@@ -8,6 +9,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Hierarchical Bayesian Negative-Binomial enrollment forecasting platform calibrated with real-world hospital patient flow covariates, interactive What-If policy intervention sandbox, sliding command dashboard, and multi-theme clinical UI.**
+
+### 🌐 Permanent Live Portal Link
+**Access the live web portal here:**
+👉 **[https://vijayaraj21.github.io/Adaptive-Clinical-Trial-Site-Enrollment-Forecasting-/](https://vijayaraj21.github.io/Adaptive-Clinical-Trial-Site-Enrollment-Forecasting-/)**
+
+*(Dedicated owner login: **`Vijay`** / password: **`1704`**)*
 
 ---
 
@@ -128,8 +135,12 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Launch Local Server
+### 2. Launch Local Server (1-Click or Command Line)
 
+**Option A (1-Click on Windows):**
+Simply double-click `run_dashboard.bat` (or `start_silent.vbs`). It will launch the FastAPI backend server and automatically open your default browser to [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+
+**Option B (CLI):**
 ```bash
 uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
 ```
@@ -144,6 +155,17 @@ Open your browser:
 ```bash
 pytest tests/ -v
 ```
+
+---
+
+## 🌐 Permanent Public Access & Deployment
+
+| Deployment Target | Access URL / Setup | Mode |
+| :--- | :--- | :--- |
+| **GitHub Pages** | **[https://vijayaraj21.github.io/Adaptive-Clinical-Trial-Site-Enrollment-Forecasting-/](https://vijayaraj21.github.io/Adaptive-Clinical-Trial-Site-Enrollment-Forecasting-/)** | 24/7 Zero-Downtime Live Web Portal |
+| **Local Machine** | Double-click `run_dashboard.bat` &rarr; `http://127.0.0.1:8000/` | Full PyMC Bayesian Engine |
+| **Render Cloud** | Connect repo & choose `render.yaml` &rarr; `https://<your-service>.onrender.com` | Full Python Cloud Backend |
+| **Vercel** | Connect repo (`vercel.json` included) | Edge Static Delivery |
 
 ---
 
