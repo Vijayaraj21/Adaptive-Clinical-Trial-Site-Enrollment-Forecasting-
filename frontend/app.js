@@ -1,3 +1,7 @@
+const authUser = JSON.parse(localStorage.getItem("ct_auth_user") || "null");
+const isGuest = new URLSearchParams(location.search).has("guest");
+if (!authUser && !isGuest) location.replace("login.html");
+
 /**
  * Clinical Trial Enrollment Forecasting Dashboard
  * Reactive Multi-Tab UI with Inline SVG Fan Chart, Histogram, What-If Simulation Sandbox,
@@ -20,14 +24,15 @@ const state = {
   baselineData: null,
   sites: [],
   selectedSiteId: null,
-  currentUser: JSON.parse(localStorage.getItem("ct_auth_user") || "null") || {
-    username: "Vijay",
-    full_name: "Vijay (System Administrator)",
-    role: "admin",
-    title: "Principal System Administrator & Owner",
-    email: "vijay@trial-operations.org",
-  },
+  currentUser: authUser,
 };
+
+// Check role-based permissions directly from authUser.permissions
+function hasPermission(perm) {
+  if (!state.currentUser || !Array.isArray(state.currentUser.permissions)) return false;
+  return state.currentUser.permissions.includes("*") || state.currentUser.permissions.includes(perm);
+}
+
 
 // Initialize App
 document.addEventListener("DOMContentLoaded", () => {
@@ -118,7 +123,7 @@ function initEventListeners() {
   // Quick Scenario Presets
   document.querySelectorAll(".preset-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+      const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
       if (!isPrivileged) {
         showToast("⚠️ Quick scenarios require Management or Admin privileges.", "warning");
         return;
@@ -152,7 +157,7 @@ function initEventListeners() {
   });
 
   document.getElementById("btn-close-at-risk")?.addEventListener("click", () => {
-    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
     if (!isPrivileged) {
       showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
       return;
@@ -168,7 +173,7 @@ function initEventListeners() {
   });
 
   document.getElementById("btn-reset")?.addEventListener("click", () => {
-    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
     if (!isPrivileged) {
       showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
       return;
@@ -212,45 +217,20 @@ function initEventListeners() {
   });
 
   // Auth & Role Event Listeners
-  document.getElementById("btn-open-login")?.addEventListener("click", openLoginModal);
-  document.getElementById("btn-close-login")?.addEventListener("click", closeLoginModal);
-  document.getElementById("btn-cancel-login")?.addEventListener("click", () => {
-    closeLoginModal();
-    showToast("Continuing in Guest View (Read-Only).");
+  document.getElementById("btn-open-login")?.addEventListener("click", () => {
+    location.href = "login.html";
   });
-
-  document.getElementById("btn-quick-login-admin")?.addEventListener("click", () => quickLogin("admin"));
-  document.getElementById("btn-quick-login-mgmt")?.addEventListener("click", () => quickLogin("management"));
-
   document.getElementById("btn-switch-role")?.addEventListener("click", switchRole);
   document.getElementById("btn-logout")?.addEventListener("click", logout);
+  document.getElementById("drawer-btn-logout")?.addEventListener("click", logout);
   document.getElementById("link-switch-to-manager")?.addEventListener("click", (e) => {
     e.preventDefault();
-    quickLogin("management");
+    switchRole();
   });
 
-  // Demo credential chips
-  document.getElementById("btn-quick-login-vijay")?.addEventListener("click", () => quickLogin("vijay"));
   document.getElementById("btn-header-open-drawer")?.addEventListener("click", () => {
     document.getElementById("sliding-dashboard")?.classList.add("open");
     document.getElementById("sliding-drawer-backdrop")?.classList.add("active");
-  });
-
-  document.getElementById("chip-vijay")?.addEventListener("click", () => {
-    document.getElementById("login-username").value = "Vijay";
-    document.getElementById("login-password").value = "1704";
-  });
-  document.getElementById("chip-admin")?.addEventListener("click", () => {
-    document.getElementById("login-username").value = "admin";
-    document.getElementById("login-password").value = "admin123";
-  });
-  document.getElementById("chip-vijayaraj")?.addEventListener("click", () => {
-    document.getElementById("login-username").value = "vijayaraj";
-    document.getElementById("login-password").value = "admin123";
-  });
-  document.getElementById("chip-manager")?.addEventListener("click", () => {
-    document.getElementById("login-username").value = "manager";
-    document.getElementById("login-password").value = "admin123";
   });
 
   // Change Password Modal Listeners
@@ -258,16 +238,6 @@ function initEventListeners() {
   document.getElementById("btn-close-pwd-modal")?.addEventListener("click", closeChangePwdModal);
   document.getElementById("btn-cancel-change-pwd")?.addEventListener("click", closeChangePwdModal);
   document.getElementById("change-pwd-form")?.addEventListener("submit", submitChangePwd);
-
-  // Login form submit
-  document.getElementById("login-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const u = document.getElementById("login-username").value.trim();
-    const p = document.getElementById("login-password").value.trim();
-    if (u && p) {
-      loginWithCredentials(u, p);
-    }
-  });
 
   // Ingestion Modal Listeners (Management)
   document.getElementById("btn-open-ingest")?.addEventListener("click", openIngestModal);
@@ -339,7 +309,7 @@ function initEventListeners() {
   // Drawer Simulator Sliders Synchronization
   const drawerFlowSlider = document.getElementById("drawer-slider-flow");
   drawerFlowSlider?.addEventListener("input", (e) => {
-    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
     if (!isPrivileged) {
       showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
       e.target.value = Math.round(state.flowChange * 100);
@@ -357,7 +327,7 @@ function initEventListeners() {
 
   const drawerSitesSlider = document.getElementById("drawer-slider-new-sites");
   drawerSitesSlider?.addEventListener("input", (e) => {
-    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
     if (!isPrivileged) {
       showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
       e.target.value = state.newSites;
@@ -376,7 +346,7 @@ function initEventListeners() {
   // Drawer Presets
   document.querySelectorAll(".drawer-preset-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+      const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
       if (!isPrivileged) {
         showToast("⚠️ Quick scenarios require Management or Admin privileges.", "warning");
         return;
@@ -436,7 +406,7 @@ function initEventListeners() {
   document.getElementById("btn-export-summary")?.addEventListener("click", exportExecutiveSummary);
 
   document.getElementById("drawer-btn-reset")?.addEventListener("click", () => {
-    const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+    const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
     if (!isPrivileged) {
       showToast("⚠️ Simulation interventions require Management or Admin privileges.", "warning");
       return;
@@ -550,9 +520,17 @@ function updateUserDisplay() {
   }
 }
 
+// Permission Checker: checks authUser.permissions array
+function hasPermission(perm) {
+  if (!state.currentUser || !Array.isArray(state.currentUser.permissions)) return false;
+  return state.currentUser.permissions.includes("*") || state.currentUser.permissions.includes(perm);
+}
+
 function applyRolePermissions() {
-  const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
-  const isAdmin = state.currentUser && state.currentUser.role === "admin";
+  // Role-based permission checks reading strictly from authUser.permissions
+  const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
+  const canIngest = hasPermission("ingest_data") || hasPermission("*");
+  const isAdmin = hasPermission("*");
   const isMgmt = state.currentUser && state.currentUser.role === "management";
 
   const rolePill = document.getElementById("panel-role-pill");
@@ -578,7 +556,7 @@ function applyRolePermissions() {
   }
 
   if (openIngestBtn) {
-    openIngestBtn.style.display = isPrivileged ? "inline-flex" : "none";
+    openIngestBtn.style.display = canIngest ? "inline-flex" : "none";
   }
 
   const inputs = [
@@ -605,7 +583,7 @@ function applyRolePermissions() {
   // Update Drawer Privileges
   const drawerIngestBtn = document.getElementById("drawer-btn-ingest");
   if (drawerIngestBtn) {
-    drawerIngestBtn.style.display = isPrivileged ? "inline-block" : "none";
+    drawerIngestBtn.style.display = canIngest ? "inline-block" : "none";
   }
   const drawerFlow = document.getElementById("drawer-slider-flow");
   const drawerSites = document.getElementById("drawer-slider-new-sites");
@@ -617,118 +595,41 @@ function applyRolePermissions() {
 
 function setAuthenticatedUser(user) {
   state.currentUser = user;
-  localStorage.setItem("ct_auth_user", JSON.stringify(user));
+  if (user) {
+    localStorage.setItem("ct_auth_user", JSON.stringify(user));
+  } else {
+    localStorage.removeItem("ct_auth_user");
+  }
   updateUserDisplay();
   applyRolePermissions();
 }
 
-function openLoginModal() {
-  const modal = document.getElementById("login-modal");
-  if (modal) modal.style.display = "flex";
-  const errDiv = document.getElementById("login-error");
-  if (errDiv) errDiv.style.display = "none";
-}
-
-function closeLoginModal() {
-  const modal = document.getElementById("login-modal");
-  if (modal) modal.style.display = "none";
-}
-
-async function loginWithCredentials(username, password) {
-  const errDiv = document.getElementById("login-error");
-  if (errDiv) errDiv.style.display = "none";
-
-  let loggedInUser = null;
-
-  try {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (res.ok) {
-      loggedInUser = await res.json();
-    } else if (res.status === 401) {
-      throw new Error("Invalid username or password.");
-    }
-  } catch (err) {
-    if (err.message === "Invalid username or password.") {
-      if (errDiv) {
-        errDiv.textContent = err.message;
-        errDiv.style.display = "block";
-      }
-      return;
-    }
-    // Standalone fallback on GitHub Pages
-    const u = username.toLowerCase().trim();
-    if (u === "vijay" && password === "1704") {
-      loggedInUser = {
-        username: "Vijay",
-        full_name: "Vijay (System Owner & Administrator)",
-        role: "admin",
-        email: "vijay@trial-operations.org",
-        token: "token_vijay_admin_live",
-        permissions: ["*"],
-      };
-    } else if (u === "admin" && password === "admin123") {
-      loggedInUser = {
-        username: "admin",
-        full_name: "Vijayaraj (System Administrator)",
-        role: "admin",
-        email: "vijayaraj@trial-operations.org",
-        token: "token_admin_live",
-        permissions: ["*"],
-      };
-    } else if (u === "manager" && password === "admin123") {
-      loggedInUser = {
+function switchRole() {
+  const isVijay = state.currentUser && state.currentUser.username.toLowerCase() === "vijay";
+  const newUser = isVijay
+    ? {
         username: "manager",
         full_name: "Dr. Marcus Vance",
         role: "management",
         email: "m.vance@trial-operations.org",
-        token: "token_manager_live",
+        token: "token_manager_switched",
         permissions: ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data"],
-      };
-    } else {
-      if (errDiv) {
-        errDiv.textContent = "Invalid username or password.";
-        errDiv.style.display = "block";
       }
-      return;
-    }
-  }
-
-  if (loggedInUser) {
-    setAuthenticatedUser(loggedInUser);
-    closeLoginModal();
-    showToast(`Signed in as ${loggedInUser.full_name} [${loggedInUser.role.toUpperCase()}]`);
-  }
-}
-
-function quickLogin(role) {
-  if (role === "admin" || role === "vijay") {
-    loginWithCredentials("Vijay", "1704");
-  } else {
-    loginWithCredentials("manager", "admin123");
-  }
-}
-
-function switchRole() {
-  const currentRole = state.currentUser ? state.currentUser.role : "guest";
-  if (currentRole === "admin") {
-    quickLogin("management");
-  } else {
-    quickLogin("admin");
-  }
+    : {
+        username: "Vijay",
+        full_name: "Vijay (System Owner & Administrator)",
+        role: "admin",
+        email: "vijay@trial-operations.org",
+        token: "token_vijay_switched",
+        permissions: ["*"],
+      };
+  setAuthenticatedUser(newUser);
+  showToast(`Switched role to ${newUser.full_name}`);
 }
 
 function logout() {
-  state.currentUser = null;
   localStorage.removeItem("ct_auth_user");
-  updateUserDisplay();
-  applyRolePermissions();
-  openLoginModal();
-  showToast("Logged out.");
+  location.href = "login.html";
 }
 
 function openChangePwdModal() {
@@ -1356,7 +1257,7 @@ function renderSitesTable() {
   const query = state.searchQuery;
   const statusFilter = state.siteFilter;
   const countryFilter = state.countryFilter;
-  const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+  const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
 
   const filtered = state.sites.filter((s) => {
     const matchSearch = s.site_id.toLowerCase().includes(query) || s.country.toLowerCase().includes(query);
@@ -1400,7 +1301,7 @@ function renderSitesTable() {
 
 // Toggle Site Open/Close
 function toggleSiteAction(siteId) {
-  const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+  const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
   if (!isPrivileged) {
     showToast("⚠️ Site intervention requires Management or Admin privileges.", "warning");
     return;
@@ -1480,7 +1381,7 @@ async function openSiteDetailModal(siteId) {
 
     const isClosed = state.closedSites.has(siteId);
     if (toggleBtn) {
-      const isPrivileged = state.currentUser && (state.currentUser.role === "management" || state.currentUser.role === "admin");
+      const isPrivileged = hasPermission("simulate_whatif") || hasPermission("modify_sites") || hasPermission("*");
       toggleBtn.textContent = isClosed ? "Reopen Site" : "Close Site";
       toggleBtn.className = isClosed ? "btn-secondary" : "btn-danger";
       toggleBtn.disabled = !isPrivileged;

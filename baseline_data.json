@@ -1,0 +1,3100 @@
+{
+  "trials": {
+    "trial_id": "NCT04280705",
+    "title": "Adaptive Multi-Center Clinical Trial for Acute Cardiovascular Care",
+    "protocol": {
+      "identificationModule": {
+        "nctId": "NCT04280705",
+        "briefTitle": "Adaptive Multi-Center Clinical Trial for Acute Cardiovascular Care",
+        "officialTitle": "A Phase III, Randomized, Multi-Center, Global Trial Evaluating Real-World Enrollment and Clinical Outcomes"
+      },
+      "statusModule": {
+        "overallStatus": "RECRUITING",
+        "startDateStruct": {
+          "startDate": "2024-01-15",
+          "type": "ACTUAL"
+        },
+        "completionDateStruct": {
+          "completionDate": "2026-01-15",
+          "type": "ANTICIPATED"
+        }
+      },
+      "designModule": {
+        "studyType": "INTERVENTIONAL",
+        "phases": [
+          "PHASE3"
+        ],
+        "designInfo": {
+          "allocation": "RANDOMIZED",
+          "interventionModel": "PARALLEL",
+          "primaryPurpose": "TREATMENT"
+        },
+        "enrollmentInfo": {
+          "count": 1200,
+          "type": "ESTIMATED"
+        }
+      },
+      "conditionsModule": {
+        "conditions": [
+          "Acute Coronary Syndrome",
+          "Congestive Heart Failure",
+          "Sepsis-Associated Cardiac Dysfunction"
+        ]
+      },
+      "eligibilityModule": {
+        "eligibilityCriteria": "Inclusion: Age 18-85, Emergency Admission with cardiac biomarker elevation.\nExclusion: End-stage renal disease on dialysis, terminal illness <3 months.",
+        "healthyVolunteers": false,
+        "sex": "ALL",
+        "minimumAge": "18 Years",
+        "maximumAge": "85 Years"
+      },
+      "contactsLocationsModule": {
+        "locations": [
+          {
+            "facility": "Academic Medical Center Site 001",
+            "city": "Boston",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 002",
+            "city": "New York",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 003",
+            "city": "Chicago",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 004",
+            "city": "Houston",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 005",
+            "city": "Seattle",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 006",
+            "city": "San Francisco",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 007",
+            "city": "Philadelphia",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 008",
+            "city": "Atlanta",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 009",
+            "city": "London",
+            "country": "UK",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 010",
+            "city": "Manchester",
+            "country": "UK",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 011",
+            "city": "Birmingham",
+            "country": "UK",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 012",
+            "city": "Edinburgh",
+            "country": "UK",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 013",
+            "city": "Berlin",
+            "country": "Germany",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 014",
+            "city": "Munich",
+            "country": "Germany",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 015",
+            "city": "Heidelberg",
+            "country": "Germany",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 016",
+            "city": "Hamburg",
+            "country": "Germany",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 017",
+            "city": "Toronto",
+            "country": "Canada",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 018",
+            "city": "Montreal",
+            "country": "Canada",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 019",
+            "city": "Vancouver",
+            "country": "Canada",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 020",
+            "city": "Calgary",
+            "country": "Canada",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 021",
+            "city": "Paris",
+            "country": "France",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 022",
+            "city": "Lyon",
+            "country": "France",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 023",
+            "city": "Marseille",
+            "country": "France",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 024",
+            "city": "Bordeaux",
+            "country": "France",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 025",
+            "city": "Boston",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 026",
+            "city": "New York",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 027",
+            "city": "Chicago",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 028",
+            "city": "Houston",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 029",
+            "city": "Seattle",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 030",
+            "city": "San Francisco",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 031",
+            "city": "Philadelphia",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 032",
+            "city": "Atlanta",
+            "country": "USA",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 033",
+            "city": "London",
+            "country": "UK",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 034",
+            "city": "Manchester",
+            "country": "UK",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 035",
+            "city": "Birmingham",
+            "country": "UK",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 036",
+            "city": "Edinburgh",
+            "country": "UK",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 037",
+            "city": "Berlin",
+            "country": "Germany",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 038",
+            "city": "Munich",
+            "country": "Germany",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 039",
+            "city": "Heidelberg",
+            "country": "Germany",
+            "status": "RECRUITING"
+          },
+          {
+            "facility": "Academic Medical Center Site 040",
+            "city": "Hamburg",
+            "country": "Germany",
+            "status": "RECRUITING"
+          }
+        ]
+      }
+    },
+    "total_sites": 40,
+    "countries": [
+      "Canada",
+      "France",
+      "Germany",
+      "UK",
+      "USA"
+    ],
+    "current_week": 40,
+    "total_enrolled": 1634
+  },
+  "whatif": {
+    "baseline": {
+      "current_week": 40,
+      "target": 1200,
+      "deadline": 90,
+      "total_enrolled_to_date": 1634,
+      "p_hit_by_deadline": 1.0,
+      "median_completion_week": 41.0,
+      "at_risk_sites_count": 0,
+      "active_sites_count": 40,
+      "observed_history": [
+        {
+          "week": 1,
+          "cumulative_enrolled": 0
+        },
+        {
+          "week": 2,
+          "cumulative_enrolled": 0
+        },
+        {
+          "week": 3,
+          "cumulative_enrolled": 5
+        },
+        {
+          "week": 4,
+          "cumulative_enrolled": 14
+        },
+        {
+          "week": 5,
+          "cumulative_enrolled": 23
+        },
+        {
+          "week": 6,
+          "cumulative_enrolled": 40
+        },
+        {
+          "week": 7,
+          "cumulative_enrolled": 53
+        },
+        {
+          "week": 8,
+          "cumulative_enrolled": 88
+        },
+        {
+          "week": 9,
+          "cumulative_enrolled": 112
+        },
+        {
+          "week": 10,
+          "cumulative_enrolled": 164
+        },
+        {
+          "week": 11,
+          "cumulative_enrolled": 198
+        },
+        {
+          "week": 12,
+          "cumulative_enrolled": 244
+        },
+        {
+          "week": 13,
+          "cumulative_enrolled": 333
+        },
+        {
+          "week": 14,
+          "cumulative_enrolled": 396
+        },
+        {
+          "week": 15,
+          "cumulative_enrolled": 466
+        },
+        {
+          "week": 16,
+          "cumulative_enrolled": 503
+        },
+        {
+          "week": 17,
+          "cumulative_enrolled": 549
+        },
+        {
+          "week": 18,
+          "cumulative_enrolled": 628
+        },
+        {
+          "week": 19,
+          "cumulative_enrolled": 694
+        },
+        {
+          "week": 20,
+          "cumulative_enrolled": 745
+        },
+        {
+          "week": 21,
+          "cumulative_enrolled": 819
+        },
+        {
+          "week": 22,
+          "cumulative_enrolled": 843
+        },
+        {
+          "week": 23,
+          "cumulative_enrolled": 871
+        },
+        {
+          "week": 24,
+          "cumulative_enrolled": 922
+        },
+        {
+          "week": 25,
+          "cumulative_enrolled": 951
+        },
+        {
+          "week": 26,
+          "cumulative_enrolled": 1005
+        },
+        {
+          "week": 27,
+          "cumulative_enrolled": 1071
+        },
+        {
+          "week": 28,
+          "cumulative_enrolled": 1089
+        },
+        {
+          "week": 29,
+          "cumulative_enrolled": 1173
+        },
+        {
+          "week": 30,
+          "cumulative_enrolled": 1227
+        },
+        {
+          "week": 31,
+          "cumulative_enrolled": 1245
+        },
+        {
+          "week": 32,
+          "cumulative_enrolled": 1271
+        },
+        {
+          "week": 33,
+          "cumulative_enrolled": 1309
+        },
+        {
+          "week": 34,
+          "cumulative_enrolled": 1337
+        },
+        {
+          "week": 35,
+          "cumulative_enrolled": 1376
+        },
+        {
+          "week": 36,
+          "cumulative_enrolled": 1440
+        },
+        {
+          "week": 37,
+          "cumulative_enrolled": 1481
+        },
+        {
+          "week": 38,
+          "cumulative_enrolled": 1516
+        },
+        {
+          "week": 39,
+          "cumulative_enrolled": 1559
+        },
+        {
+          "week": 40,
+          "cumulative_enrolled": 1634
+        }
+      ],
+      "forecast_fan": {
+        "weeks": [
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103,
+          104
+        ],
+        "q025": [
+          1656.0,
+          1694.4,
+          1738.5,
+          1788.4,
+          1837.0,
+          1888.0,
+          1939.0,
+          1985.0,
+          2030.5,
+          2086.4,
+          2137.4,
+          2196.4,
+          2242.5,
+          2294.9,
+          2349.8,
+          2402.8,
+          2439.9,
+          2502.4,
+          2552.4,
+          2604.0,
+          2660.2,
+          2704.8,
+          2766.3,
+          2819.3,
+          2856.6,
+          2914.4,
+          2970.3,
+          3019.8,
+          3081.0,
+          3124.4,
+          3177.8,
+          3229.0,
+          3277.7,
+          3324.8,
+          3375.4,
+          3420.2,
+          3462.4,
+          3520.7,
+          3570.2,
+          3625.9,
+          3668.8,
+          3742.3,
+          3793.1,
+          3835.5,
+          3879.3,
+          3931.0,
+          3974.9,
+          4021.9,
+          4078.2,
+          4118.5,
+          4166.4,
+          4217.8,
+          4274.9,
+          4347.4,
+          4399.1,
+          4451.3,
+          4489.4,
+          4540.3,
+          4586.6,
+          4634.1,
+          4688.6,
+          4734.9,
+          4784.1,
+          4843.8
+        ],
+        "q10": [
+          1664.0,
+          1710.0,
+          1761.9,
+          1812.9,
+          1864.9,
+          1918.9,
+          1969.9,
+          2023.7,
+          2075.9,
+          2133.9,
+          2188.9,
+          2241.0,
+          2299.9,
+          2362.9,
+          2417.8,
+          2466.9,
+          2522.9,
+          2580.8,
+          2631.8,
+          2693.0,
+          2746.9,
+          2805.0,
+          2856.0,
+          2903.8,
+          2964.7,
+          3016.9,
+          3074.9,
+          3133.0,
+          3182.9,
+          3239.6,
+          3292.9,
+          3347.8,
+          3404.8,
+          3456.6,
+          3509.6,
+          3560.0,
+          3622.3,
+          3667.9,
+          3725.5,
+          3776.9,
+          3824.9,
+          3876.7,
+          3933.8,
+          4001.0,
+          4053.9,
+          4105.5,
+          4173.6,
+          4216.0,
+          4263.8,
+          4316.0,
+          4372.0,
+          4425.6,
+          4480.9,
+          4522.5,
+          4575.7,
+          4623.9,
+          4685.5,
+          4730.9,
+          4791.3,
+          4839.6,
+          4913.4,
+          4965.9,
+          5028.9,
+          5074.8
+        ],
+        "q25": [
+          1675.0,
+          1727.0,
+          1784.8,
+          1839.0,
+          1896.0,
+          1951.8,
+          2008.0,
+          2063.0,
+          2119.8,
+          2171.0,
+          2234.0,
+          2293.0,
+          2351.8,
+          2406.0,
+          2472.5,
+          2526.0,
+          2587.5,
+          2649.8,
+          2704.0,
+          2767.0,
+          2830.0,
+          2890.0,
+          2949.8,
+          3005.0,
+          3067.0,
+          3118.8,
+          3175.8,
+          3234.0,
+          3291.8,
+          3353.0,
+          3398.8,
+          3454.8,
+          3507.8,
+          3568.8,
+          3626.0,
+          3686.0,
+          3739.8,
+          3793.8,
+          3849.0,
+          3903.8,
+          3964.5,
+          4015.8,
+          4076.5,
+          4121.8,
+          4180.0,
+          4234.5,
+          4297.5,
+          4350.0,
+          4406.0,
+          4468.0,
+          4529.5,
+          4592.0,
+          4641.2,
+          4694.2,
+          4760.0,
+          4814.0,
+          4875.8,
+          4941.8,
+          4993.8,
+          5073.0,
+          5126.0,
+          5181.0,
+          5231.0,
+          5292.0
+        ],
+        "q50": [
+          1690.0,
+          1748.0,
+          1808.5,
+          1868.5,
+          1928.0,
+          1987.0,
+          2045.0,
+          2109.0,
+          2172.0,
+          2235.0,
+          2298.0,
+          2353.5,
+          2417.0,
+          2481.0,
+          2546.0,
+          2609.0,
+          2670.0,
+          2731.5,
+          2801.5,
+          2856.5,
+          2922.0,
+          2983.0,
+          3047.5,
+          3107.0,
+          3167.5,
+          3227.5,
+          3292.0,
+          3360.0,
+          3415.5,
+          3482.0,
+          3541.0,
+          3598.5,
+          3657.5,
+          3711.5,
+          3777.5,
+          3830.5,
+          3894.5,
+          3958.5,
+          4016.0,
+          4071.5,
+          4132.5,
+          4187.0,
+          4237.5,
+          4298.5,
+          4367.5,
+          4426.5,
+          4486.0,
+          4542.5,
+          4612.0,
+          4674.0,
+          4731.0,
+          4783.0,
+          4846.5,
+          4903.0,
+          4959.0,
+          5019.5,
+          5075.5,
+          5145.5,
+          5210.5,
+          5271.5,
+          5334.5,
+          5386.5,
+          5450.5,
+          5507.5
+        ],
+        "q75": [
+          1705.0,
+          1775.0,
+          1840.0,
+          1903.0,
+          1968.2,
+          2033.0,
+          2096.2,
+          2163.2,
+          2227.0,
+          2295.2,
+          2366.0,
+          2430.2,
+          2495.0,
+          2562.0,
+          2640.2,
+          2711.2,
+          2772.2,
+          2832.2,
+          2905.2,
+          2963.2,
+          3037.2,
+          3100.2,
+          3166.0,
+          3235.0,
+          3289.2,
+          3358.2,
+          3416.2,
+          3481.2,
+          3548.5,
+          3613.2,
+          3683.2,
+          3750.2,
+          3807.0,
+          3876.0,
+          3935.2,
+          4000.2,
+          4065.0,
+          4117.2,
+          4186.5,
+          4250.2,
+          4308.2,
+          4370.8,
+          4436.2,
+          4496.0,
+          4559.2,
+          4617.2,
+          4682.0,
+          4740.0,
+          4809.5,
+          4865.5,
+          4922.5,
+          4973.2,
+          5039.5,
+          5098.5,
+          5171.5,
+          5240.8,
+          5309.2,
+          5367.2,
+          5438.5,
+          5497.0,
+          5571.2,
+          5633.2,
+          5704.0,
+          5767.0
+        ],
+        "q90": [
+          1721.0,
+          1800.1,
+          1870.0,
+          1940.0,
+          2011.0,
+          2078.2,
+          2147.1,
+          2230.2,
+          2292.0,
+          2363.2,
+          2438.2,
+          2510.2,
+          2580.1,
+          2645.1,
+          2722.0,
+          2790.1,
+          2863.2,
+          2934.2,
+          3003.0,
+          3081.1,
+          3153.3,
+          3222.1,
+          3284.4,
+          3366.3,
+          3436.2,
+          3511.4,
+          3567.1,
+          3632.6,
+          3697.7,
+          3777.2,
+          3837.2,
+          3913.2,
+          3987.3,
+          4048.1,
+          4095.6,
+          4159.4,
+          4226.0,
+          4294.4,
+          4356.1,
+          4416.4,
+          4486.6,
+          4555.1,
+          4609.6,
+          4674.1,
+          4731.6,
+          4800.4,
+          4874.3,
+          4931.3,
+          5006.1,
+          5062.3,
+          5123.5,
+          5198.3,
+          5263.5,
+          5324.7,
+          5397.5,
+          5473.1,
+          5520.1,
+          5603.3,
+          5684.2,
+          5745.1,
+          5811.5,
+          5877.5,
+          5950.2,
+          6014.0
+        ],
+        "q975": [
+          1752.0,
+          1826.5,
+          1910.5,
+          1982.0,
+          2073.2,
+          2138.5,
+          2230.6,
+          2299.0,
+          2379.2,
+          2464.6,
+          2529.5,
+          2614.8,
+          2688.1,
+          2752.7,
+          2825.3,
+          2916.1,
+          2990.5,
+          3064.1,
+          3134.5,
+          3231.0,
+          3297.0,
+          3363.6,
+          3439.0,
+          3511.5,
+          3594.4,
+          3677.8,
+          3747.9,
+          3821.7,
+          3888.5,
+          3964.7,
+          4032.5,
+          4122.6,
+          4177.2,
+          4241.4,
+          4321.4,
+          4394.6,
+          4464.6,
+          4552.3,
+          4631.0,
+          4700.6,
+          4760.6,
+          4837.8,
+          4887.2,
+          4964.7,
+          5050.1,
+          5121.3,
+          5186.5,
+          5240.6,
+          5301.1,
+          5373.7,
+          5435.0,
+          5514.0,
+          5594.2,
+          5654.7,
+          5734.3,
+          5789.1,
+          5869.3,
+          5942.8,
+          5998.5,
+          6082.9,
+          6149.0,
+          6205.8,
+          6279.5,
+          6377.8
+        ]
+      },
+      "completion_histogram": [
+        {
+          "week": 40,
+          "count": 500
+        },
+        {
+          "week": 42,
+          "count": 0
+        },
+        {
+          "week": 44,
+          "count": 0
+        },
+        {
+          "week": 46,
+          "count": 0
+        },
+        {
+          "week": 48,
+          "count": 0
+        },
+        {
+          "week": 50,
+          "count": 0
+        },
+        {
+          "week": 52,
+          "count": 0
+        },
+        {
+          "week": 54,
+          "count": 0
+        },
+        {
+          "week": 56,
+          "count": 0
+        },
+        {
+          "week": 58,
+          "count": 0
+        },
+        {
+          "week": 60,
+          "count": 0
+        },
+        {
+          "week": 62,
+          "count": 0
+        },
+        {
+          "week": 64,
+          "count": 0
+        },
+        {
+          "week": 66,
+          "count": 0
+        },
+        {
+          "week": 68,
+          "count": 0
+        },
+        {
+          "week": 70,
+          "count": 0
+        },
+        {
+          "week": 72,
+          "count": 0
+        },
+        {
+          "week": 74,
+          "count": 0
+        },
+        {
+          "week": 76,
+          "count": 0
+        },
+        {
+          "week": 78,
+          "count": 0
+        },
+        {
+          "week": 80,
+          "count": 0
+        },
+        {
+          "week": 82,
+          "count": 0
+        },
+        {
+          "week": 84,
+          "count": 0
+        },
+        {
+          "week": 86,
+          "count": 0
+        },
+        {
+          "week": 88,
+          "count": 0
+        },
+        {
+          "week": 90,
+          "count": 0
+        },
+        {
+          "week": 92,
+          "count": 0
+        },
+        {
+          "week": 94,
+          "count": 0
+        },
+        {
+          "week": 96,
+          "count": 0
+        },
+        {
+          "week": 98,
+          "count": 0
+        },
+        {
+          "week": 100,
+          "count": 0
+        },
+        {
+          "week": 102,
+          "count": 0
+        }
+      ],
+      "sites": [
+        {
+          "site_id": "SITE_001",
+          "country": "USA",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 42,
+          "posterior_mean_rate": 1.37,
+          "rate_ci_80": [
+            1.21,
+            1.55
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_002",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 42,
+          "posterior_mean_rate": 1.03,
+          "rate_ci_80": [
+            0.91,
+            1.18
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_003",
+          "country": "Germany",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 29,
+          "posterior_mean_rate": 1.24,
+          "rate_ci_80": [
+            1.08,
+            1.41
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_004",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 22,
+          "posterior_mean_rate": 1.12,
+          "rate_ci_80": [
+            0.98,
+            1.28
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_005",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 21,
+          "posterior_mean_rate": 1.78,
+          "rate_ci_80": [
+            1.57,
+            2.01
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_006",
+          "country": "USA",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 54,
+          "posterior_mean_rate": 2.36,
+          "rate_ci_80": [
+            2.06,
+            2.7
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_007",
+          "country": "UK",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 22,
+          "posterior_mean_rate": 1.04,
+          "rate_ci_80": [
+            0.91,
+            1.18
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_008",
+          "country": "Germany",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 19,
+          "posterior_mean_rate": 1.21,
+          "rate_ci_80": [
+            1.06,
+            1.38
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_009",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 0,
+          "posterior_mean_rate": 0.02,
+          "rate_ci_80": [
+            0.01,
+            0.02
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_010",
+          "country": "France",
+          "hospital_tier": "Community Hospital",
+          "enrolled_to_date": 18,
+          "posterior_mean_rate": 0.78,
+          "rate_ci_80": [
+            0.69,
+            0.89
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_011",
+          "country": "USA",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 0,
+          "posterior_mean_rate": 0.01,
+          "rate_ci_80": [
+            0.01,
+            0.01
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_012",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 53,
+          "posterior_mean_rate": 1.84,
+          "rate_ci_80": [
+            1.6,
+            2.11
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_013",
+          "country": "Germany",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 61,
+          "posterior_mean_rate": 1.74,
+          "rate_ci_80": [
+            1.51,
+            1.98
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_014",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 19,
+          "posterior_mean_rate": 1.09,
+          "rate_ci_80": [
+            0.96,
+            1.23
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_015",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 50,
+          "posterior_mean_rate": 1.38,
+          "rate_ci_80": [
+            1.19,
+            1.55
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_016",
+          "country": "USA",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 0,
+          "posterior_mean_rate": 0.01,
+          "rate_ci_80": [
+            0.01,
+            0.01
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_017",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 56,
+          "posterior_mean_rate": 1.2,
+          "rate_ci_80": [
+            1.04,
+            1.37
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_018",
+          "country": "Germany",
+          "hospital_tier": "Community Hospital",
+          "enrolled_to_date": 13,
+          "posterior_mean_rate": 0.66,
+          "rate_ci_80": [
+            0.58,
+            0.75
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_019",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 18,
+          "posterior_mean_rate": 1.63,
+          "rate_ci_80": [
+            1.42,
+            1.85
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_020",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 43,
+          "posterior_mean_rate": 1.59,
+          "rate_ci_80": [
+            1.4,
+            1.8
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_021",
+          "country": "USA",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 131,
+          "posterior_mean_rate": 3.38,
+          "rate_ci_80": [
+            2.97,
+            3.83
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_022",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 33,
+          "posterior_mean_rate": 1.2,
+          "rate_ci_80": [
+            1.05,
+            1.35
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_023",
+          "country": "Germany",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 78,
+          "posterior_mean_rate": 3.03,
+          "rate_ci_80": [
+            2.66,
+            3.47
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_024",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 15,
+          "posterior_mean_rate": 1.23,
+          "rate_ci_80": [
+            1.07,
+            1.39
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_025",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 43,
+          "posterior_mean_rate": 1.67,
+          "rate_ci_80": [
+            1.46,
+            1.9
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_026",
+          "country": "USA",
+          "hospital_tier": "Community Hospital",
+          "enrolled_to_date": 25,
+          "posterior_mean_rate": 0.58,
+          "rate_ci_80": [
+            0.51,
+            0.66
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_027",
+          "country": "UK",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 50,
+          "posterior_mean_rate": 1.35,
+          "rate_ci_80": [
+            1.19,
+            1.53
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_028",
+          "country": "Germany",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 82,
+          "posterior_mean_rate": 1.44,
+          "rate_ci_80": [
+            1.26,
+            1.64
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_029",
+          "country": "Canada",
+          "hospital_tier": "Community Hospital",
+          "enrolled_to_date": 56,
+          "posterior_mean_rate": 3.65,
+          "rate_ci_80": [
+            3.19,
+            4.19
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_030",
+          "country": "France",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 44,
+          "posterior_mean_rate": 1.14,
+          "rate_ci_80": [
+            1.0,
+            1.29
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_031",
+          "country": "USA",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 58,
+          "posterior_mean_rate": 1.32,
+          "rate_ci_80": [
+            1.16,
+            1.51
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_032",
+          "country": "UK",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 41,
+          "posterior_mean_rate": 2.97,
+          "rate_ci_80": [
+            2.61,
+            3.37
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_033",
+          "country": "Germany",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 25,
+          "posterior_mean_rate": 1.63,
+          "rate_ci_80": [
+            1.42,
+            1.86
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_034",
+          "country": "Canada",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 0,
+          "posterior_mean_rate": 0.02,
+          "rate_ci_80": [
+            0.01,
+            0.02
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_035",
+          "country": "France",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 28,
+          "posterior_mean_rate": 1.08,
+          "rate_ci_80": [
+            0.94,
+            1.24
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_036",
+          "country": "USA",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 79,
+          "posterior_mean_rate": 2.74,
+          "rate_ci_80": [
+            2.4,
+            3.13
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_037",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 37,
+          "posterior_mean_rate": 1.33,
+          "rate_ci_80": [
+            1.15,
+            1.51
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_038",
+          "country": "Germany",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 34,
+          "posterior_mean_rate": 0.93,
+          "rate_ci_80": [
+            0.8,
+            1.06
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_039",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 78,
+          "posterior_mean_rate": 2.96,
+          "rate_ci_80": [
+            2.59,
+            3.37
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_040",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 115,
+          "posterior_mean_rate": 2.4,
+          "rate_ci_80": [
+            2.1,
+            2.72
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        }
+      ]
+    },
+    "scenario": {
+      "current_week": 40,
+      "target": 1200,
+      "deadline": 90,
+      "total_enrolled_to_date": 1634,
+      "p_hit_by_deadline": 1.0,
+      "median_completion_week": 41.0,
+      "at_risk_sites_count": 0,
+      "active_sites_count": 40,
+      "observed_history": [
+        {
+          "week": 1,
+          "cumulative_enrolled": 0
+        },
+        {
+          "week": 2,
+          "cumulative_enrolled": 0
+        },
+        {
+          "week": 3,
+          "cumulative_enrolled": 5
+        },
+        {
+          "week": 4,
+          "cumulative_enrolled": 14
+        },
+        {
+          "week": 5,
+          "cumulative_enrolled": 23
+        },
+        {
+          "week": 6,
+          "cumulative_enrolled": 40
+        },
+        {
+          "week": 7,
+          "cumulative_enrolled": 53
+        },
+        {
+          "week": 8,
+          "cumulative_enrolled": 88
+        },
+        {
+          "week": 9,
+          "cumulative_enrolled": 112
+        },
+        {
+          "week": 10,
+          "cumulative_enrolled": 164
+        },
+        {
+          "week": 11,
+          "cumulative_enrolled": 198
+        },
+        {
+          "week": 12,
+          "cumulative_enrolled": 244
+        },
+        {
+          "week": 13,
+          "cumulative_enrolled": 333
+        },
+        {
+          "week": 14,
+          "cumulative_enrolled": 396
+        },
+        {
+          "week": 15,
+          "cumulative_enrolled": 466
+        },
+        {
+          "week": 16,
+          "cumulative_enrolled": 503
+        },
+        {
+          "week": 17,
+          "cumulative_enrolled": 549
+        },
+        {
+          "week": 18,
+          "cumulative_enrolled": 628
+        },
+        {
+          "week": 19,
+          "cumulative_enrolled": 694
+        },
+        {
+          "week": 20,
+          "cumulative_enrolled": 745
+        },
+        {
+          "week": 21,
+          "cumulative_enrolled": 819
+        },
+        {
+          "week": 22,
+          "cumulative_enrolled": 843
+        },
+        {
+          "week": 23,
+          "cumulative_enrolled": 871
+        },
+        {
+          "week": 24,
+          "cumulative_enrolled": 922
+        },
+        {
+          "week": 25,
+          "cumulative_enrolled": 951
+        },
+        {
+          "week": 26,
+          "cumulative_enrolled": 1005
+        },
+        {
+          "week": 27,
+          "cumulative_enrolled": 1071
+        },
+        {
+          "week": 28,
+          "cumulative_enrolled": 1089
+        },
+        {
+          "week": 29,
+          "cumulative_enrolled": 1173
+        },
+        {
+          "week": 30,
+          "cumulative_enrolled": 1227
+        },
+        {
+          "week": 31,
+          "cumulative_enrolled": 1245
+        },
+        {
+          "week": 32,
+          "cumulative_enrolled": 1271
+        },
+        {
+          "week": 33,
+          "cumulative_enrolled": 1309
+        },
+        {
+          "week": 34,
+          "cumulative_enrolled": 1337
+        },
+        {
+          "week": 35,
+          "cumulative_enrolled": 1376
+        },
+        {
+          "week": 36,
+          "cumulative_enrolled": 1440
+        },
+        {
+          "week": 37,
+          "cumulative_enrolled": 1481
+        },
+        {
+          "week": 38,
+          "cumulative_enrolled": 1516
+        },
+        {
+          "week": 39,
+          "cumulative_enrolled": 1559
+        },
+        {
+          "week": 40,
+          "cumulative_enrolled": 1634
+        }
+      ],
+      "forecast_fan": {
+        "weeks": [
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103,
+          104
+        ],
+        "q025": [
+          1656.0,
+          1694.4,
+          1738.5,
+          1788.4,
+          1837.0,
+          1888.0,
+          1939.0,
+          1985.0,
+          2030.5,
+          2086.4,
+          2137.4,
+          2196.4,
+          2242.5,
+          2294.9,
+          2349.8,
+          2402.8,
+          2439.9,
+          2502.4,
+          2552.4,
+          2604.0,
+          2660.2,
+          2704.8,
+          2766.3,
+          2819.3,
+          2856.6,
+          2914.4,
+          2970.3,
+          3019.8,
+          3081.0,
+          3124.4,
+          3177.8,
+          3229.0,
+          3277.7,
+          3324.8,
+          3375.4,
+          3420.2,
+          3462.4,
+          3520.7,
+          3570.2,
+          3625.9,
+          3668.8,
+          3742.3,
+          3793.1,
+          3835.5,
+          3879.3,
+          3931.0,
+          3974.9,
+          4021.9,
+          4078.2,
+          4118.5,
+          4166.4,
+          4217.8,
+          4274.9,
+          4347.4,
+          4399.1,
+          4451.3,
+          4489.4,
+          4540.3,
+          4586.6,
+          4634.1,
+          4688.6,
+          4734.9,
+          4784.1,
+          4843.8
+        ],
+        "q10": [
+          1664.0,
+          1710.0,
+          1761.9,
+          1812.9,
+          1864.9,
+          1918.9,
+          1969.9,
+          2023.7,
+          2075.9,
+          2133.9,
+          2188.9,
+          2241.0,
+          2299.9,
+          2362.9,
+          2417.8,
+          2466.9,
+          2522.9,
+          2580.8,
+          2631.8,
+          2693.0,
+          2746.9,
+          2805.0,
+          2856.0,
+          2903.8,
+          2964.7,
+          3016.9,
+          3074.9,
+          3133.0,
+          3182.9,
+          3239.6,
+          3292.9,
+          3347.8,
+          3404.8,
+          3456.6,
+          3509.6,
+          3560.0,
+          3622.3,
+          3667.9,
+          3725.5,
+          3776.9,
+          3824.9,
+          3876.7,
+          3933.8,
+          4001.0,
+          4053.9,
+          4105.5,
+          4173.6,
+          4216.0,
+          4263.8,
+          4316.0,
+          4372.0,
+          4425.6,
+          4480.9,
+          4522.5,
+          4575.7,
+          4623.9,
+          4685.5,
+          4730.9,
+          4791.3,
+          4839.6,
+          4913.4,
+          4965.9,
+          5028.9,
+          5074.8
+        ],
+        "q25": [
+          1675.0,
+          1727.0,
+          1784.8,
+          1839.0,
+          1896.0,
+          1951.8,
+          2008.0,
+          2063.0,
+          2119.8,
+          2171.0,
+          2234.0,
+          2293.0,
+          2351.8,
+          2406.0,
+          2472.5,
+          2526.0,
+          2587.5,
+          2649.8,
+          2704.0,
+          2767.0,
+          2830.0,
+          2890.0,
+          2949.8,
+          3005.0,
+          3067.0,
+          3118.8,
+          3175.8,
+          3234.0,
+          3291.8,
+          3353.0,
+          3398.8,
+          3454.8,
+          3507.8,
+          3568.8,
+          3626.0,
+          3686.0,
+          3739.8,
+          3793.8,
+          3849.0,
+          3903.8,
+          3964.5,
+          4015.8,
+          4076.5,
+          4121.8,
+          4180.0,
+          4234.5,
+          4297.5,
+          4350.0,
+          4406.0,
+          4468.0,
+          4529.5,
+          4592.0,
+          4641.2,
+          4694.2,
+          4760.0,
+          4814.0,
+          4875.8,
+          4941.8,
+          4993.8,
+          5073.0,
+          5126.0,
+          5181.0,
+          5231.0,
+          5292.0
+        ],
+        "q50": [
+          1690.0,
+          1748.0,
+          1808.5,
+          1868.5,
+          1928.0,
+          1987.0,
+          2045.0,
+          2109.0,
+          2172.0,
+          2235.0,
+          2298.0,
+          2353.5,
+          2417.0,
+          2481.0,
+          2546.0,
+          2609.0,
+          2670.0,
+          2731.5,
+          2801.5,
+          2856.5,
+          2922.0,
+          2983.0,
+          3047.5,
+          3107.0,
+          3167.5,
+          3227.5,
+          3292.0,
+          3360.0,
+          3415.5,
+          3482.0,
+          3541.0,
+          3598.5,
+          3657.5,
+          3711.5,
+          3777.5,
+          3830.5,
+          3894.5,
+          3958.5,
+          4016.0,
+          4071.5,
+          4132.5,
+          4187.0,
+          4237.5,
+          4298.5,
+          4367.5,
+          4426.5,
+          4486.0,
+          4542.5,
+          4612.0,
+          4674.0,
+          4731.0,
+          4783.0,
+          4846.5,
+          4903.0,
+          4959.0,
+          5019.5,
+          5075.5,
+          5145.5,
+          5210.5,
+          5271.5,
+          5334.5,
+          5386.5,
+          5450.5,
+          5507.5
+        ],
+        "q75": [
+          1705.0,
+          1775.0,
+          1840.0,
+          1903.0,
+          1968.2,
+          2033.0,
+          2096.2,
+          2163.2,
+          2227.0,
+          2295.2,
+          2366.0,
+          2430.2,
+          2495.0,
+          2562.0,
+          2640.2,
+          2711.2,
+          2772.2,
+          2832.2,
+          2905.2,
+          2963.2,
+          3037.2,
+          3100.2,
+          3166.0,
+          3235.0,
+          3289.2,
+          3358.2,
+          3416.2,
+          3481.2,
+          3548.5,
+          3613.2,
+          3683.2,
+          3750.2,
+          3807.0,
+          3876.0,
+          3935.2,
+          4000.2,
+          4065.0,
+          4117.2,
+          4186.5,
+          4250.2,
+          4308.2,
+          4370.8,
+          4436.2,
+          4496.0,
+          4559.2,
+          4617.2,
+          4682.0,
+          4740.0,
+          4809.5,
+          4865.5,
+          4922.5,
+          4973.2,
+          5039.5,
+          5098.5,
+          5171.5,
+          5240.8,
+          5309.2,
+          5367.2,
+          5438.5,
+          5497.0,
+          5571.2,
+          5633.2,
+          5704.0,
+          5767.0
+        ],
+        "q90": [
+          1721.0,
+          1800.1,
+          1870.0,
+          1940.0,
+          2011.0,
+          2078.2,
+          2147.1,
+          2230.2,
+          2292.0,
+          2363.2,
+          2438.2,
+          2510.2,
+          2580.1,
+          2645.1,
+          2722.0,
+          2790.1,
+          2863.2,
+          2934.2,
+          3003.0,
+          3081.1,
+          3153.3,
+          3222.1,
+          3284.4,
+          3366.3,
+          3436.2,
+          3511.4,
+          3567.1,
+          3632.6,
+          3697.7,
+          3777.2,
+          3837.2,
+          3913.2,
+          3987.3,
+          4048.1,
+          4095.6,
+          4159.4,
+          4226.0,
+          4294.4,
+          4356.1,
+          4416.4,
+          4486.6,
+          4555.1,
+          4609.6,
+          4674.1,
+          4731.6,
+          4800.4,
+          4874.3,
+          4931.3,
+          5006.1,
+          5062.3,
+          5123.5,
+          5198.3,
+          5263.5,
+          5324.7,
+          5397.5,
+          5473.1,
+          5520.1,
+          5603.3,
+          5684.2,
+          5745.1,
+          5811.5,
+          5877.5,
+          5950.2,
+          6014.0
+        ],
+        "q975": [
+          1752.0,
+          1826.5,
+          1910.5,
+          1982.0,
+          2073.2,
+          2138.5,
+          2230.6,
+          2299.0,
+          2379.2,
+          2464.6,
+          2529.5,
+          2614.8,
+          2688.1,
+          2752.7,
+          2825.3,
+          2916.1,
+          2990.5,
+          3064.1,
+          3134.5,
+          3231.0,
+          3297.0,
+          3363.6,
+          3439.0,
+          3511.5,
+          3594.4,
+          3677.8,
+          3747.9,
+          3821.7,
+          3888.5,
+          3964.7,
+          4032.5,
+          4122.6,
+          4177.2,
+          4241.4,
+          4321.4,
+          4394.6,
+          4464.6,
+          4552.3,
+          4631.0,
+          4700.6,
+          4760.6,
+          4837.8,
+          4887.2,
+          4964.7,
+          5050.1,
+          5121.3,
+          5186.5,
+          5240.6,
+          5301.1,
+          5373.7,
+          5435.0,
+          5514.0,
+          5594.2,
+          5654.7,
+          5734.3,
+          5789.1,
+          5869.3,
+          5942.8,
+          5998.5,
+          6082.9,
+          6149.0,
+          6205.8,
+          6279.5,
+          6377.8
+        ]
+      },
+      "completion_histogram": [
+        {
+          "week": 40,
+          "count": 500
+        },
+        {
+          "week": 42,
+          "count": 0
+        },
+        {
+          "week": 44,
+          "count": 0
+        },
+        {
+          "week": 46,
+          "count": 0
+        },
+        {
+          "week": 48,
+          "count": 0
+        },
+        {
+          "week": 50,
+          "count": 0
+        },
+        {
+          "week": 52,
+          "count": 0
+        },
+        {
+          "week": 54,
+          "count": 0
+        },
+        {
+          "week": 56,
+          "count": 0
+        },
+        {
+          "week": 58,
+          "count": 0
+        },
+        {
+          "week": 60,
+          "count": 0
+        },
+        {
+          "week": 62,
+          "count": 0
+        },
+        {
+          "week": 64,
+          "count": 0
+        },
+        {
+          "week": 66,
+          "count": 0
+        },
+        {
+          "week": 68,
+          "count": 0
+        },
+        {
+          "week": 70,
+          "count": 0
+        },
+        {
+          "week": 72,
+          "count": 0
+        },
+        {
+          "week": 74,
+          "count": 0
+        },
+        {
+          "week": 76,
+          "count": 0
+        },
+        {
+          "week": 78,
+          "count": 0
+        },
+        {
+          "week": 80,
+          "count": 0
+        },
+        {
+          "week": 82,
+          "count": 0
+        },
+        {
+          "week": 84,
+          "count": 0
+        },
+        {
+          "week": 86,
+          "count": 0
+        },
+        {
+          "week": 88,
+          "count": 0
+        },
+        {
+          "week": 90,
+          "count": 0
+        },
+        {
+          "week": 92,
+          "count": 0
+        },
+        {
+          "week": 94,
+          "count": 0
+        },
+        {
+          "week": 96,
+          "count": 0
+        },
+        {
+          "week": 98,
+          "count": 0
+        },
+        {
+          "week": 100,
+          "count": 0
+        },
+        {
+          "week": 102,
+          "count": 0
+        }
+      ],
+      "sites": [
+        {
+          "site_id": "SITE_001",
+          "country": "USA",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 42,
+          "posterior_mean_rate": 1.37,
+          "rate_ci_80": [
+            1.21,
+            1.55
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_002",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 42,
+          "posterior_mean_rate": 1.03,
+          "rate_ci_80": [
+            0.91,
+            1.18
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_003",
+          "country": "Germany",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 29,
+          "posterior_mean_rate": 1.24,
+          "rate_ci_80": [
+            1.08,
+            1.41
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_004",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 22,
+          "posterior_mean_rate": 1.12,
+          "rate_ci_80": [
+            0.98,
+            1.28
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_005",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 21,
+          "posterior_mean_rate": 1.78,
+          "rate_ci_80": [
+            1.57,
+            2.01
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_006",
+          "country": "USA",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 54,
+          "posterior_mean_rate": 2.36,
+          "rate_ci_80": [
+            2.06,
+            2.7
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_007",
+          "country": "UK",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 22,
+          "posterior_mean_rate": 1.04,
+          "rate_ci_80": [
+            0.91,
+            1.18
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_008",
+          "country": "Germany",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 19,
+          "posterior_mean_rate": 1.21,
+          "rate_ci_80": [
+            1.06,
+            1.38
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_009",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 0,
+          "posterior_mean_rate": 0.02,
+          "rate_ci_80": [
+            0.01,
+            0.02
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_010",
+          "country": "France",
+          "hospital_tier": "Community Hospital",
+          "enrolled_to_date": 18,
+          "posterior_mean_rate": 0.78,
+          "rate_ci_80": [
+            0.69,
+            0.89
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_011",
+          "country": "USA",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 0,
+          "posterior_mean_rate": 0.01,
+          "rate_ci_80": [
+            0.01,
+            0.01
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_012",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 53,
+          "posterior_mean_rate": 1.84,
+          "rate_ci_80": [
+            1.6,
+            2.11
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_013",
+          "country": "Germany",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 61,
+          "posterior_mean_rate": 1.74,
+          "rate_ci_80": [
+            1.51,
+            1.98
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_014",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 19,
+          "posterior_mean_rate": 1.09,
+          "rate_ci_80": [
+            0.96,
+            1.23
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_015",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 50,
+          "posterior_mean_rate": 1.38,
+          "rate_ci_80": [
+            1.19,
+            1.55
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_016",
+          "country": "USA",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 0,
+          "posterior_mean_rate": 0.01,
+          "rate_ci_80": [
+            0.01,
+            0.01
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_017",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 56,
+          "posterior_mean_rate": 1.2,
+          "rate_ci_80": [
+            1.04,
+            1.37
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_018",
+          "country": "Germany",
+          "hospital_tier": "Community Hospital",
+          "enrolled_to_date": 13,
+          "posterior_mean_rate": 0.66,
+          "rate_ci_80": [
+            0.58,
+            0.75
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_019",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 18,
+          "posterior_mean_rate": 1.63,
+          "rate_ci_80": [
+            1.42,
+            1.85
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_020",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 43,
+          "posterior_mean_rate": 1.59,
+          "rate_ci_80": [
+            1.4,
+            1.8
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_021",
+          "country": "USA",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 131,
+          "posterior_mean_rate": 3.38,
+          "rate_ci_80": [
+            2.97,
+            3.83
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_022",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 33,
+          "posterior_mean_rate": 1.2,
+          "rate_ci_80": [
+            1.05,
+            1.35
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_023",
+          "country": "Germany",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 78,
+          "posterior_mean_rate": 3.03,
+          "rate_ci_80": [
+            2.66,
+            3.47
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_024",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 15,
+          "posterior_mean_rate": 1.23,
+          "rate_ci_80": [
+            1.07,
+            1.39
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_025",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 43,
+          "posterior_mean_rate": 1.67,
+          "rate_ci_80": [
+            1.46,
+            1.9
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_026",
+          "country": "USA",
+          "hospital_tier": "Community Hospital",
+          "enrolled_to_date": 25,
+          "posterior_mean_rate": 0.58,
+          "rate_ci_80": [
+            0.51,
+            0.66
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_027",
+          "country": "UK",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 50,
+          "posterior_mean_rate": 1.35,
+          "rate_ci_80": [
+            1.19,
+            1.53
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_028",
+          "country": "Germany",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 82,
+          "posterior_mean_rate": 1.44,
+          "rate_ci_80": [
+            1.26,
+            1.64
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_029",
+          "country": "Canada",
+          "hospital_tier": "Community Hospital",
+          "enrolled_to_date": 56,
+          "posterior_mean_rate": 3.65,
+          "rate_ci_80": [
+            3.19,
+            4.19
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_030",
+          "country": "France",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 44,
+          "posterior_mean_rate": 1.14,
+          "rate_ci_80": [
+            1.0,
+            1.29
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_031",
+          "country": "USA",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 58,
+          "posterior_mean_rate": 1.32,
+          "rate_ci_80": [
+            1.16,
+            1.51
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_032",
+          "country": "UK",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 41,
+          "posterior_mean_rate": 2.97,
+          "rate_ci_80": [
+            2.61,
+            3.37
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_033",
+          "country": "Germany",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 25,
+          "posterior_mean_rate": 1.63,
+          "rate_ci_80": [
+            1.42,
+            1.86
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_034",
+          "country": "Canada",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 0,
+          "posterior_mean_rate": 0.02,
+          "rate_ci_80": [
+            0.01,
+            0.02
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_035",
+          "country": "France",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 28,
+          "posterior_mean_rate": 1.08,
+          "rate_ci_80": [
+            0.94,
+            1.24
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_036",
+          "country": "USA",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 79,
+          "posterior_mean_rate": 2.74,
+          "rate_ci_80": [
+            2.4,
+            3.13
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_037",
+          "country": "UK",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 37,
+          "posterior_mean_rate": 1.33,
+          "rate_ci_80": [
+            1.15,
+            1.51
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_038",
+          "country": "Germany",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 34,
+          "posterior_mean_rate": 0.93,
+          "rate_ci_80": [
+            0.8,
+            1.06
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_039",
+          "country": "Canada",
+          "hospital_tier": "Regional Hospital",
+          "enrolled_to_date": 78,
+          "posterior_mean_rate": 2.96,
+          "rate_ci_80": [
+            2.59,
+            3.37
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        },
+        {
+          "site_id": "SITE_040",
+          "country": "France",
+          "hospital_tier": "Academic Medical Center",
+          "enrolled_to_date": 115,
+          "posterior_mean_rate": 2.4,
+          "rate_ci_80": [
+            2.1,
+            2.72
+          ],
+          "p_at_risk": 0.0,
+          "is_at_risk": false,
+          "status": "HEALTHY"
+        }
+      ]
+    },
+    "delta_completion_week": 0.0,
+    "delta_p_hit_by_deadline": 0.0,
+    "scenario_description": "Status Quo (No Interventions)"
+  }
+}

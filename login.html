@@ -448,7 +448,7 @@
     </form>
 
     <div class="footer-note">
-      Connected to <a href="frontend/index.html">Adaptive Clinical Trial Portal</a> &bull; Protected with Role-Based Access Control
+      Connected to <a href="index.html">Adaptive Clinical Trial Portal</a> &bull; Protected with Role-Based Access Control
     </div>
   </div>
 
@@ -469,7 +469,7 @@
     // Set authenticated user and redirect
     function completeAuthentication(user) {
       localStorage.setItem("ct_auth_user", JSON.stringify(user));
-      window.location.href = "frontend/index.html";
+      window.location.href = "index.html";
     }
 
     // Core Login Action
@@ -572,7 +572,7 @@
 
     document.getElementById("btn-guest")?.addEventListener("click", () => {
       localStorage.removeItem("ct_auth_user");
-      window.location.href = "frontend/index.html";
+      window.location.href = "index.html";
     });
   </script>
 </body>

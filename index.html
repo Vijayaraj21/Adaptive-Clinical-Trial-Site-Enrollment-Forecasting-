@@ -1,65 +1,950 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=frontend/">
-  <script type="text/javascript">
-    window.location.replace("frontend/");
-  </script>
-  <title>Adaptive Clinical Trial Site Enrollment Forecasting Platform</title>
-  <style>
-    body {
-      background-color: #0b0f19;
-      color: #e2e8f0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      text-align: center;
-    }
-    .card {
-      background: #111827;
-      border: 1px solid #1e293b;
-      border-radius: 12px;
-      padding: 2.5rem 3rem;
-      max-width: 500px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    h2 {
-      margin-top: 0;
-      color: #38bdf8;
-      font-size: 1.5rem;
-    }
-    p {
-      color: #94a3b8;
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-    a.btn {
-      display: inline-block;
-      margin-top: 1rem;
-      background: linear-gradient(135deg, #0284c7, #2563eb);
-      color: #fff;
-      padding: 0.75rem 1.75rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: opacity 0.2s;
-    }
-    a.btn:hover {
-      opacity: 0.9;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adaptive Clinical Trial Site Enrollment Forecasting Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="card">
-    <h2>Adaptive Clinical Trial Forecasting</h2>
-    <p>Hierarchical Bayesian Negative Binomial Inference & Hospital Flow Analytics Platform</p>
-    <p>Redirecting to interactive clinical portal...</p>
-    <a href="frontend/" class="btn">Launch Dashboard ⚡</a>
+  <!-- Floating Corner Tab on Left Edge of Viewport -->
+  <button id="btn-edge-drawer" class="corner-drawer-tab" title="Open Sliding Dashboard (Left Corner)" aria-label="Open Sliding Dashboard">
+    <span class="corner-tab-arrow">▶</span>
+    <span class="corner-tab-text">DASHBOARD</span>
+  </button>
+
+  <!-- Sliding Drawer Backdrop Overlay -->
+  <div id="sliding-drawer-backdrop" class="sliding-drawer-backdrop"></div>
+
+  <!-- Sliding Left Corner Dashboard Drawer -->
+  <aside id="sliding-dashboard" class="sliding-drawer" aria-label="Sliding Navigation and Control Dashboard">
+    <!-- Drawer Header -->
+    <div class="drawer-header">
+      <div class="drawer-brand">
+        <div class="logo-badge">CT-BAYES</div>
+        <div>
+          <h3>Control Dashboard</h3>
+          <p class="drawer-sub">Adaptive Trial Analytics</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <div id="system-badge" class="status-badge pulse">Connecting...</div>
+        <button id="btn-close-drawer" class="btn-close-drawer" title="Close Panel">&times;</button>
+      </div>
+    </div>
+
+    <!-- Scrollable Drawer Body -->
+    <div class="drawer-scroll-body">
+      <!-- Active User / Role Card (Moved into Drawer) -->
+      <div class="drawer-user-card" id="auth-header-section">
+        <div id="user-profile-badge" class="user-profile-badge-drawer">
+          <div class="drawer-user-info">
+            <div class="drawer-user-avatar" id="user-avatar">👑</div>
+            <div>
+              <h4 id="user-display-name">Vijay (System Administrator)</h4>
+              <span id="user-role-badge" class="role-badge role-admin">👑 SYSTEM ADMIN</span>
+            </div>
+          </div>
+          <div class="drawer-user-actions" style="margin-top:0.75rem; display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <button id="btn-change-pwd" class="btn-chip" title="Change Password">🔑 Password</button>
+            <button id="btn-switch-role" class="btn-chip" title="Cycle Account Role">🔄 Switch Role</button>
+            <button id="btn-open-ingest" class="btn-chip btn-accent" style="display:none;" title="Ingest Weekly Batch">+ Ingest Batch</button>
+            <button id="btn-logout" class="btn-chip btn-ghost" title="Sign out">Logout</button>
+          </div>
+        </div>
+        <button id="btn-open-login" class="btn-primary btn-sm btn-block" style="display:none;">Sign In</button>
+      </div>
+
+      <!-- Theme & Audio Controls Section (Moved into Drawer) -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Visual Theme & Audio FX</div>
+        <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+          <div class="theme-select-wrap" style="flex:1;">
+            <label for="theme-selector">🎨 Theme:</label>
+            <select id="theme-selector" class="theme-select" title="Switch visual color theme">
+              <option value="midnight">🌌 Midnight Cyber</option>
+              <option value="nordic">🏥 Clinical Nordic</option>
+              <option value="biotech">🧬 Bio-Tech Emerald</option>
+              <option value="executive">🌅 Sunset Executive</option>
+            </select>
+          </div>
+          <button id="btn-sound-fx" class="btn-sound-toggle active" title="Toggle Clinical Feedback Sound Effects">
+            <span id="sound-icon">🔊</span> Audio FX
+          </button>
+        </div>
+      </div>
+
+      <!-- Executive Export Suite Section (Moved into Drawer) -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Executive Data Export</div>
+        <div class="export-toolbar" style="display:flex; gap:0.5rem;">
+          <button id="btn-export-csv" class="btn-export" style="flex:1; justify-content:center;" title="Export trial panel records as CSV">
+            <span>📊 Export CSV</span>
+          </button>
+          <button id="btn-export-summary" class="btn-export" style="flex:1; justify-content:center;" title="Export executive trial briefing">
+            <span>📄 Summary</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Navigation Tabs -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Navigation Tabs</div>
+        <nav class="drawer-nav">
+          <button class="drawer-nav-item active" data-tab="tab-overview">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Trajectory & Bayesian Forecast</span>
+          </button>
+          <button class="drawer-nav-item" data-tab="tab-sites">
+            <span class="nav-icon">🏥</span>
+            <span class="nav-label">Site Registry & Risk Analysis</span>
+            <span class="drawer-nav-badge" id="drawer-nav-site-count">40</span>
+          </button>
+          <button class="drawer-nav-item" data-tab="tab-whatif">
+            <span class="nav-icon">🎛️</span>
+            <span class="nav-label">What-If Simulation Sandbox</span>
+          </button>
+          <button class="drawer-nav-item" data-tab="tab-hospital">
+            <span class="nav-icon">🔬</span>
+            <span class="nav-label">Hospital Flow Analytics</span>
+          </button>
+          <button class="drawer-nav-item" data-tab="tab-models">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Bayesian Model Diagnostics</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Trial Pulse Micro-KPIs -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Trial Pulse (Week 40)</div>
+        <div class="drawer-kpis-grid">
+          <div class="drawer-mini-kpi">
+            <span class="mini-label">Enrolled to Date</span>
+            <strong id="drawer-kpi-enrolled">--</strong>
+          </div>
+          <div class="drawer-mini-kpi">
+            <span class="mini-label">Target (Week 90)</span>
+            <strong id="drawer-kpi-target">1,200</strong>
+          </div>
+          <div class="drawer-mini-kpi">
+            <span class="mini-label">P(Hit by Deadline)</span>
+            <strong id="drawer-kpi-prob">--%</strong>
+          </div>
+          <div class="drawer-mini-kpi">
+            <span class="mini-label">Median Completion</span>
+            <strong id="drawer-kpi-comp-week">Week --</strong>
+          </div>
+          <div class="drawer-mini-kpi full-width">
+            <span class="mini-label">At-Risk Clinical Sites</span>
+            <strong id="drawer-kpi-risk-sites" style="color:var(--accent-red);">-- Sites</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Simulator Sliders (Synchronized) -->
+      <div class="drawer-section" id="drawer-sim-section">
+        <div class="drawer-section-title">
+          <span>Quick Simulator</span>
+          <span class="badge" id="drawer-scenario-tag">Status Quo</span>
+        </div>
+        <div class="drawer-slider-group">
+          <div class="slider-label">
+            <label for="drawer-slider-flow">Hospital Flow Shift</label>
+            <span id="drawer-flow-val" class="slider-num">+0%</span>
+          </div>
+          <input type="range" id="drawer-slider-flow" min="-30" max="30" value="0" step="5">
+        </div>
+        <div class="drawer-slider-group">
+          <div class="slider-label">
+            <label for="drawer-slider-new-sites">New Sites</label>
+            <span id="drawer-new-sites-val" class="slider-num">0 sites</span>
+          </div>
+          <input type="range" id="drawer-slider-new-sites" min="0" max="10" value="0" step="1">
+        </div>
+        <div class="drawer-presets">
+          <button class="btn-chip drawer-preset-btn" data-flow="15" data-sites="0">+15% Surge</button>
+          <button class="btn-chip drawer-preset-btn" data-flow="-20" data-sites="0">-20% Strain</button>
+          <button class="btn-chip drawer-preset-btn" data-flow="0" data-sites="3">+3 Sites</button>
+          <button class="btn-chip drawer-reset-btn" id="drawer-btn-reset">Reset</button>
+        </div>
+      </div>
+
+      <!-- System & API Docs -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">System & API Specs</div>
+        <div class="drawer-links-list">
+          <a href="/docs" target="_blank" class="drawer-link-item">
+            <span>📖 Swagger API Documentation</span>
+            <span class="ext-icon">↗</span>
+          </a>
+          <a href="/redoc" target="_blank" class="drawer-link-item">
+            <span>📘 ReDoc Specification</span>
+            <span class="ext-icon">↗</span>
+          </a>
+          <a href="/api/health" target="_blank" class="drawer-link-item">
+            <span>🩺 Service Health Check</span>
+            <span class="ext-icon">↗</span>
+          </a>
+          <a href="https://github.com/Vijayaraj21/Adaptive-Clinical-Trial-Site-Enrollment-Forecasting-" target="_blank" class="drawer-link-item">
+            <span>🐙 GitHub Repository</span>
+            <span class="ext-icon">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="drawer-footer">
+      <button id="drawer-btn-theme" class="btn-outline btn-block btn-sm">🌓 Theme</button>
+      <button id="drawer-btn-logout" class="btn-ghost btn-block btn-sm">Logout</button>
+    </div>
+  </aside>
+
+  <div class="app-container">
+    <!-- Top Header (Clean & Spacious - Controls moved to Left Dashboard) -->
+    <header class="app-header">
+      <div class="brand">
+        <!-- Sliding Dashboard Toggle Button in Left Corner -->
+        <button id="btn-toggle-drawer" class="btn-drawer-toggle" title="Open Sliding Dashboard (Left Corner)" aria-label="Toggle Sliding Dashboard">
+          <span class="drawer-icon-bars">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span>Dashboard</span>
+        </button>
+        <div class="logo-badge">CT-BAYES</div>
+        <div>
+          <h1>Adaptive Clinical Trial Enrollment Forecasting</h1>
+          <p class="subtitle">Hierarchical Bayesian Inference & Real-World Hospital Flow Analytics Platform</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <!-- Fast Trigger to open sliding drawer -->
+        <button id="btn-header-open-drawer" class="btn-primary btn-sm" title="Open Left Corner Control Dashboard">
+          <span>⚡ Open Control Dashboard</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top KPI Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-label">Enrolled to Date</span>
+        <div class="kpi-value" id="kpi-enrolled">--</div>
+        <span class="kpi-sub" id="kpi-enrolled-sub">Current Week 40</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Target Enrollment</span>
+        <div class="kpi-value" id="kpi-target">1,200</div>
+        <span class="kpi-sub" id="kpi-deadline-sub">Deadline: Week 90</span>
+      </div>
+      <div class="kpi-card highlight-success">
+        <span class="kpi-label">P(Hit by Deadline)</span>
+        <div class="kpi-value" id="kpi-prob">--%</div>
+        <span class="kpi-sub" id="kpi-prob-sub">Posterior Probability</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Median Completion Week</span>
+        <div class="kpi-value" id="kpi-comp-week">Week --</div>
+        <span class="kpi-sub" id="kpi-comp-delta">--</span>
+      </div>
+      <div class="kpi-card highlight-warning">
+        <span class="kpi-label">At-Risk Sites</span>
+        <div class="kpi-value" id="kpi-risk-sites">--</div>
+        <span class="kpi-sub" id="kpi-active-sites">-- Active Sites</span>
+      </div>
+    </section>
+
+    <!-- Overall Trial Progress Bar -->
+    <section class="progress-section">
+      <div class="progress-header">
+        <span>Trial Enrollment Progress: <strong id="progress-enrolled-text">--</strong> / <strong id="progress-target-text">1,200</strong> patients</span>
+        <span id="progress-percent-text" class="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%;"></div>
+      </div>
+    </section>
+
+    <!-- Creative Component: Trial Health & Velocity Gauge -->
+    <section class="trial-health-card">
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 100 100">
+          <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+          <circle id="gauge-arc" class="gauge-fill" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="30"></circle>
+        </svg>
+        <div class="gauge-center-text">
+          <span id="gauge-score-text" class="gauge-pct">92%</span>
+          <span class="gauge-subtext">Velocity</span>
+        </div>
+      </div>
+      <div class="health-details">
+        <div class="health-title-row">
+          <h4 id="health-title">Clinical Enrollment Health: Optimal Trajectory</h4>
+          <span id="health-badge" class="health-status-badge">HIGH CONFIDENCE</span>
+        </div>
+        <p class="health-desc" id="health-desc">
+          Hierarchical Bayesian posterior velocity indicates a <strong>92% probability</strong> of hitting the 1,200 patient protocol target by Week 90. Site-level overdispersion is well-controlled with low residual variance.
+        </p>
+      </div>
+    </section>
+
+    <!-- Dashboard Tab Navigation Bar -->
+    <nav class="dashboard-tabs">
+      <button class="tab-btn active" data-tab="tab-overview">
+        <span class="tab-icon">📈</span> Trajectory & Forecast
+      </button>
+      <button class="tab-btn" data-tab="tab-sites">
+        <span class="tab-icon">🏥</span> Site Registry & Risk (<span id="tab-site-count">40</span>)
+      </button>
+      <button class="tab-btn" data-tab="tab-whatif">
+        <span class="tab-icon">🎛️</span> What-If Simulator
+      </button>
+      <button class="tab-btn" data-tab="tab-hospital">
+        <span class="tab-icon">🔬</span> Hospital Flow Analytics
+      </button>
+      <button class="tab-btn" data-tab="tab-models">
+        <span class="tab-icon">📊</span> Bayesian Model Diagnostics
+      </button>
+    </nav>
+
+    <!-- =========================================================================
+         TAB 1: Trajectory & Forecast Overview
+         ========================================================================= -->
+    <div id="tab-overview" class="tab-content active">
+      <!-- Creative Component: Animated Trajectory Timeline Playback Controller -->
+      <div class="playback-controller-card">
+        <div class="playback-controls">
+          <button id="btn-play-timeline" class="playback-btn-primary" title="Play animated forecast trajectory week-by-week">
+            <span id="play-icon" class="playback-btn-icon">▶</span>
+            <span id="play-text">Play Trajectory</span>
+          </button>
+          <button id="btn-reset-timeline" class="btn-chip" title="Reset playback to current week 40">↺ Reset</button>
+        </div>
+        <div class="playback-scrubber-wrap">
+          <label for="timeline-scrubber" style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">TIMELINE:</label>
+          <input type="range" id="timeline-scrubber" min="1" max="104" value="40" step="1" title="Drag to inspect trajectory at any week">
+          <span id="scrubber-week-badge" class="playback-week-badge">Week 40</span>
+        </div>
+        <div class="playback-speed-group">
+          <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">SPEED:</span>
+          <button class="speed-chip active" data-speed="1">1x</button>
+          <button class="speed-chip" data-speed="2">2x</button>
+          <button class="speed-chip" data-speed="4">4x</button>
+        </div>
+      </div>
+
+      <!-- Main Charts Grid -->
+      <section class="charts-grid">
+        <!-- Fan Chart -->
+        <div class="chart-card">
+          <div class="card-header">
+            <div>
+              <h3>Cumulative Enrollment Trajectory & Bayesian Credible Bands</h3>
+              <p class="chart-sub">Observed trajectory, median forecast, and 80% & 95% posterior credible envelopes</p>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-item"><span class="legend-color obs"></span>Observed</span>
+              <span class="legend-item"><span class="legend-color q50"></span>Median (q50)</span>
+              <span class="legend-item"><span class="legend-color band80"></span>80% CI</span>
+              <span class="legend-item"><span class="legend-color band95"></span>95% CI</span>
+              <span class="legend-item"><span class="legend-color target"></span>Target</span>
+              <span class="legend-item"><span class="legend-color deadline"></span>Deadline</span>
+            </div>
+          </div>
+          <div class="chart-container" id="fan-chart-container">
+            <svg id="fan-chart-svg" viewBox="0 0 850 360" preserveAspectRatio="none"></svg>
+          </div>
+        </div>
+
+        <!-- Completion Week Histogram -->
+        <div class="chart-card">
+          <div class="card-header">
+            <div>
+              <h3>Completion Week Posterior Distribution</h3>
+              <p class="chart-sub">Density of Monte Carlo predicted trial completion weeks</p>
+            </div>
+          </div>
+          <div class="chart-container" id="hist-chart-container">
+            <svg id="hist-chart-svg" viewBox="0 0 450 360" preserveAspectRatio="none"></svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- Protocol Metadata Ribbon -->
+      <section class="protocol-card">
+        <div class="protocol-badge">TRIAL PROTOCOL</div>
+        <div class="protocol-info">
+          <h4 id="protocol-title">Adaptive Multi-Center Clinical Trial (NCT04280705)</h4>
+          <p id="protocol-desc">Randomized, controlled clinical trial across international medical centers evaluating adaptive Bayesian recruitment velocity.</p>
+        </div>
+        <div class="protocol-chips" id="protocol-countries-list">
+          <!-- Filled dynamically -->
+        </div>
+      </section>
+    </div>
+
+    <!-- =========================================================================
+         TAB 2: Site Registry & Performance Flags
+         ========================================================================= -->
+    <div id="tab-sites" class="tab-content">
+      <!-- Summary Site Badges -->
+      <div class="site-kpi-summary">
+        <div class="site-kpi-pill">Total Sites: <strong id="site-stat-total">40</strong></div>
+        <div class="site-kpi-pill success">Active: <strong id="site-stat-active">36</strong></div>
+        <div class="site-kpi-pill warning">At-Risk: <strong id="site-stat-risk">--</strong></div>
+        <div class="site-kpi-pill danger">Closed: <strong id="site-stat-closed">0</strong></div>
+        <div class="site-kpi-pill neutral">Countries: <strong id="site-stat-countries">5</strong></div>
+      </div>
+
+      <section class="table-section">
+        <div class="table-header">
+          <div>
+            <h3>Multi-Center Site Registry & Longitudinal Performance</h3>
+            <p class="chart-sub">Click any site to inspect its individual 104-week longitudinal trajectory and flow covariates.</p>
+          </div>
+          <div class="table-filters">
+            <input type="text" id="site-search" placeholder="Search site ID, country...">
+            <select id="status-filter">
+              <option value="ALL">All Statuses</option>
+              <option value="HEALTHY">Healthy Only</option>
+              <option value="AT_RISK">At-Risk Only</option>
+              <option value="CLOSED">Closed Only</option>
+            </select>
+            <select id="country-filter">
+              <option value="ALL">All Countries</option>
+              <option value="USA">United States</option>
+              <option value="CAN">Canada</option>
+              <option value="GBR">United Kingdom</option>
+              <option value="DEU">Germany</option>
+              <option value="FRA">France</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="site-table">
+            <thead>
+              <tr>
+                <th>Site ID</th>
+                <th>Country</th>
+                <th>Hospital Tier</th>
+                <th>Enrolled</th>
+                <th>Posterior Rate (80% CI)</th>
+                <th>P(At Risk)</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="site-table-body">
+              <tr><td colspan="8" class="text-center">Loading site profiles...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Creative Component: Global Centers Geo-Distribution Ribbon -->
+      <section class="geo-distribution-section">
+        <div class="panel-header">
+          <div>
+            <h4>Global Medical Centers Recruitment Distribution</h4>
+            <p class="chart-sub">International multi-center trial performance and hospital network tiering</p>
+          </div>
+        </div>
+        <div class="geo-grid" id="geo-grid-container">
+          <!-- Filled dynamically by app.js -->
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇺🇸 United States</span>
+              <span class="geo-site-count">16 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">4.8 pts/wk</strong>
+            </div>
+          </div>
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇨🇦 Canada</span>
+              <span class="geo-site-count">8 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">3.6 pts/wk</strong>
+            </div>
+          </div>
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇬🇧 United Kingdom</span>
+              <span class="geo-site-count">6 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">3.9 pts/wk</strong>
+            </div>
+          </div>
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇩🇪 Germany</span>
+              <span class="geo-site-count">6 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">3.4 pts/wk</strong>
+            </div>
+          </div>
+          <div class="geo-country-card">
+            <div class="geo-country-header">
+              <span class="geo-flag-name">🇦🇺 Australia</span>
+              <span class="geo-site-count">4 Sites</span>
+            </div>
+            <div class="geo-rate-row">
+              <span>Recruitment Velocity:</span>
+              <strong class="geo-rate-val">3.1 pts/wk</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- =========================================================================
+         TAB 3: Policy Interventions & What-If Simulator
+         ========================================================================= -->
+    <div id="tab-whatif" class="tab-content">
+      <section class="control-panel" id="sandbox-panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <h3>Policy Interventions & What-If Simulation Sandbox</h3>
+            <span class="role-pill" id="panel-role-pill">Guest View (Read-Only)</span>
+          </div>
+          <div class="panel-header-actions">
+            <span class="badge" id="scenario-tag">Status Quo</span>
+            <button id="btn-open-ingest" class="btn-sm btn-accent" style="display:none;" title="Management Only: Ingest new weekly site records">
+              + Ingest Weekly Data
+            </button>
+          </div>
+        </div>
+
+        <!-- User Role Notice -->
+        <div id="user-role-notice" class="role-notice-banner" style="display:none;">
+          <span class="notice-icon">🔒</span>
+          <span>
+            <strong>Guest View (Read-Only)</strong>: Simulation parameters and site closure interventions require <strong>Vijay (Admin)</strong> or <strong>Management</strong> credentials. 
+            <a href="#" id="link-switch-to-manager">Sign In with Authorized Account</a> to unlock live sandbox sliders.
+          </span>
+        </div>
+
+        <!-- Quick Scenario Presets -->
+        <div class="presets-bar">
+          <span class="presets-title">Quick Scenarios:</span>
+          <button class="btn-chip preset-btn" data-flow="15" data-sites="0" title="Simulate winter surge in patient flow">+15% Winter Flow</button>
+          <button class="btn-chip preset-btn" data-flow="-20" data-sites="0" title="Simulate hospital strain / ICU crisis">-20% Capacity Strain</button>
+          <button class="btn-chip preset-btn" data-flow="0" data-sites="3" title="Simulate onboarding 3 fast-track sites">+3 New Sites</button>
+          <button class="btn-chip preset-btn" data-flow="10" data-sites="2" title="Combined intervention">+10% Flow & +2 Sites</button>
+        </div>
+
+        <div class="controls-grid" id="controls-grid">
+          <div class="control-group">
+            <label for="input-target">Target Enrollment</label>
+            <input type="number" id="input-target" value="1200" min="200" max="5000" step="50">
+          </div>
+          <div class="control-group">
+            <label for="input-deadline">Deadline (Week)</label>
+            <input type="number" id="input-deadline" value="90" min="20" max="104" step="1">
+          </div>
+          <div class="control-group">
+            <div class="slider-label">
+              <label for="slider-flow">Hospital Patient Flow Shift</label>
+              <span id="flow-val" class="slider-num">+0%</span>
+            </div>
+            <input type="range" id="slider-flow" min="-30" max="30" value="0" step="5">
+          </div>
+          <div class="control-group">
+            <div class="slider-label">
+              <label for="slider-new-sites">Add New Sites</label>
+              <span id="new-sites-val" class="slider-num">0 sites</span>
+            </div>
+            <input type="range" id="slider-new-sites" min="0" max="10" value="0" step="1">
+          </div>
+          <div class="control-actions">
+            <button id="btn-close-at-risk" class="btn-danger">Close At-Risk Sites</button>
+            <button id="btn-reset" class="btn-secondary">Reset Interventions</button>
+          </div>
+        </div>
+
+        <div id="whatif-delta-banner" class="whatif-banner" style="display:none;">
+          <strong>Simulation Impact:</strong>
+          <span id="delta-comp-text"></span> |
+          <span id="delta-prob-text"></span>
+        </div>
+      </section>
+
+      <!-- Comparison Cards -->
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <h4>Status Quo (Baseline)</h4>
+          <div class="comparison-stat">
+            <span>P(Hit Deadline):</span>
+            <strong id="compare-base-prob">--%</strong>
+          </div>
+          <div class="comparison-stat">
+            <span>Completion Week:</span>
+            <strong id="compare-base-week">Week --</strong>
+          </div>
+          <div class="comparison-stat">
+            <span>Active Sites:</span>
+            <strong id="compare-base-sites">--</strong>
+          </div>
+        </div>
+        <div class="comparison-card highlight">
+          <h4>Simulated Intervention Scenario</h4>
+          <div class="comparison-stat">
+            <span>P(Hit Deadline):</span>
+            <strong id="compare-scen-prob">--%</strong>
+          </div>
+          <div class="comparison-stat">
+            <span>Completion Week:</span>
+            <strong id="compare-scen-week">Week --</strong>
+          </div>
+          <div class="comparison-stat">
+            <span>Net Time Saved:</span>
+            <strong id="compare-net-delta">--</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 4: Hospital Flow & MIMIC Analytics
+         ========================================================================= -->
+    <div id="tab-hospital" class="tab-content">
+      <div class="analytics-header">
+        <div>
+          <h3>Real-World Hospital Patient Flow Covariates</h3>
+          <p class="chart-sub">Coupling electronic health record dynamics (MIMIC-IV volume proxies) with longitudinal trial accrual.</p>
+        </div>
+      </div>
+
+      <div class="flow-kpi-grid">
+        <div class="flow-kpi-card">
+          <span class="flow-kpi-label">Eligible Patient Volume Correlation</span>
+          <div class="flow-kpi-val">+0.152</div>
+          <span class="flow-kpi-desc">Statistically significant positive coefficient ($\beta_{eligible} = 0.114$, 95% HDI [0.034, 0.184])</span>
+        </div>
+        <div class="flow-kpi-card">
+          <span class="flow-kpi-label">Inpatient Bed Occupancy Proxy</span>
+          <div class="flow-kpi-val">+0.062</div>
+          <span class="flow-kpi-desc">Moderate positive correlation reflecting hospital capacity utilization</span>
+        </div>
+        <div class="flow-kpi-card">
+          <span class="flow-kpi-label">Site Activation Delays</span>
+          <div class="flow-kpi-val">8.0 wks</div>
+          <span class="flow-kpi-desc">Median site contract/IRB ramp-up delay before first patient enrolled</span>
+        </div>
+      </div>
+
+      <div class="figures-grid">
+        <div class="figure-card">
+          <h4>Longitudinal Enrollment Curves by Site</h4>
+          <p class="figure-sub">Heterogeneous recruitment trajectories across 40 hospital trial centers</p>
+          <img src="/reports/figures/eda_enrollment_curves.png" alt="Enrollment Curves" class="report-figure-img" onerror="this.parentElement.style.display='none'">
+        </div>
+        <div class="figure-card">
+          <h4>Fourier Seasonality & Patient Flow Dynamics</h4>
+          <p class="figure-sub">Harmonic seasonal waves aligned with hospital admission variations</p>
+          <img src="/reports/figures/eda_seasonality_and_flow.png" alt="Seasonality & Flow" class="report-figure-img" onerror="this.parentElement.style.display='none'">
+        </div>
+        <div class="figure-card">
+          <h4>Hospital Tier Recruitment Heterogeneity</h4>
+          <p class="figure-sub">Distribution of recruitment velocity across Academic, Regional, and Specialized centers</p>
+          <img src="/reports/figures/eda_site_heterogeneity.png" alt="Site Heterogeneity" class="report-figure-img" onerror="this.parentElement.style.display='none'">
+        </div>
+        <div class="figure-card">
+          <h4>Eligible Patient Volume vs Enrolled Accrual</h4>
+          <p class="figure-sub">Empirical scatter plot confirming positive covariate relationship</p>
+          <img src="/reports/figures/eda_enrollment_vs_eligible.png" alt="Enrollment vs Volume" class="report-figure-img" onerror="this.parentElement.style.display='none'">
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 5: Bayesian Model Diagnostics & Backtesting
+         ========================================================================= -->
+    <div id="tab-models" class="tab-content">
+      <div class="analytics-header">
+        <div>
+          <h3>Bayesian MCMC Convergence Diagnostics & Baseline Benchmarking</h3>
+          <p class="chart-sub">Rigorous statistical validation: Gelman-Rubin $\hat{R} < 1.03$, Pareto-smoothed LOO-CV, and expanding-window backtesting.</p>
+        </div>
+      </div>
+
+      <!-- MCMC Diagnostics Scorecards -->
+      <div class="diagnostics-summary-grid">
+        <div class="diag-card">
+          <div class="diag-header">
+            <h4>Model A: Full Hierarchical Bayesian</h4>
+            <span class="diag-badge best">Rank 1 (Best)</span>
+          </div>
+          <div class="diag-stat-row"><span>Divergent Transitions:</span> <strong>0</strong></div>
+          <div class="diag-stat-row"><span>Max $\hat{R}$ Convergence:</span> <strong>1.03</strong> (&lt; 1.05 threshold)</div>
+          <div class="diag-stat-row"><span>Min Effective Sample Size:</span> <strong>128</strong> bulk</div>
+          <div class="diag-stat-row"><span>ELPD LOO Score:</span> <strong>-707.67</strong> (Weight: 100%)</div>
+          <div class="diag-stat-row"><span>$\beta_{eligible}$ HDI:</span> <strong>[0.034, 0.184]</strong></div>
+        </div>
+
+        <div class="diag-card">
+          <div class="diag-header">
+            <h4>Model B: No-Pooling Ablation</h4>
+            <span class="diag-badge">Rank 2</span>
+          </div>
+          <div class="diag-stat-row"><span>Divergent Transitions:</span> <strong>3</strong></div>
+          <div class="diag-stat-row"><span>Max $\hat{R}$ Convergence:</span> <strong>1.01</strong></div>
+          <div class="diag-stat-row"><span>Min Effective Sample Size:</span> <strong>797</strong> bulk</div>
+          <div class="diag-stat-row"><span>ELPD LOO Difference:</span> <strong>-0.87</strong></div>
+          <div class="diag-stat-row"><span>$\beta_{eligible}$ HDI:</span> <strong>[0.043, 0.192]</strong></div>
+        </div>
+
+        <div class="diag-card">
+          <div class="diag-header">
+            <h4>Model C: No-Flow Covariates</h4>
+            <span class="diag-badge">Rank 3</span>
+          </div>
+          <div class="diag-stat-row"><span>Divergent Transitions:</span> <strong>1</strong></div>
+          <div class="diag-stat-row"><span>Max $\hat{R}$ Convergence:</span> <strong>1.01</strong></div>
+          <div class="diag-stat-row"><span>Min Effective Sample Size:</span> <strong>952</strong> bulk</div>
+          <div class="diag-stat-row"><span>ELPD LOO Difference:</span> <strong>-1.04</strong></div>
+          <div class="diag-stat-row"><span>$\beta_{eligible}$ HDI:</span> <strong>[0.037, 0.188]</strong></div>
+        </div>
+      </div>
+
+      <!-- Backtest Benchmark Table -->
+      <section class="table-section">
+        <div class="table-header">
+          <div>
+            <h4>Rolling Expanding-Window Backtest Performance</h4>
+            <p class="chart-sub">Evaluation across forecast horizons (4, 8, 12, 26 weeks) and rolling origin weeks (30, 45, 60, 75).</p>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="site-table">
+            <thead>
+              <tr>
+                <th>Model Architecture</th>
+                <th>MAE (Patients)</th>
+                <th>RMSE</th>
+                <th>MAPE (%)</th>
+                <th>80% Coverage</th>
+                <th>95% Coverage</th>
+                <th>Completion Week Error</th>
+              </tr>
+            </thead>
+            <tbody id="backtest-table-body">
+              <tr>
+                <td><strong>Hierarchical Bayesian (Full Flow)</strong></td>
+                <td><strong>119.84</strong></td>
+                <td><strong>145.05</strong></td>
+                <td>4.17%</td>
+                <td>56.0%</td>
+                <td>81.0%</td>
+                <td>23.5 wks</td>
+              </tr>
+              <tr>
+                <td>Pooled Poisson Baseline</td>
+                <td>115.02</td>
+                <td>188.04</td>
+                <td>4.04%</td>
+                <td>94.0%</td>
+                <td>94.0%</td>
+                <td>22.5 wks</td>
+              </tr>
+              <tr>
+                <td>XGBoost Lag Baseline</td>
+                <td>123.70</td>
+                <td>180.10</td>
+                <td>4.81%</td>
+                <td>81.0%</td>
+                <td>100.0%</td>
+                <td>22.5 wks</td>
+              </tr>
+              <tr>
+                <td>Ablation: No Pooling</td>
+                <td>166.04</td>
+                <td>218.03</td>
+                <td>5.41%</td>
+                <td>88.0%</td>
+                <td>94.0%</td>
+                <td>22.5 wks</td>
+              </tr>
+              <tr>
+                <td>Ablation: No Flow Covariates</td>
+                <td>182.47</td>
+                <td>254.17</td>
+                <td>5.74%</td>
+                <td>81.0%</td>
+                <td>88.0%</td>
+                <td>22.5 wks</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Diagnostic Figures -->
+      <div class="figures-grid">
+        <div class="figure-card">
+          <h4>Posterior Predictive Checks (PPC)</h4>
+          <p class="figure-sub">Observed vs simulated data densities confirming negative-binomial calibration</p>
+          <img src="/reports/figures/model_comparison_ppc.png" alt="PPC Comparison" class="report-figure-img" onerror="this.parentElement.style.display='none'">
+        </div>
+        <div class="figure-card">
+          <h4>Backtest Horizon Evaluation Fan</h4>
+          <p class="figure-sub">Longitudinal error envelopes across 4, 8, 12, and 26-week forecast steps</p>
+          <img src="/reports/figures/backtest_metrics_fan.png" alt="Backtest Fan" class="report-figure-img" onerror="this.parentElement.style.display='none'">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Adaptive Clinical Trial Forecasting Engine v1.0.0 &bull; Biostatistical Hierarchical Negative Binomial Model with Hospital Flow Covariates</p>
+      <p class="api-link">API Swagger Docs: <a href="/docs" target="_blank">/docs</a> &bull; ReDoc: <a href="/redoc" target="_blank">/redoc</a> &bull; Health Check: <a href="/api/health" target="_blank">/api/health</a></p>
+    </footer>
   </div>
+
+  <!-- =========================================================================
+       MODALS
+       ========================================================================= -->
+
+  <!-- Site Detail Drawer/Modal -->
+  <div id="site-detail-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-brand">
+          <div class="logo-badge" id="modal-site-id">SITE</div>
+          <div>
+            <h2 id="modal-site-title">Site Profile & Longitudinal Flow</h2>
+            <p class="subtitle" id="modal-site-meta">Country & Hospital Tier</p>
+          </div>
+        </div>
+        <button id="btn-close-site-modal" class="btn-close">&times;</button>
+      </div>
+
+      <div class="site-modal-stats">
+        <div class="mini-kpi">
+          <span class="mini-kpi-label">Total Enrolled</span>
+          <strong id="modal-site-enrolled">--</strong>
+        </div>
+        <div class="mini-kpi">
+          <span class="mini-kpi-label">Enrolled at W40</span>
+          <strong id="modal-site-w40">--</strong>
+        </div>
+        <div class="mini-kpi">
+          <span class="mini-kpi-label">Active Weeks</span>
+          <strong id="modal-site-active">--</strong>
+        </div>
+        <div class="mini-kpi">
+          <span class="mini-kpi-label">Activation Week</span>
+          <strong id="modal-site-activation">Week --</strong>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin: 1.5rem 0;">
+        <div class="card-header">
+          <h4>Weekly Recruitment & Eligible Flow History (Weeks 1 - 104)</h4>
+        </div>
+        <div class="chart-container" style="height: 220px;">
+          <svg id="site-history-svg" viewBox="0 0 700 200" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+
+      <div class="form-actions" id="modal-site-actions">
+        <button id="btn-modal-toggle-site" class="btn-danger">Close Site</button>
+        <button id="btn-modal-dismiss" class="btn-secondary">Close Window</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="change-pwd-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card modal-card-sm">
+      <div class="modal-header">
+        <div class="modal-brand">
+          <div class="logo-badge">KEY</div>
+          <div>
+            <h3>Change Password</h3>
+            <p class="subtitle" id="pwd-modal-user-subtitle">Update account credentials</p>
+          </div>
+        </div>
+        <button id="btn-close-pwd-modal" class="btn-close">&times;</button>
+      </div>
+      <form id="change-pwd-form" onsubmit="return false;">
+        <div id="change-pwd-error" class="login-error-alert" style="display:none;"></div>
+        <div class="form-group">
+          <label for="pwd-old">Current Password</label>
+          <input type="password" id="pwd-old" placeholder="Enter current password" required autocomplete="current-password">
+        </div>
+        <div class="form-group">
+          <label for="pwd-new">New Password</label>
+          <input type="password" id="pwd-new" placeholder="Enter new password (min 4 chars)" required minlength="4" autocomplete="new-password">
+        </div>
+        <div class="form-actions">
+          <button type="submit" id="btn-submit-change-pwd" class="btn-primary">Update Password</button>
+          <button type="button" id="btn-cancel-change-pwd" class="btn-secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Weekly Data Ingestion Modal (Management Only) -->
+  <div id="ingest-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card modal-card-sm">
+      <div class="modal-header">
+        <div>
+          <h3>Ingest Weekly Trial Batch</h3>
+          <p class="subtitle">Management Only: Push new site observations into panel</p>
+        </div>
+        <button id="btn-close-ingest" class="btn-close">&times;</button>
+      </div>
+      <form id="ingest-form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="ingest-site">Select Site</label>
+          <select id="ingest-site" required>
+            <option value="SITE_001">SITE_001 (USA - Academic Medical Center)</option>
+            <option value="SITE_002">SITE_002 (USA - Regional Hospital)</option>
+            <option value="SITE_003">SITE_003 (CAN - Academic Medical Center)</option>
+            <option value="SITE_004">SITE_004 (GBR - Specialized Cancer Center)</option>
+            <option value="SITE_005">SITE_005 (DEU - University Hospital)</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ingest-week">Week Number</label>
+            <input type="number" id="ingest-week" value="41" min="1" max="104" required>
+          </div>
+          <div class="form-group">
+            <label for="ingest-enrolled">New Patients Enrolled</label>
+            <input type="number" id="ingest-enrolled" value="4" min="0" max="50" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="ingest-volume">Eligible Patient Volume</label>
+          <input type="number" id="ingest-volume" value="48" min="0" max="200" required>
+        </div>
+        <div id="ingest-status-msg" style="display:none; font-size:0.85rem; margin-bottom:1rem;"></div>
+        <div class="form-actions">
+          <button type="submit" id="btn-submit-ingest" class="btn-accent">Submit & Update Forecast</button>
+          <button type="button" id="btn-cancel-ingest" class="btn-secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast-notification"></div>
+  <div id="tooltip" class="chart-tooltip"></div>
+  <script src="app.js"></script>
 </body>
 </html>
