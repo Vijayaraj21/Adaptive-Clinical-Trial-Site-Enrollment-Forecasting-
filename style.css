@@ -2352,6 +2352,7 @@ input[type="range"] {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  display: none !important;
 }
 
 .auth-wrapper {

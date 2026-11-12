@@ -664,9 +664,20 @@ function closeChangePwdModal() {
 async function submitChangePwd(e) {
   e.preventDefault();
   if (!state.currentUser) return;
-  const oldPwd = document.getElementById("pwd-old").value;
-  const newPwd = document.getElementById("pwd-new").value;
+  const oldPwd = document.getElementById("pwd-old")?.value?.trim();
+  const newPwd = document.getElementById("pwd-new")?.value?.trim();
   const errDiv = document.getElementById("change-pwd-error");
+
+  if (!oldPwd || !newPwd) {
+    if (errDiv) {
+      errDiv.textContent = "Please provide both old and new passwords.";
+      errDiv.style.display = "block";
+    }
+    return;
+  }
+
+  const unameLower = state.currentUser.username.toLowerCase();
+  let updated = false;
 
   try {
     const res = await fetch("/api/auth/change-password", {
@@ -679,19 +690,27 @@ async function submitChangePwd(e) {
       }),
     });
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({ detail: "Failed to update password." }));
-      throw new Error(data.detail || "Incorrect current password.");
+    if (res.ok) {
+      updated = true;
     }
+  } catch (err) {}
 
-    closeChangePwdModal();
-    showToast("✓ Password successfully updated!");
-  } catch (err) {
-    if (errDiv) {
-      errDiv.textContent = err.message;
-      errDiv.style.display = "block";
+  if (!updated) {
+    const customPwds = JSON.parse(localStorage.getItem("ct_custom_passwords") || "{}");
+    const activeExpectedPwd = customPwds[unameLower] || DEFAULT_AUTH_USERS[unameLower]?.password;
+    if (oldPwd !== activeExpectedPwd) {
+      if (errDiv) {
+        errDiv.textContent = "Incorrect current password.";
+        errDiv.style.display = "block";
+      }
+      return;
     }
+    customPwds[unameLower] = newPwd;
+    localStorage.setItem("ct_custom_passwords", JSON.stringify(customPwds));
   }
+
+  closeChangePwdModal();
+  showToast("✓ Password successfully updated!");
 }
 
 function openIngestModal() {
@@ -1792,6 +1811,44 @@ Inference powered by PyMC Hierarchical Negative-Binomial distribution calibrated
 // INTEGRATED AUTHENTICATION OVERLAY CONTROLLER
 // Seamless Single-Page Application: Login screen transitions directly to dashboard
 // ============================================================================
+
+// Static authorized credentials for instant edge & GitHub Pages authentication
+const DEFAULT_AUTH_USERS = {
+  vijay: {
+    password: "1704",
+    user: {
+      username: "Vijay",
+      full_name: "Vijay (System Owner & Administrator)",
+      role: "admin",
+      email: "vijay@trial-operations.org",
+      token: "token_vijay_live",
+      permissions: ["*"],
+    }
+  },
+  admin: {
+    password: "admin123",
+    user: {
+      username: "admin",
+      full_name: "Vijayaraj (System Administrator)",
+      role: "admin",
+      email: "vijayaraj@trial-operations.org",
+      token: "token_admin_live",
+      permissions: ["*"],
+    }
+  },
+  manager: {
+    password: "admin123",
+    user: {
+      username: "manager",
+      full_name: "Dr. Marcus Vance",
+      role: "management",
+      email: "m.vance@trial-operations.org",
+      token: "token_manager_live",
+      permissions: ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data"],
+    }
+  }
+};
+
 function initAuthOverlay() {
   const overlay = document.getElementById("auth-screen-overlay");
   const authUser = JSON.parse(localStorage.getItem("ct_auth_user") || "null");
@@ -1811,24 +1868,31 @@ function initAuthOverlay() {
   // Password toggle
   const toggleBtn = document.getElementById("auth-btn-toggle-pwd");
   const pwdInput = document.getElementById("auth-password");
-  toggleBtn?.addEventListener("click", () => {
+  toggleBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
     const isPwd = pwdInput.type === "password";
     pwdInput.type = isPwd ? "text" : "password";
     toggleBtn.textContent = isPwd ? "🙈" : "👁️";
   });
 
-  // Login Form Submit
-  document.getElementById("combined-login-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const u = document.getElementById("auth-username")?.value.trim();
-    const p = document.getElementById("auth-password")?.value.trim();
+  // Handler for form submit & button click
+  const handleAuthSubmit = (e) => {
+    if (e) e.preventDefault();
+    const u = document.getElementById("auth-username")?.value?.trim();
+    const p = document.getElementById("auth-password")?.value?.trim();
     if (u && p) {
       performIntegratedLogin(u, p);
+    } else {
+      showAuthAlert("Please enter both username and password.");
     }
-  });
+  };
+
+  document.getElementById("auth-btn-submit")?.addEventListener("click", handleAuthSubmit);
+  document.getElementById("combined-login-form")?.addEventListener("submit", handleAuthSubmit);
 
   // 1-Click Quick Chips
-  document.getElementById("chip-login-vijay")?.addEventListener("click", () => {
+  document.getElementById("chip-login-vijay")?.addEventListener("click", (e) => {
+    e.preventDefault();
     const uInput = document.getElementById("auth-username");
     const pInput = document.getElementById("auth-password");
     if (uInput) uInput.value = "Vijay";
@@ -1836,7 +1900,8 @@ function initAuthOverlay() {
     performIntegratedLogin("Vijay", "1704");
   });
 
-  document.getElementById("chip-login-manager")?.addEventListener("click", () => {
+  document.getElementById("chip-login-manager")?.addEventListener("click", (e) => {
+    e.preventDefault();
     const uInput = document.getElementById("auth-username");
     const pInput = document.getElementById("auth-password");
     if (uInput) uInput.value = "manager";
@@ -1844,7 +1909,8 @@ function initAuthOverlay() {
     performIntegratedLogin("manager", "admin123");
   });
 
-  document.getElementById("chip-login-admin")?.addEventListener("click", () => {
+  document.getElementById("chip-login-admin")?.addEventListener("click", (e) => {
+    e.preventDefault();
     const uInput = document.getElementById("auth-username");
     const pInput = document.getElementById("auth-password");
     if (uInput) uInput.value = "admin";
@@ -1853,7 +1919,8 @@ function initAuthOverlay() {
   });
 
   // Guest View Button
-  document.getElementById("btn-enter-guest")?.addEventListener("click", () => {
+  document.getElementById("btn-enter-guest")?.addEventListener("click", (e) => {
+    e.preventDefault();
     state.currentUser = null;
     localStorage.removeItem("ct_auth_user");
     if (overlay) overlay.classList.add("hidden");
@@ -1877,8 +1944,13 @@ function hideAuthAlert() {
 
 async function performIntegratedLogin(username, password) {
   hideAuthAlert();
-  const u = username.trim();
-  const p = password.trim();
+  const u = (username || "").trim();
+  const p = (password || "").trim();
+
+  if (!u || !p) {
+    showAuthAlert("Please enter both username and password.");
+    return;
+  }
 
   const submitBtn = document.getElementById("auth-btn-submit");
   if (submitBtn) {
@@ -1887,68 +1959,39 @@ async function performIntegratedLogin(username, password) {
   }
 
   let authenticatedUser = null;
+  const unameLower = u.toLowerCase();
 
-  try {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: u, password: p }),
-    });
+  // 1. Instant check against local credentials database (for GitHub Pages static hosting & offline access)
+  const customPwds = JSON.parse(localStorage.getItem("ct_custom_passwords") || "{}");
+  const expectedPwd = customPwds[unameLower] || DEFAULT_AUTH_USERS[unameLower]?.password;
 
-    if (res.ok) {
-      authenticatedUser = await res.json();
-    } else if (res.status === 401) {
-      throw new Error("Invalid username or password.");
-    }
-  } catch (err) {
-    if (err.message === "Invalid username or password.") {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = "<span>Sign In to Dashboard</span> &rarr;";
+  if (DEFAULT_AUTH_USERS[unameLower] && expectedPwd === p) {
+    authenticatedUser = DEFAULT_AUTH_USERS[unameLower].user;
+  }
+
+  // 2. If not matched locally and not on static Pages, attempt live backend API
+  if (!authenticatedUser) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: u, password: p }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        authenticatedUser = await res.json();
       }
-      showAuthAlert("Invalid username or password. Please try again.");
-      return;
-    }
-
-    // Edge / GitHub Pages / Offline Verification
-    const unameLower = u.toLowerCase();
-    if (unameLower === "vijay" && p === "1704") {
-      authenticatedUser = {
-        username: "Vijay",
-        full_name: "Vijay (System Owner & Administrator)",
-        role: "admin",
-        email: "vijay@trial-operations.org",
-        token: "token_vijay_live",
-        permissions: ["*"],
-      };
-    } else if (unameLower === "admin" && p === "admin123") {
-      authenticatedUser = {
-        username: "admin",
-        full_name: "Vijayaraj (System Administrator)",
-        role: "admin",
-        email: "vijayaraj@trial-operations.org",
-        token: "token_admin_live",
-        permissions: ["*"],
-      };
-    } else if (unameLower === "manager" && p === "admin123") {
-      authenticatedUser = {
-        username: "manager",
-        full_name: "Dr. Marcus Vance",
-        role: "management",
-        email: "m.vance@trial-operations.org",
-        token: "token_manager_live",
-        permissions: ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data"],
-      };
-    } else {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = "<span>Sign In to Dashboard</span> &rarr;";
-      }
-      showAuthAlert("Invalid username or password. Please check your credentials.");
-      return;
+    } catch (err) {
+      // Backend unavailable; error will be surfaced below
     }
   }
 
+  // 3. Complete authentication or display error
   if (authenticatedUser) {
     state.currentUser = authenticatedUser;
     localStorage.setItem("ct_auth_user", JSON.stringify(authenticatedUser));
@@ -1966,6 +2009,12 @@ async function performIntegratedLogin(username, password) {
       if (!state.forecastData) {
         triggerForecast(true);
       }
-    }, 350);
+    }, 250);
+  } else {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = "<span>Sign In to Dashboard</span> &rarr;";
+    }
+    showAuthAlert("Invalid username or password. Please verify your credentials.");
   }
 }
