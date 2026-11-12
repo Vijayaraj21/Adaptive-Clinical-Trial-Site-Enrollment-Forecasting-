@@ -10,6 +10,158 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- =========================================================================
+       COMBINED AUTHENTICATION SCREEN OVERLAY (Integrated Login Portal)
+       Displays when unauthenticated; after login, directly opens the dashboard.
+       ========================================================================= -->
+  <div id="auth-screen-overlay" class="auth-screen-overlay">
+    <div class="auth-wrapper">
+      <!-- Left Side: Biostatistical Platform Showcase -->
+      <div class="showcase-pane">
+        <div>
+          <div class="brand-top">
+            <div class="brand-badge">CT-BAYES <span>v2.4</span></div>
+          </div>
+
+          <div class="showcase-headline">
+            <h2>Adaptive Clinical Trial Forecasting</h2>
+            <p>Next-generation Hierarchical Bayesian Negative-Binomial enrollment prediction calibrated with real-world hospital patient flow constraints.</p>
+          </div>
+
+          <div class="features-list">
+            <div class="feature-item">
+              <div class="feature-icon-box">🧬</div>
+              <div class="feature-text">
+                <h4>Hierarchical Negative-Binomial Inference</h4>
+                <p>Accounts for severe site overdispersion and historical zero-inflation across 40 global clinical sites.</p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-icon-box">🏥</div>
+              <div class="feature-text">
+                <h4>MIMIC-IV Hospital Patient Flow</h4>
+                <p>Directly models ICU bed strain and ER throughput as dynamic time-varying recruitment covariates.</p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-icon-box">🎛️</div>
+              <div class="feature-text">
+                <h4>Counterfactual What-If Sandbox</h4>
+                <p>Simulate &plusmn;30% hospital flow shifts, mid-trial site onboarding, and early closure of at-risk centers.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Metadata Strip -->
+        <div class="trial-strip">
+          <div class="strip-stat">
+            <span class="strip-label">Trial Protocol</span>
+            <span class="strip-value">NCT04280705</span>
+          </div>
+          <div class="strip-stat">
+            <span class="strip-label">Target Enrollment</span>
+            <span class="strip-value">1,200</span>
+          </div>
+          <div class="strip-stat">
+            <span class="strip-label">Current Milestone</span>
+            <span class="strip-value">Week 40</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Clean Enterprise Sign In Form -->
+      <div class="form-pane">
+        <div class="form-header">
+          <h3>Sign In</h3>
+          <p>Enter your authorized credentials to access the simulation dashboard.</p>
+        </div>
+
+        <!-- Notification / Error Box -->
+        <div id="auth-login-alert" class="alert-box"></div>
+
+        <!-- Credential Form -->
+        <form id="combined-login-form" autocomplete="on" onsubmit="return false;">
+          <!-- Username -->
+          <div class="form-group-wrap">
+            <div class="form-label-row">
+              <label for="auth-username">Username</label>
+            </div>
+            <div class="input-box-wrap">
+              <span class="input-icon-left">👤</span>
+              <input 
+                type="text" 
+                id="auth-username" 
+                class="auth-input-field" 
+                placeholder="e.g. Vijay, admin, or manager" 
+                required 
+                autocomplete="username"
+              >
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group-wrap">
+            <div class="form-label-row">
+              <label for="auth-password">Password</label>
+            </div>
+            <div class="input-box-wrap">
+              <span class="input-icon-left">🔒</span>
+              <input 
+                type="password" 
+                id="auth-password" 
+                class="auth-input-field" 
+                placeholder="Enter account password" 
+                required 
+                autocomplete="current-password"
+              >
+              <button type="button" id="auth-btn-toggle-pwd" class="toggle-pwd-btn" title="Show/Hide Password" aria-label="Toggle password visibility">👁️</button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="auth-btn-submit" class="btn-submit-action">
+            <span>Sign In to Dashboard</span>
+            <span style="font-size:1.1rem;">&rarr;</span>
+          </button>
+
+          <!-- Divider -->
+          <div class="form-divider-row">
+            <span>Quick Sign In</span>
+          </div>
+
+          <!-- Quick 1-Click Credentials -->
+          <div class="preset-chips-title">One-Click Authorized Accounts</div>
+          <div class="preset-chips-grid">
+            <button type="button" class="chip-btn-auth chip-gold-auth" id="chip-login-vijay" title="Dedicated Owner Superuser">
+              👑 Vijay (1704)
+            </button>
+            <button type="button" class="chip-btn-auth" id="chip-login-manager" title="Operations Director">
+              🛡️ Management (admin123)
+            </button>
+            <button type="button" class="chip-btn-auth" id="chip-login-admin" title="Lead Administrator">
+              👑 Admin (admin123)
+            </button>
+          </div>
+
+          <!-- Guest View Button -->
+          <button type="button" id="btn-enter-guest" class="btn-guest-action">
+            Continue as Observer (Guest View)
+          </button>
+
+          <!-- Security Compliance Badge -->
+          <div class="form-footer-badge">
+            <span>🔒 256-bit TLS Encrypted</span>
+            <span>&bull;</span>
+            <span>Role-Based Access Control</span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Floating Corner Tab on Left Edge of Viewport -->
   <button id="btn-edge-drawer" class="corner-drawer-tab" title="Open Sliding Dashboard (Left Corner)" aria-label="Open Sliding Dashboard">
     <span class="corner-tab-arrow">▶</span>

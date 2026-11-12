@@ -1,7 +1,3 @@
-const authUser = JSON.parse(localStorage.getItem("ct_auth_user") || "null");
-const isGuest = new URLSearchParams(location.search).has("guest");
-if (!authUser && !isGuest) location.replace("login.html");
-
 /**
  * Clinical Trial Enrollment Forecasting Dashboard
  * Reactive Multi-Tab UI with Inline SVG Fan Chart, Histogram, What-If Simulation Sandbox,
@@ -38,6 +34,7 @@ function hasPermission(perm) {
 document.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("ct_theme_name") || "midnight";
   applyMultiTheme(savedTheme);
+  initAuthOverlay();
   initAuth();
   initEventListeners();
   checkHealth();
@@ -218,7 +215,8 @@ function initEventListeners() {
 
   // Auth & Role Event Listeners
   document.getElementById("btn-open-login")?.addEventListener("click", () => {
-    location.href = "login.html";
+    const overlay = document.getElementById("auth-screen-overlay");
+    if (overlay) overlay.classList.remove("hidden");
   });
   document.getElementById("btn-switch-role")?.addEventListener("click", switchRole);
   document.getElementById("btn-logout")?.addEventListener("click", logout);
@@ -628,8 +626,18 @@ function switchRole() {
 }
 
 function logout() {
+  state.currentUser = null;
   localStorage.removeItem("ct_auth_user");
-  location.href = "login.html";
+  const overlay = document.getElementById("auth-screen-overlay");
+  if (overlay) {
+    overlay.classList.remove("hidden");
+    const pwd = document.getElementById("auth-password");
+    if (pwd) pwd.value = "";
+    hideAuthAlert();
+  }
+  updateUserDisplay();
+  applyRolePermissions();
+  showToast("Signed out. Authentication required to continue.");
 }
 
 function openChangePwdModal() {
@@ -1777,4 +1785,187 @@ Inference powered by PyMC Hierarchical Negative-Binomial distribution calibrated
   a.click();
   URL.revokeObjectURL(url);
   showToast("✓ Executive Summary exported!");
+}
+
+
+// ============================================================================
+// INTEGRATED AUTHENTICATION OVERLAY CONTROLLER
+// Seamless Single-Page Application: Login screen transitions directly to dashboard
+// ============================================================================
+function initAuthOverlay() {
+  const overlay = document.getElementById("auth-screen-overlay");
+  const authUser = JSON.parse(localStorage.getItem("ct_auth_user") || "null");
+  const isGuest = new URLSearchParams(location.search).has("guest");
+
+  if (authUser) {
+    state.currentUser = authUser;
+    if (overlay) overlay.classList.add("hidden");
+  } else if (isGuest) {
+    state.currentUser = null;
+    if (overlay) overlay.classList.add("hidden");
+  } else {
+    state.currentUser = null;
+    if (overlay) overlay.classList.remove("hidden");
+  }
+
+  // Password toggle
+  const toggleBtn = document.getElementById("auth-btn-toggle-pwd");
+  const pwdInput = document.getElementById("auth-password");
+  toggleBtn?.addEventListener("click", () => {
+    const isPwd = pwdInput.type === "password";
+    pwdInput.type = isPwd ? "text" : "password";
+    toggleBtn.textContent = isPwd ? "🙈" : "👁️";
+  });
+
+  // Login Form Submit
+  document.getElementById("combined-login-form")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const u = document.getElementById("auth-username")?.value.trim();
+    const p = document.getElementById("auth-password")?.value.trim();
+    if (u && p) {
+      performIntegratedLogin(u, p);
+    }
+  });
+
+  // 1-Click Quick Chips
+  document.getElementById("chip-login-vijay")?.addEventListener("click", () => {
+    const uInput = document.getElementById("auth-username");
+    const pInput = document.getElementById("auth-password");
+    if (uInput) uInput.value = "Vijay";
+    if (pInput) pInput.value = "1704";
+    performIntegratedLogin("Vijay", "1704");
+  });
+
+  document.getElementById("chip-login-manager")?.addEventListener("click", () => {
+    const uInput = document.getElementById("auth-username");
+    const pInput = document.getElementById("auth-password");
+    if (uInput) uInput.value = "manager";
+    if (pInput) pInput.value = "admin123";
+    performIntegratedLogin("manager", "admin123");
+  });
+
+  document.getElementById("chip-login-admin")?.addEventListener("click", () => {
+    const uInput = document.getElementById("auth-username");
+    const pInput = document.getElementById("auth-password");
+    if (uInput) uInput.value = "admin";
+    if (pInput) pInput.value = "admin123";
+    performIntegratedLogin("admin", "admin123");
+  });
+
+  // Guest View Button
+  document.getElementById("btn-enter-guest")?.addEventListener("click", () => {
+    state.currentUser = null;
+    localStorage.removeItem("ct_auth_user");
+    if (overlay) overlay.classList.add("hidden");
+    initAuth();
+    showToast("Entered in Guest View (Read-Only Mode).");
+  });
+}
+
+function showAuthAlert(msg, isSuccess = false) {
+  const alertBox = document.getElementById("auth-login-alert");
+  if (!alertBox) return;
+  alertBox.textContent = msg;
+  alertBox.className = isSuccess ? "alert-box alert-success" : "alert-box";
+  alertBox.style.display = "block";
+}
+
+function hideAuthAlert() {
+  const alertBox = document.getElementById("auth-login-alert");
+  if (alertBox) alertBox.style.display = "none";
+}
+
+async function performIntegratedLogin(username, password) {
+  hideAuthAlert();
+  const u = username.trim();
+  const p = password.trim();
+
+  const submitBtn = document.getElementById("auth-btn-submit");
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = "<span>Authenticating...</span>";
+  }
+
+  let authenticatedUser = null;
+
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: u, password: p }),
+    });
+
+    if (res.ok) {
+      authenticatedUser = await res.json();
+    } else if (res.status === 401) {
+      throw new Error("Invalid username or password.");
+    }
+  } catch (err) {
+    if (err.message === "Invalid username or password.") {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "<span>Sign In to Dashboard</span> &rarr;";
+      }
+      showAuthAlert("Invalid username or password. Please try again.");
+      return;
+    }
+
+    // Edge / GitHub Pages / Offline Verification
+    const unameLower = u.toLowerCase();
+    if (unameLower === "vijay" && p === "1704") {
+      authenticatedUser = {
+        username: "Vijay",
+        full_name: "Vijay (System Owner & Administrator)",
+        role: "admin",
+        email: "vijay@trial-operations.org",
+        token: "token_vijay_live",
+        permissions: ["*"],
+      };
+    } else if (unameLower === "admin" && p === "admin123") {
+      authenticatedUser = {
+        username: "admin",
+        full_name: "Vijayaraj (System Administrator)",
+        role: "admin",
+        email: "vijayaraj@trial-operations.org",
+        token: "token_admin_live",
+        permissions: ["*"],
+      };
+    } else if (unameLower === "manager" && p === "admin123") {
+      authenticatedUser = {
+        username: "manager",
+        full_name: "Dr. Marcus Vance",
+        role: "management",
+        email: "m.vance@trial-operations.org",
+        token: "token_manager_live",
+        permissions: ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data"],
+      };
+    } else {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "<span>Sign In to Dashboard</span> &rarr;";
+      }
+      showAuthAlert("Invalid username or password. Please check your credentials.");
+      return;
+    }
+  }
+
+  if (authenticatedUser) {
+    state.currentUser = authenticatedUser;
+    localStorage.setItem("ct_auth_user", JSON.stringify(authenticatedUser));
+    showAuthAlert(`✓ Authenticated as ${authenticatedUser.full_name}. Unlocking dashboard...`, true);
+
+    setTimeout(() => {
+      const overlay = document.getElementById("auth-screen-overlay");
+      if (overlay) overlay.classList.add("hidden");
+      initAuth();
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "<span>Sign In to Dashboard</span> &rarr;";
+      }
+      showToast(`Welcome, ${authenticatedUser.full_name}! Direct dashboard ready.`);
+      if (!state.forecastData) {
+        triggerForecast(true);
+      }
+    }, 350);
+  }
 }
