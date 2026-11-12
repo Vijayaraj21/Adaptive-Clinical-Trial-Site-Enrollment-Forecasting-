@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Adaptive Clinical Trial Site Enrollment Forecasting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070a13;
+      --bg-card: #0d1322;
+      --bg-input: #121a2f;
+      --border: #1e293b;
+      --border-focus: #38bdf8;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #c084fc;
+      --accent-gold: #f59e0b;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #131c35 0%, var(--bg-dark) 70%);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 760px;
+      background: rgba(13, 19, 34, 0.92);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(56, 189, 248, 0.08);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Brand Header */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, #0284c7, #6366f1);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
+      letter-spacing: 0.05em;
+    }
+
+    .brand-title h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* Quick Role Cards Grid */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 680px) {
+      .role-grid { grid-template-columns: 1fr; }
+      .login-container { padding: 1.5rem; }
+    }
+
+    .role-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .role-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .role-card-admin {
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+    .role-card-admin:hover {
+      border-color: var(--accent-gold);
+      box-shadow: 0 10px 25px -4px rgba(245, 158, 11, 0.25);
+    }
+
+    .role-card-mgmt {
+      border-color: rgba(192, 132, 252, 0.35);
+    }
+    .role-card-mgmt:hover {
+      border-color: var(--accent-purple);
+      box-shadow: 0 10px 25px -4px rgba(192, 132, 252, 0.25);
+    }
+
+    .role-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .role-icon {
+      font-size: 1.6rem;
+    }
+
+    .role-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+    }
+    .role-badge-admin {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+    .role-badge-mgmt {
+      background: rgba(192, 132, 252, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(192, 132, 252, 0.35);
+    }
+
+    .role-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .role-card p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+
+    .role-card code {
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      color: #38bdf8;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0b0f19;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+    }
+    .btn-gold:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-purple {
+      background: linear-gradient(135deg, #a855f7, #7c3aed);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
+    }
+    .btn-purple:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      color: var(--text-main);
+      border-color: #475569;
+    }
+
+    /* Form Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 1.5rem 0;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border);
+    }
+    .divider span {
+      padding: 0 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Manual Form */
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: var(--text-muted);
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+
+    .chips-bar {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .chip-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip-btn:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .chip-gold:hover {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    /* Alert */
+    .alert {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 1.75rem;
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+    .footer-note a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+    .footer-note a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <!-- Brand Header -->
+    <div class="brand-header">
+      <div class="logo-badge">CT-BAYES</div>
+      <div class="brand-title">
+        <h1>Adaptive Clinical Trial Forecasting</h1>
+        <p>Hierarchical Bayesian Inference & Hospital Flow Analytics Platform</p>
+      </div>
+    </div>
+
+    <!-- Quick Role Selection Cards -->
+    <div class="role-grid">
+      <!-- Vijay (Owner & Admin) -->
+      <div class="role-card role-card-admin">
+        <div class="role-card-top">
+          <span class="role-icon">👑</span>
+          <span class="role-badge role-badge-admin">Owner & Admin</span>
+        </div>
+        <h3>Vijay (System Owner)</h3>
+        <p>Full administrative privileges: Parameter sandbox, site control, and data ingestion. <code>Vijay / 1704</code></p>
+        <button id="btn-login-vijay" class="btn btn-gold">
+          Sign In as Vijay (1704)
+        </button>
+      </div>
+
+      <!-- Management -->
+      <div class="role-card role-card-mgmt">
+        <div class="role-card-top">
+          <span class="role-icon">🛡️</span>
+          <span class="role-badge role-badge-mgmt">Management</span>
+        </div>
+        <h3>Trial Operations Director</h3>
+        <p>Management privileges: What-If simulation interventions, &plusmn;30% flow shifts, and site toggling.</p>
+        <button id="btn-login-mgmt" class="btn btn-purple">
+          Sign In as Management
+        </button>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider">
+      <span>or sign in manually</span>
+    </div>
+
+    <!-- Error Alert -->
+    <div id="login-alert" class="alert"></div>
+
+    <!-- Manual Form -->
+    <form id="custom-login-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" class="form-input" placeholder="e.g. Vijay, admin, or manager" required autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" class="form-input" placeholder="Password" required autocomplete="current-password">
+      </div>
+
+      <div class="chips-bar">
+        <span>Quick Fill:</span>
+        <button type="button" class="chip-btn chip-gold" id="chip-v">👑 Vijay / 1704</button>
+        <button type="button" class="chip-btn chip-gold" id="chip-a">👑 admin / admin123</button>
+        <button type="button" class="chip-btn" id="chip-m">🛡️ manager / admin123</button>
+      </div>
+
+      <div class="footer-actions">
+        <button type="submit" id="btn-submit" class="btn btn-primary" style="flex: 2;">
+          Authenticate & Enter Dashboard
+        </button>
+        <button type="button" id="btn-guest" class="btn btn-ghost" style="flex: 1;">
+          Guest View
+        </button>
+      </div>
+    </form>
+
+    <div class="footer-note">
+      Connected to <a href="index.html">Adaptive Clinical Trial Portal</a> &bull; Protected with Role-Based Access Control
+    </div>
+  </div>
+
+  <script>
+    const alertBox = document.getElementById("login-alert");
+    const userInput = document.getElementById("username");
+    const passInput = document.getElementById("password");
+
+    function showError(msg) {
+      alertBox.textContent = msg;
+      alertBox.style.display = "block";
+    }
+
+    function clearError() {
+      alertBox.style.display = "none";
+    }
+
+    // Set authenticated user and redirect
+    function completeAuthentication(user) {
+      localStorage.setItem("ct_auth_user", JSON.stringify(user));
+      window.location.href = "index.html";
+    }
+
+    // Core Login Action
+    async function performLogin(username, password) {
+      clearError();
+      const u = username.trim();
+      const p = password.trim();
+
+      if (!u || !p) {
+        showError("Please enter both username and password.");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: u, password: p }),
+        });
+
+        if (res.ok) {
+          const user = await res.json();
+          completeAuthentication(user);
+          return;
+        } else if (res.status === 401) {
+          throw new Error("Invalid username or password.");
+        }
+      } catch (err) {
+        if (err.message === "Invalid username or password.") {
+          showError(err.message);
+          return;
+        }
+
+        // Fallback for static hosting (GitHub Pages) or offline mode
+        const unameLower = u.toLowerCase();
+        if (unameLower === "vijay" && p === "1704") {
+          completeAuthentication({
+            username: "Vijay",
+            full_name: "Vijay (System Owner & Administrator)",
+            role: "admin",
+            email: "vijay@trial-operations.org",
+            token: "token_vijay_static",
+            permissions: ["*"],
+          });
+          return;
+        } else if (unameLower === "admin" && p === "admin123") {
+          completeAuthentication({
+            username: "admin",
+            full_name: "Vijayaraj (System Administrator)",
+            role: "admin",
+            email: "vijayaraj@trial-operations.org",
+            token: "token_admin_static",
+            permissions: ["*"],
+          });
+          return;
+        } else if (unameLower === "manager" && p === "admin123") {
+          completeAuthentication({
+            username: "manager",
+            full_name: "Dr. Marcus Vance",
+            role: "management",
+            email: "m.vance@trial-operations.org",
+            token: "token_manager_static",
+            permissions: ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data"],
+          });
+          return;
+        } else {
+          showError("Invalid username or password.");
+        }
+      }
+    }
+
+    // Event Handlers
+    document.getElementById("btn-login-vijay")?.addEventListener("click", () => {
+      performLogin("Vijay", "1704");
+    });
+
+    document.getElementById("btn-login-mgmt")?.addEventListener("click", () => {
+      performLogin("manager", "admin123");
+    });
+
+    document.getElementById("chip-v")?.addEventListener("click", () => {
+      userInput.value = "Vijay";
+      passInput.value = "1704";
+    });
+
+    document.getElementById("chip-a")?.addEventListener("click", () => {
+      userInput.value = "admin";
+      passInput.value = "admin123";
+    });
+
+    document.getElementById("chip-m")?.addEventListener("click", () => {
+      userInput.value = "manager";
+      passInput.value = "admin123";
+    });
+
+    document.getElementById("custom-login-form")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      performLogin(userInput.value, passInput.value);
+    });
+
+    document.getElementById("btn-guest")?.addEventListener("click", () => {
+      localStorage.removeItem("ct_auth_user");
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
