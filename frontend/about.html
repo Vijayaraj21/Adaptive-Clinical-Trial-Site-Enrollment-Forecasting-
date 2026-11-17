@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070c18">
+  <title>About | CT-BAYES</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="portal-body">
+  <header class="portal-header">
+    <a class="portal-brand" href="/" aria-label="CT-BAYES dashboard">
+      <span class="logo-badge">CT-BAYES</span>
+      <span>TRIAL FORECASTING</span>
+    </a>
+    <nav class="portal-nav" aria-label="Main navigation">
+      <a href="/">Dashboard</a>
+      <a href="/about.html" aria-current="page">About</a>
+      <a href="/login.html">Sign in</a>
+      <a href="/login.html?role=admin">Admin</a>
+      <a class="portal-nav-primary" href="/register.html">Register</a>
+    </nav>
+  </header>
+
+  <main class="portal-main about-main">
+    <section class="portal-intro">
+      <p class="portal-eyebrow">CLINICAL OPERATIONS / FORECASTING</p>
+      <h1>Enrollment, with uncertainty made visible.</h1>
+      <p class="portal-lede">CT-BAYES models site-level recruitment and hospital-flow signals to estimate trial enrollment trajectories, completion timing, and operational risk.</p>
+      <div class="portal-live-status" id="portal-health" role="status">Connecting to the forecasting service...</div>
+    </section>
+
+    <section class="about-metrics" aria-label="Live trial summary">
+      <div class="about-metric"><span>Trial</span><strong id="about-trial">Loading</strong></div>
+      <div class="about-metric"><span>Participating sites</span><strong id="about-sites">--</strong></div>
+      <div class="about-metric"><span>Countries</span><strong id="about-countries">--</strong></div>
+      <div class="about-metric"><span>Persistence</span><strong id="about-database">--</strong></div>
+    </section>
+
+    <section class="about-section">
+      <div class="about-section-heading">
+        <p class="portal-eyebrow">MODEL</p>
+        <h2 id="about-model">Bayesian enrollment forecasting</h2>
+      </div>
+      <div class="about-copy">
+        <p>The forecasting service uses a hierarchical Negative Binomial model to represent variation between recruiting sites and uncertainty in weekly enrollment. Hospital patient-flow covariates provide changing context for each site's recruitment capacity.</p>
+        <p>Posterior simulation produces completion distributions, credible intervals, deadline probabilities, and site-level risk estimates. Scenario analysis evaluates operational changes without rewriting observed trial history.</p>
+      </div>
+    </section>
+
+    <section class="about-section about-data-section">
+      <div class="about-section-heading">
+        <p class="portal-eyebrow">DATA LIFECYCLE</p>
+        <h2>One service, shared records</h2>
+      </div>
+      <div class="about-copy">
+        <p>Trial metadata and the site-week enrollment panel are loaded by the FastAPI service. With MySQL enabled, panel updates, account records, and password hashes persist in the configured database. The dashboard, account forms, and API documentation use this same backend.</p>
+        <div class="about-links">
+          <a href="/docs">API reference <span aria-hidden="true">↗</span></a>
+          <a href="/redoc">API specification <span aria-hidden="true">↗</span></a>
+          <a href="/">Open dashboard <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="portal-footer">
+    <span>CT-BAYES</span>
+    <span id="about-trace">Model trace status: checking</span>
+  </footer>
+  <script src="portal.js"></script>
+</body>
+</html>

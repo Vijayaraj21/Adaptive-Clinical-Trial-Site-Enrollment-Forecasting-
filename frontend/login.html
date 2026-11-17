@@ -1,18 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="midnight">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=index.html">
-  <script type="text/javascript">
-    window.location.replace("index.html");
-  </script>
-  <title>Adaptive Clinical Trial Site Enrollment Forecasting</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070c18">
+  <title>Sign in | CT-BAYES</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body style="background:#070913; color:#ffffff; font-family:-apple-system, BlinkMacSystemFont, sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; text-align:center;">
-  <div>
-    <h2 style="color:#38bdf8; margin-bottom:0.5rem;">Adaptive Clinical Trial Portal</h2>
-    <p style="color:#94a3b8;">Redirecting to unified authentication & simulation dashboard...</p>
-    <a href="index.html" style="display:inline-block; margin-top:1rem; background:#0284c7; color:#fff; padding:0.6rem 1.4rem; border-radius:8px; text-decoration:none; font-weight:600;">Launch Dashboard ⚡</a>
-  </div>
+<body class="portal-body">
+  <header class="portal-header">
+    <a class="portal-brand" href="/" aria-label="CT-BAYES dashboard">
+      <span class="logo-badge">CT-BAYES</span>
+      <span>TRIAL FORECASTING</span>
+    </a>
+    <nav class="portal-nav" aria-label="Main navigation">
+      <a href="/">Dashboard</a>
+      <a href="/about.html">About</a>
+      <a href="/login.html" aria-current="page">Sign in</a>
+      <a href="/login.html?role=admin">Admin</a>
+      <a class="portal-nav-primary" href="/register.html">Register</a>
+    </nav>
+  </header>
+
+  <main class="portal-main portal-auth-main">
+    <section class="portal-auth-intro">
+      <p class="portal-eyebrow" id="login-eyebrow">TRIAL OPERATIONS / ACCOUNT ACCESS</p>
+      <h1 id="login-heading">Welcome back.</h1>
+      <p class="portal-lede">Sign in to view the trial enrollment forecast and site-level operational outlook.</p>
+      <a class="portal-text-link" href="/about.html">About CT-BAYES <span aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="portal-form-panel" aria-labelledby="login-panel-heading">
+      <div class="portal-form-heading">
+        <h2 id="login-panel-heading">Sign in</h2>
+        <span class="portal-role-label">SECURE ACCOUNT</span>
+      </div>
+      <form id="portal-login-form" novalidate>
+        <label class="portal-field" for="portal-username">Username
+          <input id="portal-username" name="username" type="text" autocomplete="username" minlength="3" maxlength="32" required>
+        </label>
+        <label class="portal-field" for="portal-password">Password
+          <input id="portal-password" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <p id="login-message" class="portal-message" role="status" aria-live="polite"></p>
+        <button class="portal-submit" type="submit">Sign in <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="portal-form-footnote">Need an account? <a href="/register.html">Register for observer access</a></p>
+    </section>
+  </main>
+
+  <footer class="portal-footer"><span>CT-BAYES</span><span>Administrator privileges require an approved administrator account.</span></footer>
+  <script src="portal.js"></script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 """Unit and integration tests for FastAPI backend endpoints."""
 
+from uuid import uuid4
+
 from fastapi.testclient import TestClient
 
 from backend.main import app
@@ -81,11 +83,32 @@ def test_update_endpoint():
         ],
         "recalculate_forecast": True,
     }
-    response = client.post("/api/update", json=payload)
+    token = client.post("/api/auth/login", json={"username": "Vijay", "password": "1704"}).json()["token"]
+    response = client.post("/api/update", json=payload, headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "success"
     assert data["ingested_count"] == 1
+
+
+def test_observer_cannot_ingest_data():
+    username = f"observer_{uuid4().hex[:10]}"
+    registration = client.post(
+        "/api/auth/register",
+        json={
+            "username": username,
+            "full_name": "Test Observer",
+            "email": f"{username}@example.org",
+            "password": "test-password-123",
+        },
+    )
+    token = registration.json()["token"]
+    response = client.post(
+        "/api/update",
+        json={"records": [], "recalculate_forecast": False},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 403
 
 
 def test_auth_login_vijay():
@@ -119,6 +142,34 @@ def test_auth_login_investigator_removed():
 def test_auth_login_invalid():
     resp = client.post("/api/auth/login", json={"username": "wrong", "password": "bad"})
     assert resp.status_code == 401
+
+
+def test_auth_register_read_only_user():
+    username = f"observer_{uuid4().hex[:10]}"
+    response = client.post(
+        "/api/auth/register",
+        json={
+            "username": username,
+            "full_name": "Test Observer",
+            "email": f"{username}@example.org",
+            "password": "test-password-123",
+        },
+    )
+    assert response.status_code == 201
+    user = response.json()
+    assert user["role"] == "user"
+    assert "*" not in user["permissions"]
+
+    login_response = client.post(
+        "/api/auth/login",
+        json={"username": username, "password": "test-password-123"},
+    )
+    assert login_response.status_code == 200
+    assert login_response.json()["role"] == "user"
+    token = login_response.json()["token"]
+    profile = client.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert profile.status_code == 200
+    assert profile.json()["username"] == username
 
 
 def test_auth_demo_users():

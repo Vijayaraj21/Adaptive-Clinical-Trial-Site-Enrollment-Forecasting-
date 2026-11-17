@@ -65,3 +65,11 @@ api:
   port: 8000
   reload: false
 
+database:
+  enabled: true
+  host: "127.0.0.1"
+  port: 3306
+  name: "mygem"
+  username: "root"
+  password_env: "MYSQL_PASSWORD"
+

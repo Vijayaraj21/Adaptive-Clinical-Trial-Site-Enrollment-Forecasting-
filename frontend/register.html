@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070c18">
+  <title>Create account | CT-BAYES</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="portal-body">
+  <header class="portal-header">
+    <a class="portal-brand" href="/" aria-label="CT-BAYES dashboard">
+      <span class="logo-badge">CT-BAYES</span>
+      <span>TRIAL FORECASTING</span>
+    </a>
+    <nav class="portal-nav" aria-label="Main navigation">
+      <a href="/">Dashboard</a>
+      <a href="/about.html">About</a>
+      <a href="/login.html">Sign in</a>
+      <a href="/login.html?role=admin">Admin</a>
+      <a class="portal-nav-primary" href="/register.html" aria-current="page">Register</a>
+    </nav>
+  </header>
+
+  <main class="portal-main portal-auth-main">
+    <section class="portal-auth-intro">
+      <p class="portal-eyebrow">ACCOUNT ACCESS / OBSERVER</p>
+      <h1>Create an account</h1>
+      <p class="portal-lede">New accounts are created with read-only dashboard access. Management and administrator access must be provisioned separately.</p>
+      <a class="portal-text-link" href="/about.html">About the forecasting service <span aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="portal-form-panel" aria-labelledby="register-heading">
+      <div class="portal-form-heading">
+        <h2 id="register-heading">Registration</h2>
+        <span class="portal-role-label">READ ONLY</span>
+      </div>
+      <form id="portal-register-form" novalidate>
+        <label class="portal-field" for="register-name">Full name
+          <input id="register-name" name="full_name" type="text" autocomplete="name" minlength="2" maxlength="120" required>
+        </label>
+        <label class="portal-field" for="register-username">Username
+          <input id="register-username" name="username" type="text" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.-]+" required>
+        </label>
+        <label class="portal-field" for="register-email">Email
+          <input id="register-email" name="email" type="email" autocomplete="email" maxlength="255" required>
+        </label>
+        <label class="portal-field" for="register-password">Password
+          <input id="register-password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+        </label>
+        <label class="portal-field" for="register-confirm-password">Confirm password
+          <input id="register-confirm-password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+        </label>
+        <p id="register-message" class="portal-message" role="status" aria-live="polite"></p>
+        <button class="portal-submit" type="submit">Create observer account <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="portal-form-footnote">Already registered? <a href="/login.html">Sign in</a></p>
+    </section>
+  </main>
+
+  <footer class="portal-footer"><span>CT-BAYES</span><span>Credential records are stored by the application backend.</span></footer>
+  <script src="portal.js"></script>
+</body>
+</html>

@@ -20,7 +20,7 @@ const state = {
   baselineData: null,
   sites: [],
   selectedSiteId: null,
-  currentUser: authUser,
+  currentUser: null,
 };
 
 // Check role-based permissions directly from authUser.permissions
@@ -218,13 +218,8 @@ function initEventListeners() {
     const overlay = document.getElementById("auth-screen-overlay");
     if (overlay) overlay.classList.remove("hidden");
   });
-  document.getElementById("btn-switch-role")?.addEventListener("click", switchRole);
   document.getElementById("btn-logout")?.addEventListener("click", logout);
   document.getElementById("drawer-btn-logout")?.addEventListener("click", logout);
-  document.getElementById("link-switch-to-manager")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    switchRole();
-  });
 
   document.getElementById("btn-header-open-drawer")?.addEventListener("click", () => {
     document.getElementById("sliding-dashboard")?.classList.add("open");
@@ -298,7 +293,6 @@ function initEventListeners() {
   });
 
   // Drawer User Actions
-  document.getElementById("drawer-btn-switch-role")?.addEventListener("click", switchRole);
   document.getElementById("drawer-btn-pwd")?.addEventListener("click", openChangePwdModal);
   document.getElementById("drawer-btn-ingest")?.addEventListener("click", openIngestModal);
   document.getElementById("drawer-btn-theme")?.addEventListener("click", toggleTheme);
@@ -602,29 +596,6 @@ function setAuthenticatedUser(user) {
   applyRolePermissions();
 }
 
-function switchRole() {
-  const isVijay = state.currentUser && state.currentUser.username.toLowerCase() === "vijay";
-  const newUser = isVijay
-    ? {
-        username: "manager",
-        full_name: "Dr. Marcus Vance",
-        role: "management",
-        email: "m.vance@trial-operations.org",
-        token: "token_manager_switched",
-        permissions: ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data"],
-      }
-    : {
-        username: "Vijay",
-        full_name: "Vijay (System Owner & Administrator)",
-        role: "admin",
-        email: "vijay@trial-operations.org",
-        token: "token_vijay_switched",
-        permissions: ["*"],
-      };
-  setAuthenticatedUser(newUser);
-  showToast(`Switched role to ${newUser.full_name}`);
-}
-
 function logout() {
   state.currentUser = null;
   localStorage.removeItem("ct_auth_user");
@@ -676,13 +647,14 @@ async function submitChangePwd(e) {
     return;
   }
 
-  const unameLower = state.currentUser.username.toLowerCase();
-  let updated = false;
-
+  let response;
   try {
-    const res = await fetch("/api/auth/change-password", {
+    response = await fetch("/api/auth/change-password", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${state.currentUser.token}`,
+      },
       body: JSON.stringify({
         username: state.currentUser.username,
         old_password: oldPwd,
@@ -690,23 +662,21 @@ async function submitChangePwd(e) {
       }),
     });
 
-    if (res.ok) {
-      updated = true;
+  } catch (err) {
+    if (errDiv) {
+      errDiv.textContent = "Could not reach the password service. Start the dashboard server and try again.";
+      errDiv.style.display = "block";
     }
-  } catch (err) {}
+    return;
+  }
 
-  if (!updated) {
-    const customPwds = JSON.parse(localStorage.getItem("ct_custom_passwords") || "{}");
-    const activeExpectedPwd = customPwds[unameLower] || DEFAULT_AUTH_USERS[unameLower]?.password;
-    if (oldPwd !== activeExpectedPwd) {
-      if (errDiv) {
-        errDiv.textContent = "Incorrect current password.";
-        errDiv.style.display = "block";
-      }
-      return;
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    if (errDiv) {
+      errDiv.textContent = result.detail || "Password update failed.";
+      errDiv.style.display = "block";
     }
-    customPwds[unameLower] = newPwd;
-    localStorage.setItem("ct_custom_passwords", JSON.stringify(customPwds));
+    return;
   }
 
   closeChangePwdModal();
@@ -753,7 +723,10 @@ async function submitIngestData(e) {
 
     const res = await fetch("/api/update", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${state.currentUser?.token || ""}`,
+      },
       body: JSON.stringify(payload),
     });
 
@@ -1812,56 +1785,35 @@ Inference powered by PyMC Hierarchical Negative-Binomial distribution calibrated
 // Seamless Single-Page Application: Login screen transitions directly to dashboard
 // ============================================================================
 
-// Static authorized credentials for instant edge & GitHub Pages authentication
-const DEFAULT_AUTH_USERS = {
-  vijay: {
-    password: "1704",
-    user: {
-      username: "Vijay",
-      full_name: "Vijay (System Owner & Administrator)",
-      role: "admin",
-      email: "vijay@trial-operations.org",
-      token: "token_vijay_live",
-      permissions: ["*"],
-    }
-  },
-  admin: {
-    password: "admin123",
-    user: {
-      username: "admin",
-      full_name: "Vijayaraj (System Administrator)",
-      role: "admin",
-      email: "vijayaraj@trial-operations.org",
-      token: "token_admin_live",
-      permissions: ["*"],
-    }
-  },
-  manager: {
-    password: "admin123",
-    user: {
-      username: "manager",
-      full_name: "Dr. Marcus Vance",
-      role: "management",
-      email: "m.vance@trial-operations.org",
-      token: "token_manager_live",
-      permissions: ["view_kpi", "view_forecast", "view_sites", "simulate_whatif", "modify_sites", "ingest_data"],
-    }
-  }
-};
-
 function initAuthOverlay() {
   const overlay = document.getElementById("auth-screen-overlay");
   const authUser = JSON.parse(localStorage.getItem("ct_auth_user") || "null");
   const isGuest = new URLSearchParams(location.search).has("guest");
 
-  if (authUser) {
+  if (authUser?.token) {
     state.currentUser = authUser;
     if (overlay) overlay.classList.add("hidden");
+    fetch("/api/auth/me", { headers: { Authorization: `Bearer ${authUser.token}` } })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Session expired.");
+        const verifiedUser = await response.json();
+        state.currentUser = verifiedUser;
+        localStorage.setItem("ct_auth_user", JSON.stringify(verifiedUser));
+        initAuth();
+      })
+      .catch(() => {
+        state.currentUser = null;
+        localStorage.removeItem("ct_auth_user");
+        if (overlay) overlay.classList.remove("hidden");
+        initAuth();
+        showAuthAlert("Your session expired. Please sign in again.");
+      });
   } else if (isGuest) {
     state.currentUser = null;
     if (overlay) overlay.classList.add("hidden");
   } else {
     state.currentUser = null;
+    localStorage.removeItem("ct_auth_user");
     if (overlay) overlay.classList.remove("hidden");
   }
 
@@ -1889,34 +1841,6 @@ function initAuthOverlay() {
 
   document.getElementById("auth-btn-submit")?.addEventListener("click", handleAuthSubmit);
   document.getElementById("combined-login-form")?.addEventListener("submit", handleAuthSubmit);
-
-  // 1-Click Quick Chips
-  document.getElementById("chip-login-vijay")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    const uInput = document.getElementById("auth-username");
-    const pInput = document.getElementById("auth-password");
-    if (uInput) uInput.value = "Vijay";
-    if (pInput) pInput.value = "1704";
-    performIntegratedLogin("Vijay", "1704");
-  });
-
-  document.getElementById("chip-login-manager")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    const uInput = document.getElementById("auth-username");
-    const pInput = document.getElementById("auth-password");
-    if (uInput) uInput.value = "manager";
-    if (pInput) pInput.value = "admin123";
-    performIntegratedLogin("manager", "admin123");
-  });
-
-  document.getElementById("chip-login-admin")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    const uInput = document.getElementById("auth-username");
-    const pInput = document.getElementById("auth-password");
-    if (uInput) uInput.value = "admin";
-    if (pInput) pInput.value = "admin123";
-    performIntegratedLogin("admin", "admin123");
-  });
 
   // Guest View Button
   document.getElementById("btn-enter-guest")?.addEventListener("click", (e) => {
@@ -1958,40 +1882,48 @@ async function performIntegratedLogin(username, password) {
     submitBtn.innerHTML = "<span>Authenticating...</span>";
   }
 
-  let authenticatedUser = null;
-  const unameLower = u.toLowerCase();
-
-  // 1. Instant check against local credentials database (for GitHub Pages static hosting & offline access)
-  const customPwds = JSON.parse(localStorage.getItem("ct_custom_passwords") || "{}");
-  const expectedPwd = customPwds[unameLower] || DEFAULT_AUTH_USERS[unameLower]?.password;
-
-  if (DEFAULT_AUTH_USERS[unameLower] && expectedPwd === p) {
-    authenticatedUser = DEFAULT_AUTH_USERS[unameLower].user;
-  }
-
-  // 2. If not matched locally and not on static Pages, attempt live backend API
-  if (!authenticatedUser) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: u, password: p }),
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        authenticatedUser = await res.json();
-      }
-    } catch (err) {
-      // Backend unavailable; error will be surfaced below
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  let response;
+  try {
+    response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: u, password: p }),
+      signal: controller.signal,
+    });
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = "<span>Sign In to Dashboard</span> &rarr;";
     }
+    showAuthAlert(err.name === "AbortError"
+      ? "Sign-in timed out. Check that the dashboard server is running."
+      : "Could not reach the sign-in service. Start the dashboard server and try again.");
+    return;
+  }
+  clearTimeout(timeoutId);
+
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = "<span>Sign In to Dashboard</span> &rarr;";
+    }
+    showAuthAlert(result.detail || "Sign-in failed. Check your username and password.");
+    return;
+  }
+  const authenticatedUser = await response.json().catch(() => null);
+  if (!authenticatedUser) {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = "<span>Sign In to Dashboard</span> &rarr;";
+    }
+    showAuthAlert("The sign-in service returned an invalid response.");
+    return;
   }
 
-  // 3. Complete authentication or display error
   if (authenticatedUser) {
     state.currentUser = authenticatedUser;
     localStorage.setItem("ct_auth_user", JSON.stringify(authenticatedUser));

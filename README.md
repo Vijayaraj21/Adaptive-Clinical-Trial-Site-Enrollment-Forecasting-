@@ -137,13 +137,22 @@ pip install -r requirements.txt
 
 ### 2. Launch Local Server (1-Click or Command Line)
 
+#### Configure local MySQL
+
+Start the local MySQL server, then set `MYSQL_PASSWORD` in the ignored `.env` file. The database name, host, port, and user are configured in `config.yaml` (`mygem` by default). On first startup, the backend creates the database and tables, imports the existing processed site panel, and seeds the demo accounts. Later site-data and password changes are saved in MySQL. Do not commit `.env`; use a dedicated least-privilege MySQL account outside local development.
+
 **Option A (1-Click on Windows):**
 Simply double-click `run_dashboard.bat` (or `start_silent.vbs`). It will launch the FastAPI backend server and automatically open your default browser to [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
 **Option B (CLI):**
 ```bash
-uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+py app.py
 ```
+
+`app.py` starts the FastAPI backend and uses the project `venv` automatically. If Windows reports that port 8000 is already in use, the dashboard is likely already running; open the URL below instead of starting another copy. To run a second instance, set `PORT` to another port first.
+
+**Option C (Windows Desktop App):**
+Run `build_desktop.bat` to build a native WebView application under `dist/CTBayesDesktop/`. See [Windows Desktop Build](docs/DESKTOP_INSTALL.md) for MySQL setup and instructions to create a setup EXE with Inno Setup.
 
 Open your browser:
 - **Interactive Web Dashboard**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)

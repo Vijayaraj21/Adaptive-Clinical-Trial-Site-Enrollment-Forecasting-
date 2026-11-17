@@ -17,12 +17,14 @@ from backend.schemas import (
     ForecastResponse,
     HealthResponse,
     LoginRequest,
+    RegisterRequest,
     SitesResponse,
     TrialMetadataResponse,
     UpdatePasswordRequest,
     UserResponse,
     WhatIfResponse,
 )
+from backend.database import MySQLStore
 from backend.services.forecast_service import ForecastService
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -84,8 +86,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Singleton Forecast Service
-service = ForecastService()
+# Singleton MySQL store and forecast service
+database = MySQLStore.from_config_file("config.yaml")
+if database:
+    database.seed_users(USERS_DB)
+service = ForecastService(database=database)
+
+
+def get_user_for_token(token: str | None) -> dict:
+    if not token:
+        raise HTTPException(status_code=401, detail="Authentication required.")
+    if database:
+        user = database.get_user_for_token(token)
+    else:
+        user = next(
+            (record for name, record in USERS_DB.items() if f"token_{name}_{record['role']}" == token),
+            None,
+        )
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid or expired session token.")
+    return user
+
+
+def get_user_from_authorization(authorization: str | None) -> dict:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Bearer token required.")
+    return get_user_for_token(authorization.removeprefix("Bearer "))
 
 
 @app.get("/api/health", response_model=HealthResponse, tags=["System"])
@@ -139,8 +165,11 @@ def create_whatif_scenario(req: ForecastRequest) -> WhatIfResponse:
 
 
 @app.post("/api/update", tags=["Adaptive Ingestion"])
-def ingest_weekly_data(batch: DataIngestBatch) -> dict:
+def ingest_weekly_data(batch: DataIngestBatch, authorization: str | None = Header(None)) -> dict:
     """Ingest new weekly records into the longitudinal panel and update forecasts."""
+    user = get_user_from_authorization(authorization)
+    if "*" not in user["permissions"] and "ingest_data" not in user["permissions"]:
+        raise HTTPException(status_code=403, detail="Data ingestion requires management access.")
     try:
         return service.ingest_new_data(batch)
     except (RuntimeError, ValueError, KeyError, OSError) as e:
@@ -194,15 +223,34 @@ def get_eda_report() -> dict:
 @app.post("/api/auth/login", response_model=UserResponse, tags=["Authentication"])
 def login(req: LoginRequest) -> UserResponse:
     """Authenticate User or Management credentials."""
-    user = USERS_DB.get(req.username.lower())
-    if not user or user["password"] != req.password:
+    username = req.username.lower()
+    user = database.authenticate_user(username, req.password) if database else USERS_DB.get(username)
+    if not user or (not database and user["password"] != req.password):
         raise HTTPException(status_code=401, detail="Invalid username or password.")
     return UserResponse(
-        username=req.username.lower(),
+        username=username,
         full_name=user["full_name"],
         role=user["role"],
         email=user["email"],
-        token=f"token_{req.username.lower()}_{user['role']}",
+        token=database.issue_token(username) if database else f"token_{username}_{user['role']}",
+        permissions=user["permissions"],
+    )
+
+
+@app.post("/api/auth/register", response_model=UserResponse, status_code=201, tags=["Authentication"])
+def register(req: RegisterRequest) -> UserResponse:
+    """Create a read-only account; elevated roles are provisioned by administrators."""
+    if not database:
+        raise HTTPException(status_code=503, detail="Registration requires MySQL persistence.")
+    user = database.register_user(req.username, req.full_name, req.email, req.password)
+    if not user:
+        raise HTTPException(status_code=409, detail="That username is already registered.")
+    return UserResponse(
+        username=user["username"],
+        full_name=user["full_name"],
+        role=user["role"],
+        email=user["email"],
+        token=database.issue_token(user["username"]),
         permissions=user["permissions"],
     )
 
@@ -229,9 +277,19 @@ def get_demo_users() -> list[DemoUser]:
 
 
 @app.post("/api/auth/change-password", tags=["Authentication"])
-def change_password(req: UpdatePasswordRequest) -> dict:
+def change_password(req: UpdatePasswordRequest, authorization: str | None = Header(None)) -> dict:
     """Update password for an existing account."""
     uname = req.username.lower()
+    current_user = get_user_from_authorization(authorization)
+    if current_user["username"] != uname:
+        raise HTTPException(status_code=403, detail="You can only change your own password.")
+    if database:
+        result = database.change_password(uname, req.old_password, req.new_password)
+        if result == "not_found":
+            raise HTTPException(status_code=404, detail="User account not found.")
+        if result == "incorrect_password":
+            raise HTTPException(status_code=401, detail="Current password incorrect.")
+        return {"status": "success", "message": f"Password successfully updated for user '{uname}'."}
     user = USERS_DB.get(uname)
     if not user:
         raise HTTPException(status_code=404, detail="User account not found.")
@@ -244,22 +302,16 @@ def change_password(req: UpdatePasswordRequest) -> dict:
 @app.get("/api/auth/me", response_model=UserResponse, tags=["Authentication"])
 def get_current_user(token: str | None = Query(None), authorization: str | None = Header(None)) -> UserResponse:
     """Validate current session token and return user profile."""
-    auth_token = token or (authorization.replace("Bearer ", "") if authorization else None)
-    if not auth_token:
-        raise HTTPException(status_code=401, detail="No authorization token provided.")
-
-    for uname, user in USERS_DB.items():
-        if f"token_{uname}_{user['role']}" == auth_token:
-            return UserResponse(
-                username=uname,
-                full_name=user["full_name"],
-                role=user["role"],
-                email=user["email"],
-                token=auth_token,
-                permissions=user["permissions"],
-            )
-
-    raise HTTPException(status_code=401, detail="Invalid or expired session token.")
+    auth_token = token or (authorization.removeprefix("Bearer ") if authorization else None)
+    user = get_user_for_token(auth_token)
+    return UserResponse(
+        username=user["username"],
+        full_name=user["full_name"],
+        role=user["role"],
+        email=user["email"],
+        token=auth_token,
+        permissions=user["permissions"],
+    )
 
 
 

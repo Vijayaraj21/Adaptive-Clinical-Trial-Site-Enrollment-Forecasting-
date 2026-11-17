@@ -16,6 +16,7 @@ from backend.schemas import (
     TrialMetadataResponse,
     WhatIfResponse,
 )
+from backend.database import MySQLStore
 from src.data.ctgov import load_trial_metadata
 from src.simulation.forecaster import AdaptiveTrialForecaster
 
@@ -25,15 +26,24 @@ logger = logging.getLogger(__name__)
 class ForecastService:
     """Singleton service for trial forecasting state and business logic."""
 
-    def __init__(self, config_path: str = "config.yaml"):
+    def __init__(self, config_path: str = "config.yaml", database: MySQLStore | None = None):
         self.config_path = config_path
+        self.database = database
         self.forecaster = AdaptiveTrialForecaster(config_path)
         self.panel_path = Path("data/processed/weekly_site_panel.parquet")
         self.panel_df = self._load_panel()
         self.metadata = load_trial_metadata(config_path)
+        if self.database:
+            trial_id = self.metadata.get("protocolSection", {}).get("identificationModule", {}).get("nctId", "NCT04280705")
+            self.metadata = self.database.load_metadata(trial_id, self.metadata)
 
     def _load_panel(self) -> pd.DataFrame:
         """Load site panel from disk."""
+        if self.database:
+            seed_path = Path("data/processed/weekly_site_panel.csv")
+            if not seed_path.exists():
+                raise FileNotFoundError(f"Processed panel not found: {seed_path}")
+            return self.database.load_panel(pd.read_csv(seed_path))
         if not self.panel_path.exists():
             raise FileNotFoundError(f"Processed panel not found: {self.panel_path}")
         return pd.read_parquet(self.panel_path)
@@ -45,6 +55,7 @@ class ForecastService:
             "version": "1.0.0",
             "trace_loaded": self.forecaster.has_trace,
             "model_type": "Hierarchical Bayesian Negative Binomial",
+            "database": "mysql" if self.database else "parquet",
         }
 
     def get_trials(self) -> TrialMetadataResponse:
@@ -202,7 +213,10 @@ class ForecastService:
         combined = combined.sort_values(["site_id", "week"]).reset_index(drop=True)
 
         self.panel_df = combined
-        self.panel_df.to_parquet(self.panel_path, index=False)
+        if self.database:
+            self.database.save_panel(combined)
+        else:
+            self.panel_df.to_parquet(self.panel_path, index=False)
         logger.info("Ingested %d new records into panel.", len(new_records))
 
         latest_week = int(new_df["week"].max()) if len(new_df) > 0 else 40

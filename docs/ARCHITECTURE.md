@@ -7,7 +7,7 @@ flowchart TD
     subgraph Data Layer
         CTGov[ClinicalTrials.gov Protocol Metadata] --> Ingest[Data Ingestion Pipeline]
         MIMIC[Hospital Flow Covariates Engine] --> Ingest
-        Ingest --> Panel[Longitudinal Site-Week Panel]
+        Ingest --> Panel[(MySQL Site-Week Panel)]
         Panel --> Cache[(NetCDF Trace Cache)]
     end
 
@@ -51,6 +51,7 @@ flowchart TD
 
 ### 1.1 Backend Service Layer (FastAPI)
 - **Singleton `ForecastService`**: Loads the pre-compiled MCMC posterior draws (`models_cache/model_a_trace.nc`) and raw trial metadata into memory on startup, ensuring sub-50ms query latency for simulation and forecasting requests.
+- **MySQL persistence**: Stores site-week panel rows, trial metadata, and salted password hashes. The local Parquet panel is imported on first startup and retained as a backup/export.
 - **RESTful Endpoints**:
   - `GET /api/health`: System health and cached model diagnostics.
   - `GET /api/trials`: Protocol details (NCT ID, eligibility, target enrollment).

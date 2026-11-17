@@ -127,24 +127,7 @@
             <span style="font-size:1.1rem;">&rarr;</span>
           </button>
 
-          <!-- Divider -->
-          <div class="form-divider-row">
-            <span>Quick Sign In</span>
-          </div>
-
-          <!-- Quick 1-Click Credentials -->
-          <div class="preset-chips-title">One-Click Authorized Accounts</div>
-          <div class="preset-chips-grid">
-            <button type="button" class="chip-btn-auth chip-gold-auth" id="chip-login-vijay" title="Dedicated Owner Superuser">
-              👑 Vijay (1704)
-            </button>
-            <button type="button" class="chip-btn-auth" id="chip-login-manager" title="Operations Director">
-              🛡️ Management (admin123)
-            </button>
-            <button type="button" class="chip-btn-auth" id="chip-login-admin" title="Lead Administrator">
-              👑 Admin (admin123)
-            </button>
-          </div>
+          <p class="portal-form-switch">New to CT-BAYES? <a href="/register.html">Create an observer account</a></p>
 
           <!-- Guest View Button -->
           <button type="button" id="btn-enter-guest" class="btn-guest-action">
@@ -202,7 +185,6 @@
           </div>
           <div class="drawer-user-actions" style="margin-top:0.75rem; display:flex; gap:0.4rem; flex-wrap:wrap;">
             <button id="btn-change-pwd" class="btn-chip" title="Change Password">🔑 Password</button>
-            <button id="btn-switch-role" class="btn-chip" title="Cycle Account Role">🔄 Switch Role</button>
             <button id="btn-open-ingest" class="btn-chip btn-accent" style="display:none;" title="Ingest Weekly Batch">+ Ingest Batch</button>
             <button id="btn-logout" class="btn-chip btn-ghost" title="Sign out">Logout</button>
           </div>
@@ -376,6 +358,13 @@
         </div>
       </div>
       <div class="header-actions">
+        <nav class="site-nav" aria-label="Website pages">
+          <a href="/" aria-current="page">Dashboard</a>
+          <a href="/about.html">About</a>
+          <a href="/login.html">Sign in</a>
+          <a href="/login.html?role=admin">Admin</a>
+          <a href="/register.html">Register</a>
+        </nav>
         <!-- Fast Trigger to open sliding drawer -->
         <button id="btn-header-open-drawer" class="btn-primary btn-sm" title="Open Left Corner Control Dashboard">
           <span>⚡ Open Control Dashboard</span>
@@ -686,7 +675,7 @@
           <span class="notice-icon">🔒</span>
           <span>
             <strong>Guest View (Read-Only)</strong>: Simulation parameters and site closure interventions require <strong>Vijay (Admin)</strong> or <strong>Management</strong> credentials. 
-            <a href="#" id="link-switch-to-manager">Sign In with Authorized Account</a> to unlock live sandbox sliders.
+            <a href="/login.html">Sign in with a management account</a> to unlock live sandbox sliders.
           </span>
         </div>
 

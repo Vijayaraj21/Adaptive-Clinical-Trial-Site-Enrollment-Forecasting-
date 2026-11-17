@@ -41,3 +41,7 @@ Thumbs.db
 htmlcov/
 .ruff_cache/
 .cache/
+
+# Desktop packaging outputs
+CTBayesDesktop.spec
+installer_output/

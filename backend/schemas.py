@@ -12,6 +12,13 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class RegisterRequest(BaseModel):
+    username: str = Field(min_length=3, max_length=32, pattern=r"^[A-Za-z0-9_.-]+$")
+    full_name: str = Field(min_length=2, max_length=120)
+    email: str = Field(max_length=255, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+    password: str = Field(min_length=8, max_length=128)
+
+
 class UpdatePasswordRequest(BaseModel):
     username: str
     old_password: str
@@ -21,7 +28,7 @@ class UpdatePasswordRequest(BaseModel):
 class UserResponse(BaseModel):
     username: str
     full_name: str
-    role: str  # "user" or "management"
+    role: str
     email: str
     token: str
     permissions: list[str]
@@ -41,6 +48,7 @@ class HealthResponse(BaseModel):
     version: str = "1.0.0"
     trace_loaded: bool
     model_type: str = "Hierarchical Negative Binomial"
+    database: str = "parquet"
 
 
 class SiteProfile(BaseModel):
